@@ -137,11 +137,8 @@ const MTADataMap = ({ mapboxToken }) => {
 
       // Update scatter points with the current height
       const scatterPoints = filteredData.flatMap((d) => {
-        if (d.ridership < 1) {
-          return [] // todo: animate to 0?
-        }
         const normalizedRidership = d.ridership / maxRidershipToday;
-        const targetHeight = Math.floor(normalizedRidership * HEIGHT_COEFF);
+        const targetHeight = d.ridership < 1 ? 0 : Math.floor(normalizedRidership * HEIGHT_COEFF);
         
         const prevRidership = stationIdToPrevRidership[d.station_id] ?? 0;
         const prevHeight = Math.floor(prevRidership / maxRidershipToday * HEIGHT_COEFF);
