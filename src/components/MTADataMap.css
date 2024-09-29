@@ -1,0 +1,92 @@
+body.default-cursor {
+    cursor: default !important;
+}
+  
+body.pointer-cursor {
+    cursor: pointer !important;
+}
+ 
+.map-container {
+    position: relative; /* Ensures the controls position correctly */
+    width: 100vw;
+    height: 100vh;
+}
+
+.map-controls {
+    max-width: 300px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(255, 255, 255, 0.8); /* Transparent background */
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Light shadow for contrast */
+    z-index: 10; /* Ensure controls are above the map */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.map-controls label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.map-controls select {
+    width: 100%;
+    padding: 5px;
+    font-size: 14px;
+}
+
+.hour-control {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.slider {
+    flex-grow: 1;
+    outline: none;
+}
+
+.play-button {
+    background-color: white;
+    border: 1px solid #333;
+    color: #333;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 50%;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.play-button:hover {
+    background-color: #f5f5f5;
+}
+
+.play-button:active {
+    background-color: #e0e0e0;
+    transform: scale(0.95);
+}
+
+.play-button:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+button:focus-visible {
+    outline: none;
+  }
+  
