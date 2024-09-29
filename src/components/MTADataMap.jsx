@@ -32,7 +32,8 @@ const MTADataMap = ({ mapboxToken }) => {
     height: '100vh',
   });
 
-  const stations = useStations();
+  const stationIdToStations = useStations();
+  const stations = Object.values(stationIdToStations);
   const [data, setData] = useState([]);
   const [hoverInfo, setHoverInfo] = useState(null);
   const [selectedHour, setSelectedHour] = useState(0);
@@ -101,7 +102,7 @@ const MTADataMap = ({ mapboxToken }) => {
       }
     };
     fetchData();
-  }, [stations, selectedDay, selectedStation, selectedDirection]);
+  }, [selectedDay, selectedStation, selectedDirection]);
 
   const maxRidershipToday = Math.max(...data.map(d => d.ridership));
   const minRidershipToday = Math.min(...data.map(d => d.ridership));
@@ -187,7 +188,7 @@ const MTADataMap = ({ mapboxToken }) => {
       }
     };
   }, [animationStart, data]);
-  
+
   // const columnLayer = new ColumnLayer({
   //   id: 'ridership-column-layer',
   //   data: filteredData,
@@ -251,6 +252,39 @@ const MTADataMap = ({ mapboxToken }) => {
     }
   });
 
+  const selectedStationData = stationIdToStations[selectedStation]
+  const mainStationPoint = new ScatterplotLayer({
+    id: 'main-station-scatterplot-layer',
+    data: selectedStationData ? 
+      [{ station_id: selectedStation, position: [Number(selectedStationData.lon), Number(selectedStationData.lat)] }]
+      : [],
+    pickable: true,
+    opacity: 1,
+    stroked: false,
+    filled: true,
+    lineWidthMinPixels: 1,
+    getPosition: d => d.position,
+    getRadius: 50,
+    getFillColor: [50, 115, 246],
+    updateTriggers: {
+      getPosition: [selectedStationData]
+    },
+    onHover: (info) => {
+      if (info.object) {
+        const stationName = getStationName(info.object.station_id);
+        setHoverInfo({
+          x: info.x,
+          y: info.y,
+          stationName,
+          stationId: info.object.station_id,
+          ridership: info.object.ridership
+        });
+      } else {
+        setHoverInfo(null);
+      }
+    }
+  })
+
   return (
     <div className="map-container">
       <DataControls
@@ -266,7 +300,7 @@ const MTADataMap = ({ mapboxToken }) => {
       <DeckGL
         initialViewState={viewport}
         controller={true}
-        layers={[scatterplotLayer]}
+        layers={[scatterplotLayer, mainStationPoint]}
         onViewStateChange={({ viewState }) => setViewport(viewState)}
       >
         <ReactMapGL

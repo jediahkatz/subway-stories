@@ -15,7 +15,7 @@ const daysOfWeek = [
 ];
 
 const DataControls = ({ selectedHour, setSelectedHour, selectedDay, setSelectedDay, selectedStation, setSelectedStation, selectedDirection, setSelectedDirection }) => {
-  const stations = useStations();
+  const stations = Object.values(useStations());
   const [isPlaying, setIsPlaying] = useState(false);
 
   const togglePlay = useCallback(() => {
