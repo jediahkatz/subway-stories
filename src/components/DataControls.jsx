@@ -55,6 +55,7 @@ const DataControls = ({ selectedHour, setSelectedHour, selectedDay, setSelectedD
           <Slider
             min={0}
             max={23}
+            disabled={isPlaying}
             value={selectedHour}
             onChange={e => setSelectedHour(Number(e.target.value), selectedHour)}
           />

@@ -11,6 +11,30 @@ import './MTADataMap.css';
 
 const ANIMATE_HOUR_CHANGE_DURATION = 500;
 
+const NYC_BOUNDS = {
+  minLng: -74.2591,  // Southwest longitude
+  minLat: 40.4774,   // Southwest latitude
+  maxLng: -73.7004,  // Northeast longitude
+  maxLat: 40.9176,   // Northeast latitude
+  minZoom: 10,
+};
+
+function constrainViewState({viewState}) {
+  const {longitude, latitude, zoom} = viewState;
+
+  // Constrain longitude and latitude to NYC bounds
+  const constrainedLongitude = Math.max(Math.min(longitude, NYC_BOUNDS.maxLng), NYC_BOUNDS.minLng);
+  const constrainedLatitude = Math.max(Math.min(latitude, NYC_BOUNDS.maxLat), NYC_BOUNDS.minLat);
+  const constrainedZoom = Math.max(NYC_BOUNDS.minZoom, zoom);
+
+  return {
+    ...viewState,
+    longitude: constrainedLongitude,
+    latitude: constrainedLatitude,
+    zoom: constrainedZoom
+  };
+}
+
 const getColor = (value, min, max) => {
   const colorscale = [
     [210, 180, 140],
@@ -141,7 +165,7 @@ const MTADataMap = ({ mapboxToken }) => {
         const targetHeight = d.ridership < 1 ? 0 : Math.floor(normalizedRidership * HEIGHT_COEFF);
         
         const prevRidership = stationIdToPrevRidership[d.station_id] ?? 0;
-        const prevHeight = Math.floor(prevRidership / maxRidershipToday * HEIGHT_COEFF);
+        const prevHeight = prevRidership < 1 ? 0 : Math.floor(prevRidership / maxRidershipToday * HEIGHT_COEFF);
 
         const linear = (t) => t;
         const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
@@ -151,7 +175,7 @@ const MTADataMap = ({ mapboxToken }) => {
             : 1 - Math.pow(-2 * t + 2, 4) / 2;
         };
 
-        const currentHeight = Math.floor(prevHeight + (targetHeight - prevHeight) * easeInOutQuart(progress));
+        const currentHeight = Math.floor(prevHeight + (targetHeight - prevHeight) * easeOutCubic(progress));
         const points = [];
         for (let i = 0; i < currentHeight; i++) {
           const opacity = (0.1 + 0.9 * (i / currentHeight)) * 255;
@@ -298,12 +322,17 @@ const MTADataMap = ({ mapboxToken }) => {
         initialViewState={viewport}
         controller={true}
         layers={[scatterplotLayer, mainStationPoint]}
-        onViewStateChange={({ viewState }) => setViewport(viewState)}
+        onViewStateChange={({viewState}) => {
+          const constrained = constrainViewState({viewState})
+          setViewport(constrained);
+          return constrained;
+        }}
       >
         <ReactMapGL
           {...viewport}
           mapboxAccessToken={mapboxToken}
-          mapStyle="mapbox://styles/mapbox/light-v11"
+          // todo - transition between light & dark styles by rendering both and fading in/out?
+          mapStyle="mapbox://styles/mapbox/dark-v11"
           controller={true}
         />
       </DeckGL>
