@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const correctPassword = import.meta.env.VITE_PASSWORD ?? process.env.VITE_PASSWORD
+const correctPassword = import.meta.env.VITE_PASSWORD ?? (typeof process !== 'undefined' ? process.env.VITE_PASSWORD : '')
 
 const PasswordPage = ({ onCorrectPassword, children }) => {
   const [password, setPassword] = useState('');
