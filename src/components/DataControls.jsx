@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { useStations } from '../hooks/useStations';
+import { getStations } from '../lib/stations';
 import Slider from './Slider';
 
 const ANIMATE_HOUR_PERIOD = 500
@@ -15,7 +15,7 @@ const daysOfWeek = [
 ];
 
 const DataControls = ({ selectedHour, setSelectedHour, selectedDay, setSelectedDay, selectedStation, setSelectedStation, selectedDirection, setSelectedDirection }) => {
-  const stations = Object.values(useStations());
+  const stations = Object.values(getStations());
   const [isPlaying, setIsPlaying] = useState(false);
 
   const togglePlay = useCallback(() => {

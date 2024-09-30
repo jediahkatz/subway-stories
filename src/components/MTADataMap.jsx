@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { DeckGL, ColumnLayer, ScatterplotLayer } from 'deck.gl';
 import { Matrix4 } from '@math.gl/core';
 import ReactMapGL from 'react-map-gl';
-import { useStations } from '../hooks/useStations';
+import { getStations } from '../lib/stations';
 import Tooltip from './Tooltip';
 import DataControls from './DataControls';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -56,7 +56,7 @@ const MTADataMap = ({ mapboxToken }) => {
     height: '100vh',
   });
 
-  const stationIdToStations = useStations();
+  const stationIdToStations = getStations();
   const stations = Object.values(stationIdToStations);
   const [data, setData] = useState([]);
   const [hoverInfo, setHoverInfo] = useState(null);
