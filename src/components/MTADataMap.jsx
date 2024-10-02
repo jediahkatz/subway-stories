@@ -8,8 +8,7 @@ import Tooltip from './Tooltip';
 import DataControls from './DataControls';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import './MTADataMap.css';
-
-const ANIMATE_HOUR_CHANGE_DURATION = 500;
+import { useRidershipAnimation } from '../hooks/useRidershipAnimation';
 
 const NYC_BOUNDS = {
   minLng: -74.2591,  // Southwest longitude
@@ -65,9 +64,30 @@ const MTADataMap = ({ mapboxToken }) => {
   const [selectedDay, setSelectedDay] = useState('Monday');
   const [selectedStation, setSelectedStation] = useState('126');
   const [selectedDirection, setSelectedDirection] = useState('goingTo');
-  const [animationStart, setAnimationStart] = useState(null);
-  const animationFrameRef = useRef(null);
-  const [scatterPlotPoints, setScatterPlotPoints] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const maxRidershipToday = Math.max(...data.map(d => d.ridership));
+  const minRidershipToday = Math.min(...data.map(d => d.ridership));
+
+  const sortedData = React.useMemo(() =>
+    data.sort((a, b) => {
+      return b.dlat - a.dlat;
+    })
+    , [data]);
+  const filteredData = React.useMemo(() => 
+    sortedData.filter(d => d.hour === selectedHour)
+    , [sortedData, selectedHour]);
+  const filteredPrevData = React.useMemo(() => 
+    sortedData.filter(d => d.hour === prevSelectedHour)
+    , [sortedData, prevSelectedHour]);
+
+  const { scatterPlotPoints, startAnimation } = useRidershipAnimation(
+    filteredData,
+    filteredPrevData,
+    minRidershipToday,
+    maxRidershipToday,
+    isLoading
+  );
 
   const getStationName = (id) => {
     // todo fix this linear search
@@ -75,18 +95,19 @@ const MTADataMap = ({ mapboxToken }) => {
     return station ? station.display_name : 'Unknown Station';
   };
 
-  const handleHourChange = React.useCallback((newHour, prevHour) => {
-    setPrevSelectedHour(prevHour)
+  const handleHourChange = React.useCallback((newHour) => {
+    setPrevSelectedHour(selectedHour);
     setSelectedHour(newHour);
-    setAnimationStart(() => Date.now());
-  }, []);
+    startAnimation();
+  }, [selectedHour, startAnimation]);
 
   useEffect(() => {
-    handleHourChange(0, 0);
+    handleHourChange(0);
   }, [])
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       const complexId = selectedStation;
       const baseUrl = "https://data.ny.gov/resource/jsu2-fbtj.json";
       const params = {
@@ -123,122 +144,13 @@ const MTADataMap = ({ mapboxToken }) => {
         setData(processedData);
       } catch (error) {
         console.error('Failed to fetch data:', error);
+      } finally {
+        setIsLoading(false);
+        startAnimation(); // Start animation when loading is complete
       }
     };
     fetchData();
   }, [selectedDay, selectedStation, selectedDirection]);
-
-  const maxRidershipToday = Math.max(...data.map(d => d.ridership));
-  const minRidershipToday = Math.min(...data.map(d => d.ridership));
-
-  const HEIGHT_COEFF = 500;
-  const sortedData = React.useMemo(() =>
-    data.sort((a, b) => {
-      return b.dlat - a.dlat;
-    })
-    , [data]);
-  const filteredData = React.useMemo(() => 
-    sortedData.filter(d => d.hour === selectedHour)
-    , [sortedData, selectedHour]);
-  const filteredPrevData = React.useMemo(() => 
-    sortedData.filter(d => d.hour === prevSelectedHour)
-    , [sortedData, prevSelectedHour]);
-  
-  const stationIdToPrevRidership = React.useMemo(() => 
-    filteredPrevData.reduce((acc, d) => {
-      acc[d.station_id] = d.ridership;
-      return acc;
-    }, {})
-  , [filteredPrevData]);
-
-  // Animation function
-  const animateHeight = (duration) => {
-    const startTime = animationStart;
-
-    const step = () => {
-      const elapsedTime = Date.now() - startTime;
-      const progress = Math.min(elapsedTime / duration, 1); // Normalize progress (0 to 1)
-
-      // Update scatter points with the current height
-      const scatterPoints = filteredData.flatMap((d) => {
-        const normalizedRidership = d.ridership / maxRidershipToday;
-        const targetHeight = d.ridership < 1 ? 0 : Math.floor(normalizedRidership * HEIGHT_COEFF);
-        
-        const prevRidership = stationIdToPrevRidership[d.station_id] ?? 0;
-        const prevHeight = prevRidership < 1 ? 0 : Math.floor(prevRidership / maxRidershipToday * HEIGHT_COEFF);
-
-        const linear = (t) => t;
-        const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
-        const easeInOutQuart = (t) => {
-          return t < 0.5
-            ? 8 * t * t * t * t
-            : 1 - Math.pow(-2 * t + 2, 4) / 2;
-        };
-
-        const currentHeight = Math.floor(prevHeight + (targetHeight - prevHeight) * easeOutCubic(progress));
-        const points = [];
-        for (let i = 0; i < currentHeight; i++) {
-          const opacity = (0.1 + 0.9 * (i / currentHeight)) * 255;
-          points.push({
-            position: [d.dlong, d.dlat + 0.00005 * i],
-            opacity,
-            ...d,
-          });
-        }
-        return points;
-      });
-
-      setScatterPlotPoints(scatterPoints); // Set updated points
-
-      if (progress < 1) {
-        animationFrameRef.current = requestAnimationFrame(step); // Continue animation
-      }
-    };
-    animationFrameRef.current = requestAnimationFrame(step); // Start animation
-  };
-
-  useEffect(() => {
-    if (animationStart) {
-      // Start the animation when selectedHour changes
-      animateHeight(ANIMATE_HOUR_CHANGE_DURATION); // duration is 200ms
-    }
-    return () => {
-      // Cleanup animation frame on component unmount
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, [animationStart, data]);
-
-  // const columnLayer = new ColumnLayer({
-  //   id: 'ridership-column-layer',
-  //   data: filteredData,
-  //   diskResolution: 12,
-  //   radius: 60,
-  //   extruded: true,
-  //   pickable: true,
-  //   elevationScale: 1,
-  //   getPosition: d => [d.dlong, d.dlat],
-  //   getFillColor: d => getColor(d.ridership, minRidershipToday, maxRidershipToday),
-  //   getLineColor: [0, 0, 0],
-  //   getElevation: d =>(d.ridership / d.maxRidership) * 50,
-  //   highlightColor: [0, 0, 0, 0],
-  //   autoHighlight: false,
-  //   modelMatrix: new Matrix4().rotateX(-0.01),
-  //   onHover: (info) => {
-  //     if (info.object) {
-  //       const stationName = getStationName(info.object.station_id);
-  //       setHoverInfo({
-  //         x: info.x,
-  //         y: info.y,
-  //         stationName,
-  //         ridership: info.object.ridership
-  //       });
-  //     } else {
-  //       setHoverInfo(null);
-  //     }
-  //   }
-  // });
 
   const scatterplotLayer = new ScatterplotLayer({
     id: 'ridership-scatterplot-layer',
@@ -250,12 +162,10 @@ const MTADataMap = ({ mapboxToken }) => {
     lineWidthMinPixels: 1,
     getPosition: d => d.position,
     getRadius: 30,
-    getFillColor: d => {
-      const color = getColor(d.ridership, minRidershipToday, maxRidershipToday)
-      return [...color, d.opacity]
-    },
+    getFillColor: d => d.color, // Use the color from the scatter plot points
     updateTriggers: {
-      getPosition: [selectedHour, selectedDay, selectedStation, selectedDirection]
+      getPosition: [selectedHour, selectedDay, selectedStation, selectedDirection],
+      getFillColor: [selectedHour, selectedDay, selectedStation, selectedDirection, isLoading]
     },
     onHover: (info) => {
       if (info.object) {
