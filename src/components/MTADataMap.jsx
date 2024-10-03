@@ -11,6 +11,7 @@ import './MTADataMap.css';
 import { useRidershipAnimation } from '../hooks/useRidershipAnimation';
 import subwayRoutes from '../data/nyc-subway-routes.js';
 import subwayLayerStyles from '../lib/subway-layer-styles.js';
+import { fetchData } from '../lib/data-fetcher';
 
 const NYC_BOUNDS = {
   minLng: -74.2591,  // Southwest longitude
@@ -110,50 +111,19 @@ const MTADataMap = ({ mapboxToken }) => {
   }, [])
 
   useEffect(() => {
-    const fetchData = async () => {
+    const loadData = async () => {
       setIsLoading(true);
-      const complexId = selectedStation;
-      const baseUrl = "https://data.ny.gov/resource/jsu2-fbtj.json";
-      const params = {
-        $where: selectedDirection === 'goingTo'
-          ? `origin_station_complex_id=${complexId} AND day_of_week='${selectedDay}'`
-          : `destination_station_complex_id=${complexId} AND day_of_week='${selectedDay}'`,
-        $select: selectedDirection === 'goingTo'
-          ? "destination_station_complex_id as station_id, hour_of_day as hour, avg(estimated_average_ridership) as ridership, destination_latitude as dlat, destination_longitude as dlong"
-          : "origin_station_complex_id as station_id, hour_of_day as hour, avg(estimated_average_ridership) as ridership, origin_latitude as dlat, origin_longitude as dlong",
-        $group: "station_id,hour,dlat,dlong",
-        $limit: 100000
-      };
-      const queryString = new URLSearchParams(params).toString();
-      const url = `${baseUrl}?${queryString}`;
-
       try {
-        const start = Date.now();
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Network response was not ok:\n${JSON.stringify(await response.json(), 2)}`);
-        }
-        console.log(`Successfully fetched origin-destination data in ${Date.now() - start} ms`);
-        const result = await response.json();
-
-        const processedData = result
-          .map(item => ({
-            ...item,
-            ridership: Number(item.ridership),
-            dlat: Number(item.dlat),
-            dlong: Number(item.dlong),
-            hour: Number(item.hour),
-          }))
-
+        const processedData = await fetchData(selectedDay, selectedStation, selectedDirection);
         setData(processedData);
       } catch (error) {
-        console.error('Failed to fetch data:', error);
+        console.error('Failed to load data:', error);
       } finally {
         setIsLoading(false);
         startAnimation(); // Start animation when loading is complete
       }
     };
-    fetchData();
+    loadData();
   }, [selectedDay, selectedStation, selectedDirection]);
 
   const scatterplotLayer = new ScatterplotLayer({

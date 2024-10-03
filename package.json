@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "profile": "node --inspect --no-node-snapshot --no-sandbox --max-old-space-size=4096 ./node_modules/vite/bin/vite.js"
   },
   "dependencies": {
     "@luma.gl/constants": "^9.0.27",
