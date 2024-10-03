@@ -9,6 +9,8 @@ import DataControls from './DataControls';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import './MTADataMap.css';
 import { useRidershipAnimation } from '../hooks/useRidershipAnimation';
+import subwayRoutes from '../data/nyc-subway-routes.js';
+import subwayLayerStyles from '../lib/subway-layer-styles.js';
 
 const NYC_BOUNDS = {
   minLng: -74.2591,  // Southwest longitude
@@ -34,15 +36,17 @@ function constrainViewState({viewState}) {
   };
 }
 
-const getColor = (value, min, max) => {
-  const colorscale = [
-    [210, 180, 140],
-    [255, 0, 0],
-  ];
-  const normalizedValue = (value - min) / (max - min);
-  const [r, g, b] = colorscale[0].map((c, i) => c + normalizedValue * (colorscale[1][i] - c));
-  return [r, g, b];
-};
+const drawSubwayLines = (map) => {
+  map.addSource('nyc-subway-routes', {
+    type: 'geojson',
+    data: subwayRoutes,
+  })
+
+  // add layers by iterating over the styles in the array defined in subway-layer-styles.js
+  subwayLayerStyles.forEach((style) => {
+    map.addLayer(style)
+  })
+}
 
 const MTADataMap = ({ mapboxToken }) => {
   const [viewport, setViewport] = useState({
@@ -244,6 +248,10 @@ const MTADataMap = ({ mapboxToken }) => {
           // todo - transition between light & dark styles by rendering both and fading in/out?
           mapStyle="mapbox://styles/mapbox/dark-v11"
           controller={true}
+          onLoad={(e) => {
+            const map = e.target
+            drawSubwayLines(map)
+          }}
         />
       </DeckGL>
       {hoverInfo && (
