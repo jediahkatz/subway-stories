@@ -184,6 +184,7 @@ export const useRidershipAnimation = (filteredData, prevFilteredData, minRidersh
 
   const generatePoints = (d, height, color, waveEffect) => {
     const points = [];
+    // return points; // ~
     for (let i = 0; i < height; i++) {
       // Create a gradient effect for opacity
       const opacity = (i / height) * 0.9; // Opacity increases from 0 to 0.9
