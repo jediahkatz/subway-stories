@@ -1,7 +1,7 @@
 const cache = new Map();
 
-const fetchData = async (selectedDay: string, selectedStation: string, selectedDirection: string, signal?: AbortSignal) => {
-  const cacheKey = `${selectedDay}-${selectedStation}-${selectedDirection}`;
+const fetchData = async (selectedDay: string, selectedStation: string, selectedDirection: string, selectedMonths: number[], signal?: AbortSignal) => {
+  const cacheKey = `${selectedDay}-${selectedStation}-${selectedDirection}-${selectedMonths}`;
   
   if (cache.has(cacheKey)) {
     console.log('Returning cached data');
@@ -9,11 +9,14 @@ const fetchData = async (selectedDay: string, selectedStation: string, selectedD
   }
 
   const complexId = selectedStation;
-  const baseUrl = "https://data.ny.gov/resource/jsu2-fbtj.json";
+  const baseUrl2023 = "https://data.ny.gov/resource/uhf3-t34z.json";
+  const baseUrl2024 = "https://data.ny.gov/resource/jsu2-fbtj.json";
+  const baseUrl = baseUrl2023;
   const params = {
-    $where: selectedDirection === 'goingTo'
-      ? `origin_station_complex_id=${complexId} AND day_of_week='${selectedDay}'`
-      : `destination_station_complex_id=${complexId} AND day_of_week='${selectedDay}'`,
+    $where: `${selectedDirection === 'goingTo'
+      ? `origin_station_complex_id=${complexId}`
+      : `destination_station_complex_id=${complexId}`
+    } AND day_of_week='${selectedDay}' AND month IN (${selectedMonths.map(m => m + 1).join(',')})`,
     $select: selectedDirection === 'goingTo'
       ? "destination_station_complex_id as station_id, hour_of_day as hour, avg(estimated_average_ridership) as ridership, destination_latitude as lat, destination_longitude as lon"
       : "origin_station_complex_id as station_id, hour_of_day as hour, avg(estimated_average_ridership) as ridership, origin_latitude as lat, origin_longitude as lon",
