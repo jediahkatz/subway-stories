@@ -119,8 +119,8 @@ const MTADataMap = ({ mapboxToken }) => {
           ? `origin_station_complex_id=${complexId} AND day_of_week='${selectedDay}'`
           : `destination_station_complex_id=${complexId} AND day_of_week='${selectedDay}'`,
         $select: selectedDirection === 'goingTo'
-          ? "destination_station_complex_id as station_id, hour_of_day as hour, sum(estimated_average_ridership) as ridership, destination_latitude as dlat, destination_longitude as dlong"
-          : "origin_station_complex_id as station_id, hour_of_day as hour, sum(estimated_average_ridership) as ridership, origin_latitude as dlat, origin_longitude as dlong",
+          ? "destination_station_complex_id as station_id, hour_of_day as hour, avg(estimated_average_ridership) as ridership, destination_latitude as dlat, destination_longitude as dlong"
+          : "origin_station_complex_id as station_id, hour_of_day as hour, avg(estimated_average_ridership) as ridership, origin_latitude as dlat, origin_longitude as dlong",
         $group: "station_id,hour,dlat,dlong",
         $limit: 100000
       };
@@ -207,12 +207,14 @@ const MTADataMap = ({ mapboxToken }) => {
     onHover: (info) => {
       if (info.object) {
         const stationName = getStationName(info.object.station_id);
+        const totalRidership = filteredData.reduce((acc, d) => acc + d.ridership, 0);
         setHoverInfo({
           x: info.x,
           y: info.y,
           stationName,
           stationId: info.object.station_id,
-          ridership: info.object.ridership
+          ridership: totalRidership,
+          ridershipLabel: selectedDirection === 'goingTo' ? 'Total departures' : 'Total arrivals'
         });
       } else {
         setHoverInfo(null);
@@ -260,6 +262,7 @@ const MTADataMap = ({ mapboxToken }) => {
           y={hoverInfo.y}
           stationName={`${hoverInfo.stationName} (${hoverInfo.stationId})`}
           ridership={hoverInfo.ridership}
+          ridershipLabel={hoverInfo.ridershipLabel}
         />
       )}
     </div>

@@ -1,7 +1,7 @@
 // src/components/Tooltip.js
 import React from 'react';
 
-const Tooltip = ({ x, y, stationName, ridership }) => {
+const Tooltip = ({ x, y, stationName, ridership, ridershipLabel }) => {
   const style = {
     position: 'absolute',
     top: y,
@@ -13,13 +13,12 @@ const Tooltip = ({ x, y, stationName, ridership }) => {
     pointerEvents: 'none',
     zIndex: 9999,
   };
-
   return (
-    <div style={style}>
-      <strong>{stationName}</strong>
-      <br />
-      Ridership: {ridership}
-    </div>
+  <div style={style}>
+    <strong>{stationName}</strong>
+    <br />
+    <div>{ridershipLabel || 'Ridership'}: {Math.round(ridership)}</div>
+  </div>
   );
 };
 
