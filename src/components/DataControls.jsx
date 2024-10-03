@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { getStations } from '../lib/stations';
 import { Slider, LogarithmicSlider } from './Slider';
+import MonthSelector from './MonthSelector';
 
 const ANIMATE_HOUR_PERIOD = 500
 
@@ -12,7 +13,7 @@ const daysOfWeek = [
   'Friday',
   'Saturday',
   'Sunday'
-];
+]; 
 
 const DataControls = ({ 
   selectedHour, 
@@ -25,6 +26,8 @@ const DataControls = ({
   setSelectedDirection,
   barScale,
   setSelectedBarScale,
+  selectedMonths, 
+  setSelectedMonths
 }) => {
   const stations = Object.values(getStations());
   const [isPlaying, setIsPlaying] = useState(false);
@@ -43,8 +46,20 @@ const DataControls = ({
     return () => clearInterval(intervalId);
   }, [isPlaying, setSelectedHour, selectedHour]);
 
+  // horrible ai generated code but works
+  const handleMonthToggle = (monthIndex) => {
+    setSelectedMonths(prev => {
+      if (prev.includes(monthIndex)) {
+        return prev.filter(m => m !== monthIndex);
+      } else {
+        return [...prev, monthIndex].sort((a, b) => a - b);
+      }
+    });
+  };
+
   return (
     <div className="map-controls">
+      <MonthSelector initialSelectedMonths={selectedMonths} onMonthsChange={setSelectedMonths} />
       <label>
         Select day:
         <select

@@ -90,3 +90,33 @@ button:focus-visible {
     outline: none;
   }
   
+.month-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.month-button {
+  padding: 5px 10px;
+  font-size: 12px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.month-button.selected {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.month-button:hover {
+  background-color: #e0e0e0;
+}
+
+.month-button.selected:hover {
+  background-color: #0056b3;
+}

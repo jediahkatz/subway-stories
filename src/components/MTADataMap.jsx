@@ -1,5 +1,5 @@
 // src/components/MTADataMap.jsx
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DeckGL, LineLayer, ScatterplotLayer } from 'deck.gl';
 import { Matrix4 } from '@math.gl/core';
 import ReactMapGL from 'react-map-gl';
@@ -9,6 +9,7 @@ import DataControls from './DataControls';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import './MTADataMap.css';
 import { useRidershipAnimation } from '../hooks/useRidershipAnimation';
+import { debounce } from '../lib/debounce';
 import subwayRoutes from '../data/nyc-subway-routes.js';
 import subwayLayerStyles from '../lib/subway-layer-styles.js';
 import { fetchData } from '../lib/data-fetcher';
@@ -71,6 +72,7 @@ const MTADataMap = ({ mapboxToken }) => {
   const [selectedDirection, setSelectedDirection] = useState('goingTo');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedBarScale, setSelectedBarScale] = useState(null); // number | null (default)
+  const [selectedMonths, setSelectedMonths] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
 
   const maxRidershipToday = React.useMemo(() => Math.max(...data.map(d => d.ridership)), [data]);
 
@@ -114,7 +116,7 @@ const MTADataMap = ({ mapboxToken }) => {
     const loadData = async () => {
       let aborted = false;
       try {
-        const processedData = await fetchData(selectedDay, selectedStation, selectedDirection, abortController.signal);
+        const processedData = await fetchData(selectedDay, selectedStation, selectedDirection, selectedMonths, abortController.signal);
         setData(processedData);
       } catch (error) {
         if (error.name === 'AbortError') {
@@ -131,7 +133,7 @@ const MTADataMap = ({ mapboxToken }) => {
     };
     loadData();
     return () => abortController.abort();
-  }, [selectedDay, selectedStation, selectedDirection]);
+  }, [selectedDay, selectedStation, selectedDirection, selectedMonths]);
 
   const getColorRelative = (value, max) => {
     const colorscale = [
@@ -244,6 +246,8 @@ const MTADataMap = ({ mapboxToken }) => {
         barScale={barScale}
         setSelectedBarScale={setSelectedBarScale}
         initialBarScale={1 / maxRidershipToday}
+        selectedMonths={selectedMonths}
+        setSelectedMonths={debounce(setSelectedMonths, 1000)}
       />
       <DeckGL
         initialViewState={viewport}
