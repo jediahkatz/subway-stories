@@ -15,9 +15,9 @@ const fetchData = async (selectedDay, selectedStation, selectedDirection) => {
       ? `origin_station_complex_id=${complexId} AND day_of_week='${selectedDay}'`
       : `destination_station_complex_id=${complexId} AND day_of_week='${selectedDay}'`,
     $select: selectedDirection === 'goingTo'
-      ? "destination_station_complex_id as station_id, hour_of_day as hour, avg(estimated_average_ridership) as ridership, destination_latitude as dlat, destination_longitude as dlong"
-      : "origin_station_complex_id as station_id, hour_of_day as hour, avg(estimated_average_ridership) as ridership, origin_latitude as dlat, origin_longitude as dlong",
-    $group: "station_id,hour,dlat,dlong",
+      ? "destination_station_complex_id as station_id, hour_of_day as hour, avg(estimated_average_ridership) as ridership, destination_latitude as lat, destination_longitude as lon"
+      : "origin_station_complex_id as station_id, hour_of_day as hour, avg(estimated_average_ridership) as ridership, origin_latitude as lat, origin_longitude as lon",
+    $group: "station_id,hour,lat,lon",
     $limit: "100000"
   };
   const queryString = new URLSearchParams(params).toString();
@@ -37,8 +37,8 @@ const fetchData = async (selectedDay, selectedStation, selectedDirection) => {
       .map(item => ({
         ...item,
         ridership: Number(item.ridership),
-        dlat: Number(item.dlat),
-        dlong: Number(item.dlong),
+        lat: Number(item.lat),
+        lon: Number(item.lon),
         hour: Number(item.hour),
       }));
 

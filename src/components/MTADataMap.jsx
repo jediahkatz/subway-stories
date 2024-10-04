@@ -1,6 +1,6 @@
 // src/components/MTADataMap.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { DeckGL, ColumnLayer, ScatterplotLayer } from 'deck.gl';
+import { DeckGL, LineLayer, ScatterplotLayer } from 'deck.gl';
 import { Matrix4 } from '@math.gl/core';
 import ReactMapGL from 'react-map-gl';
 import { getStations } from '../lib/stations';
@@ -12,6 +12,7 @@ import { useRidershipAnimation } from '../hooks/useRidershipAnimation';
 import subwayRoutes from '../data/nyc-subway-routes.js';
 import subwayLayerStyles from '../lib/subway-layer-styles.js';
 import { fetchData } from '../lib/data-fetcher';
+import MapBarLayer from './MapBarLayer';
 
 const NYC_BOUNDS = {
   minLng: -74.2591,  // Southwest longitude
@@ -76,7 +77,7 @@ const MTADataMap = ({ mapboxToken }) => {
 
   const sortedData = React.useMemo(() =>
     data.sort((a, b) => {
-      return b.dlat - a.dlat;
+      return b.lat - a.lat;
     })
     , [data]);
   const filteredData = React.useMemo(() => 
@@ -86,7 +87,7 @@ const MTADataMap = ({ mapboxToken }) => {
     sortedData.filter(d => d.hour === prevSelectedHour)
     , [sortedData, prevSelectedHour]);
 
-  const { scatterPlotPoints, startAnimation } = useRidershipAnimation(
+  const { lineData, startAnimation } = useRidershipAnimation(
     filteredData,
     filteredPrevData,
     minRidershipToday,
@@ -126,20 +127,26 @@ const MTADataMap = ({ mapboxToken }) => {
     loadData();
   }, [selectedDay, selectedStation, selectedDirection]);
 
-  const scatterplotLayer = new ScatterplotLayer({
-    id: 'ridership-scatterplot-layer',
-    data: scatterPlotPoints,
+  const getColor = (value, min, max) => {
+    const colorscale = [
+      [210, 180, 140],
+      [255, 0, 0],
+    ];
+    const normalizedValue = (value - min) / (max - min);
+    const [r, g, b] = colorscale[0].map((c, i) => c + normalizedValue * (colorscale[1][i] - c));
+    return [r, g, b];
+  };
+
+  const mapBarLayer = new MapBarLayer({
+    id: 'ridership-composite-layer',
+    data: lineData,
     pickable: true,
-    opacity: 1,
-    stroked: false,
-    filled: true,
-    lineWidthMinPixels: 1,
-    getPosition: d => d.position,
-    getRadius: 30,
-    getFillColor: d => d.color, // Use the color from the scatter plot points
-    updateTriggers: {
-      getPosition: [selectedHour, selectedDay, selectedStation, selectedDirection],
-      getFillColor: [selectedHour, selectedDay, selectedStation, selectedDirection, isLoading]
+    getBasePosition: d => [d.lon, d.lat],
+    getHeight: d => d.targetHeight, 
+    getWidth: _d => 50,
+    getColor: d => {
+      const color = d.color ?? getColor(d.ridership, minRidershipToday, maxRidershipToday);
+      return [...color, 255];
     },
     onHover: (info) => {
       if (info.object) {
@@ -154,6 +161,11 @@ const MTADataMap = ({ mapboxToken }) => {
       } else {
         setHoverInfo(null);
       }
+    },
+    updateTriggers: {
+      data: [selectedHour, selectedDay, selectedStation, selectedDirection, maxRidershipToday],
+      getColor: [minRidershipToday, maxRidershipToday],
+      getHeight: [maxRidershipToday], // Add this if height depends on max ridership
     }
   });
 
@@ -207,7 +219,7 @@ const MTADataMap = ({ mapboxToken }) => {
       <DeckGL
         initialViewState={viewport}
         controller={true}
-        layers={[scatterplotLayer, mainStationPoint]}
+        layers={[mapBarLayer, mainStationPoint]}
         onViewStateChange={({viewState}) => {
           const constrained = constrainViewState({viewState})
           setViewport(constrained);
