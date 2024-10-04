@@ -111,20 +111,29 @@ const MTADataMap = ({ mapboxToken }) => {
 
   useEffect(() => {
     setIsLoading(true);
+    const abortController = new AbortController();
     const loadData = async () => {
+      let aborted = false;
       try {
-        const processedData = await fetchData(selectedDay, selectedStation, selectedDirection);
+        const processedData = await fetchData(selectedDay, selectedStation, selectedDirection, abortController.signal);
         setData(processedData);
         const maxRidership = Math.max(...processedData.map(d => d.ridership));
         setBarScale(1 / maxRidership);
       } catch (error) {
-        console.error('Failed to load data:', error);
+        if (error.name === 'AbortError') {
+          aborted = true;
+        } else {
+          console.error('Failed to load data:', error);
+        }
       } finally {
-        setIsLoading(false);
-        startAnimation();
+        if (!aborted) {
+          setIsLoading(false);
+          startAnimation();
+        }
       }
     };
     loadData();
+    return () => abortController.abort();
   }, [selectedDay, selectedStation, selectedDirection]);
 
   const getColorRelative = (value, max) => {

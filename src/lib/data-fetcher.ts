@@ -1,6 +1,6 @@
 const cache = new Map();
 
-const fetchData = async (selectedDay, selectedStation, selectedDirection) => {
+const fetchData = async (selectedDay: string, selectedStation: string, selectedDirection: string, signal?: AbortSignal) => {
   const cacheKey = `${selectedDay}-${selectedStation}-${selectedDirection}`;
   
   if (cache.has(cacheKey)) {
@@ -25,7 +25,7 @@ const fetchData = async (selectedDay, selectedStation, selectedDirection) => {
 
   try {
     const start = Date.now();
-    const response = await fetch(url);
+    const response = await fetch(url, { signal });
     if (!response.ok) {
       const errorResponse = await response.json();
       throw new Error(`Network response was not ok:\n${JSON.stringify(errorResponse, null, 2)}`);
@@ -46,7 +46,11 @@ const fetchData = async (selectedDay, selectedStation, selectedDirection) => {
     console.log('Cache memory usage:', getCacheMemoryUsageInBytes(), cache.size);
     return processedData;
   } catch (error) {
-    console.error('Failed to fetch data:', error);
+    if (error.name === 'AbortError') {
+      console.log('Fetch aborted');
+    } else {
+      console.error('Failed to fetch data:', error);
+    }
     throw error;
   }
 };
