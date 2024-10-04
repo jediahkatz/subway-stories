@@ -2,13 +2,13 @@ import { useState, useEffect, useRef } from 'react';
 
 const ANIMATE_HOUR_CHANGE_DURATION = 500;
 const LOADING_WAVE_DURATION = 3000;
-const HEIGHT_COEFF = 500 * 0.00005;
+const DEFAULT_BAR_HEIGHT_FOR_MAX_RIDERSHIP = 0.02;
 const MIN_PULSE_HEIGHT = 1;
 const MAX_PULSE_HEIGHT = 50;
 const LOADING_COLOR = [204, 204, 255];
 const WAVE_FREQUENCY = 2;
 
-export const useRidershipAnimation = (filteredData, prevFilteredData, minRidershipToday, maxRidershipToday, isLoading) => {
+export const useRidershipAnimation = (filteredData, prevFilteredData, isLoading) => {
   const [lineData, setLineData] = useState([]);
   const [animationStart, setAnimationStart] = useState(null);
   const animationFrameRef = useRef(null);
@@ -75,8 +75,7 @@ export const useRidershipAnimation = (filteredData, prevFilteredData, minRidersh
       const progress = Math.min(elapsedTime / duration, 1);
 
       const newLineData = filteredData.map((d) => {
-        const normalizedRidership = d.ridership / maxRidershipToday;
-        const targetHeight = d.ridership < 1 ? 0 : normalizedRidership * HEIGHT_COEFF;
+        const targetHeight = d.ridership < 1 ? 0 : d.ridership * DEFAULT_BAR_HEIGHT_FOR_MAX_RIDERSHIP;
         
         let startHeight;
         if (isLoading) {
@@ -84,7 +83,7 @@ export const useRidershipAnimation = (filteredData, prevFilteredData, minRidersh
         } else {
           const prevData = prevFilteredData.find(pd => pd.station_id === d.station_id);
           const prevRidership = prevData ? prevData.ridership : 0;
-          startHeight = prevRidership < 1 ? 0 : (prevRidership / maxRidershipToday) * HEIGHT_COEFF;
+          startHeight = prevRidership < 1 ? 0 : prevRidership * DEFAULT_BAR_HEIGHT_FOR_MAX_RIDERSHIP;
         }
 
         const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);

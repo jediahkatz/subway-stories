@@ -71,9 +71,9 @@ const MTADataMap = ({ mapboxToken }) => {
   const [selectedStation, setSelectedStation] = useState('126');
   const [selectedDirection, setSelectedDirection] = useState('goingTo');
   const [isLoading, setIsLoading] = useState(false);
+  const [barScale, setBarScale] = useState(1);
 
-  const maxRidershipToday = Math.max(...data.map(d => d.ridership));
-  const minRidershipToday = Math.min(...data.map(d => d.ridership));
+  const maxRidershipToday = React.useMemo(() => Math.max(...data.map(d => d.ridership)), [data]);
 
   const sortedData = React.useMemo(() =>
     data.sort((a, b) => {
@@ -90,8 +90,6 @@ const MTADataMap = ({ mapboxToken }) => {
   const { lineData, startAnimation } = useRidershipAnimation(
     filteredData,
     filteredPrevData,
-    minRidershipToday,
-    maxRidershipToday,
     isLoading
   );
 
@@ -112,40 +110,62 @@ const MTADataMap = ({ mapboxToken }) => {
   }, [])
 
   useEffect(() => {
+    setIsLoading(true);
     const loadData = async () => {
-      setIsLoading(true);
       try {
         const processedData = await fetchData(selectedDay, selectedStation, selectedDirection);
         setData(processedData);
+        const maxRidership = Math.max(...processedData.map(d => d.ridership));
+        setBarScale(1 / maxRidership);
       } catch (error) {
         console.error('Failed to load data:', error);
       } finally {
         setIsLoading(false);
-        startAnimation(); // Start animation when loading is complete
+        startAnimation();
       }
     };
     loadData();
   }, [selectedDay, selectedStation, selectedDirection]);
 
-  const getColor = (value, min, max) => {
+  const getColorRelative = (value, max) => {
     const colorscale = [
       [210, 180, 140],
       [255, 0, 0],
     ];
-    const normalizedValue = (value - min) / (max - min);
+    const normalizedValue = value / max;
     const [r, g, b] = colorscale[0].map((c, i) => c + normalizedValue * (colorscale[1][i] - c));
     return [r, g, b];
   };
 
+  const getColorAbsolute = (value) => {
+    const intervals = [0, 10, 20, 40, 80, 160, 320, 640, 1280];
+    const colors = [
+      [255, 255, 240], // Light cream
+      [240, 220, 200], // Very light tan
+      [230, 200, 170], // Light beige
+      [220, 180, 150], // Soft tan
+      [210, 140, 110], // Warm orange-beige
+      [200, 100, 80],  // Muted orange
+      [180, 60, 50],   // Deep orange-red
+      [140, 40, 30],   // Brick red
+      [100, 20, 20]    // Dark brick red
+    ];
+
+    let colorIndex = intervals.findIndex(interval => value < interval) - 1;
+    if (colorIndex === -2) colorIndex = colors.length - 1; // For values 1280+
+
+    return colors[colorIndex];
+  };
+  
   const mapBarLayer = new MapBarLayer({
     id: 'ridership-composite-layer',
     data: lineData,
     pickable: true,
     getBasePosition: d => [d.lon, d.lat],
-    getHeight: d => d.targetHeight, 
+    getHeight: d => isLoading ? d.targetHeight : d.targetHeight * barScale,
     getWidth: _d => 50,
     getColor: d => {
-      const color = d.color ?? getColor(d.ridership, minRidershipToday, maxRidershipToday);
+      const color = d.color ?? getColorAbsolute(d.ridership);
       return [...color, 255];
     },
     onHover: (info) => {
@@ -163,9 +183,9 @@ const MTADataMap = ({ mapboxToken }) => {
       }
     },
     updateTriggers: {
-      data: [selectedHour, selectedDay, selectedStation, selectedDirection, maxRidershipToday],
-      getColor: [minRidershipToday, maxRidershipToday],
-      getHeight: [maxRidershipToday], // Add this if height depends on max ridership
+      data: [data],
+      getColor: [data],
+      getHeight: [barScale, data],
     }
   });
 
@@ -215,6 +235,9 @@ const MTADataMap = ({ mapboxToken }) => {
         setSelectedStation={setSelectedStation}
         selectedDirection={selectedDirection}
         setSelectedDirection={setSelectedDirection}
+        barScale={barScale}
+        setBarScale={setBarScale}
+        initialBarScale={1 / maxRidershipToday}
       />
       <DeckGL
         initialViewState={viewport}

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { getStations } from '../lib/stations';
-import Slider from './Slider';
+import { Slider, LogarithmicSlider } from './Slider';
 
 const ANIMATE_HOUR_PERIOD = 500
 
@@ -14,7 +14,19 @@ const daysOfWeek = [
   'Sunday'
 ];
 
-const DataControls = ({ selectedHour, setSelectedHour, selectedDay, setSelectedDay, selectedStation, setSelectedStation, selectedDirection, setSelectedDirection }) => {
+const DataControls = ({ 
+  selectedHour, 
+  setSelectedHour, 
+  selectedDay, 
+  setSelectedDay, 
+  selectedStation, 
+  setSelectedStation, 
+  selectedDirection, 
+  setSelectedDirection,
+  barScale,
+  setBarScale,
+  initialBarScale
+}) => {
   const stations = Object.values(getStations());
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -87,8 +99,29 @@ const DataControls = ({ selectedHour, setSelectedHour, selectedDay, setSelectedD
           <option value="comingFrom">Coming from</option>
         </select>
       </label>
+      <div className="bar-scale-control">
+        <label>
+          Bar Scale:
+        </label>
+        <div className="slider-container">
+          <LogarithmicSlider
+            value={barScale}
+            onChange={setBarScale}
+            onDoubleClick={() => setBarScale(initialBarScale)}
+          />
+          <span>{barScale.toFixed(3)}x</span>
+        </div>
+      </div>
     </div>
   );
+};
+
+const logSliderToLinear = (value) => {
+  return Math.round((Math.log10(value) + 3) * 1000 / 3);
+};
+
+const linearToLogSlider = (value) => {
+  return Math.pow(10, (value * 3 / 1000) - 3);
 };
 
 export default DataControls;
