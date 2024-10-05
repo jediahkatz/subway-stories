@@ -66,12 +66,11 @@ const MTADataMap = ({ mapboxToken }) => {
   const [data, setData] = useState([]);
   const [hoverInfo, setHoverInfo] = useState(null);
   const [selectedHour, setSelectedHour] = useState(0);
-  const [prevSelectedHour, setPrevSelectedHour] = useState(0);
   const [selectedDay, setSelectedDay] = useState('Monday');
   const [selectedStation, setSelectedStation] = useState('126');
   const [selectedDirection, setSelectedDirection] = useState('goingTo');
   const [isLoading, setIsLoading] = useState(false);
-  const [barScale, setBarScale] = useState(1);
+  const [selectedBarScale, setSelectedBarScale] = useState(null); // number | null (default)
 
   const maxRidershipToday = React.useMemo(() => Math.max(...data.map(d => d.ridership)), [data]);
 
@@ -83,13 +82,14 @@ const MTADataMap = ({ mapboxToken }) => {
   const filteredData = React.useMemo(() => 
     sortedData.filter(d => d.hour === selectedHour)
     , [sortedData, selectedHour]);
-  const filteredPrevData = React.useMemo(() => 
-    sortedData.filter(d => d.hour === prevSelectedHour)
-    , [sortedData, prevSelectedHour]);
+
+    const barScaleLocked = selectedBarScale !== null;
+    const initialBarScale = 1 / maxRidershipToday;
+    const barScale = barScaleLocked ? selectedBarScale : initialBarScale;
 
   const { lineData, startAnimation } = useRidershipAnimation(
     filteredData,
-    filteredPrevData,
+    barScale,
     isLoading
   );
 
@@ -100,7 +100,6 @@ const MTADataMap = ({ mapboxToken }) => {
   };
 
   const handleHourChange = React.useCallback((newHour) => {
-    setPrevSelectedHour(selectedHour);
     setSelectedHour(newHour);
     startAnimation();
   }, [selectedHour, startAnimation]);
@@ -117,8 +116,6 @@ const MTADataMap = ({ mapboxToken }) => {
       try {
         const processedData = await fetchData(selectedDay, selectedStation, selectedDirection, abortController.signal);
         setData(processedData);
-        const maxRidership = Math.max(...processedData.map(d => d.ridership));
-        setBarScale(1 / maxRidership);
       } catch (error) {
         if (error.name === 'AbortError') {
           aborted = true;
@@ -245,7 +242,7 @@ const MTADataMap = ({ mapboxToken }) => {
         selectedDirection={selectedDirection}
         setSelectedDirection={setSelectedDirection}
         barScale={barScale}
-        setBarScale={setBarScale}
+        setSelectedBarScale={setSelectedBarScale}
         initialBarScale={1 / maxRidershipToday}
       />
       <DeckGL

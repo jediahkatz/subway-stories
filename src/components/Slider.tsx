@@ -25,9 +25,9 @@ export const logSliderToLinear = (value) => {
   };
   
 const linearToLogSlider = (value) => {
-return Math.pow(10, (value * 3 / 1000) - 3);
+    return Math.pow(10, (value * 3 / 1000) - 3);
 };
-  
+
 export const LogarithmicSlider = ({ value, onChange, onDoubleClick, disabled = false }) => {
   const [sliderValue, setSliderValue] = useState(logSliderToLinear(value));
   const [isDragging, setIsDragging] = useState(false);
