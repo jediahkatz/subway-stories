@@ -17,7 +17,7 @@ const fetchData = async (selectedDay: string, selectedStation: string, selectedD
       ? `origin_station_complex_id=${complexId}`
       : `destination_station_complex_id=${complexId}`
     } AND day_of_week='${selectedDay}' AND month IN (${selectedMonths.map(m => m + 1).join(',')})`,
-    $select: selectedDirection === 'goingTo'
+    $select: selectedDirection === 'goingTo'  
       ? "destination_station_complex_id as station_id, hour_of_day as hour, avg(estimated_average_ridership) as ridership, destination_latitude as lat, destination_longitude as lon"
       : "origin_station_complex_id as station_id, hour_of_day as hour, avg(estimated_average_ridership) as ridership, origin_latitude as lat, origin_longitude as lon",
     $group: "station_id,hour,lat,lon",

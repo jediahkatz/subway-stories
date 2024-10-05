@@ -35,7 +35,9 @@ function constrainViewState({viewState}) {
     ...viewState,
     longitude: constrainedLongitude,
     latitude: constrainedLatitude,
-    zoom: constrainedZoom
+    zoom: constrainedZoom,
+    bearing: 0,
+    pitch: 0
   };
 }
 
