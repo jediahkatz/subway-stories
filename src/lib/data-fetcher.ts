@@ -42,7 +42,7 @@ const fetchData = async (selectedDay: string, selectedStation: string, selectedD
         hour: Number(item.hour),
       }));
 
-    // cache.set(cacheKey, processedData);
+    cache.set(cacheKey, processedData);
     console.log('Cache memory usage:', getCacheMemoryUsageInBytes(), cache.size);
     return processedData;
   } catch (error) {
