@@ -24,8 +24,7 @@ const DataControls = ({
   selectedDirection, 
   setSelectedDirection,
   barScale,
-  setBarScale,
-  initialBarScale
+  setSelectedBarScale,
 }) => {
   const stations = Object.values(getStations());
   const [isPlaying, setIsPlaying] = useState(false);
@@ -47,7 +46,7 @@ const DataControls = ({
   return (
     <div className="map-controls">
       <label>
-        Select Day:
+        Select day:
         <select
           value={selectedDay}
           onChange={e => setSelectedDay(e.target.value)}
@@ -61,7 +60,7 @@ const DataControls = ({
       </label>
       <div className="hour-control">
         <label>
-          Select Hour: {selectedHour}:00
+          Select hour: {selectedHour}:00
         </label>
         <div className="slider-container">
           <Slider
@@ -77,7 +76,7 @@ const DataControls = ({
         </div>
       </div>
       <label>
-        Select Station:
+        Select station:
         <select
           value={selectedStation}
           onChange={e => setSelectedStation(e.target.value)}
@@ -101,13 +100,14 @@ const DataControls = ({
       </label>
       <div className="bar-scale-control">
         <label>
-          Bar Scale:
+          Bar height (double-click to reset):
         </label>
         <div className="slider-container">
           <LogarithmicSlider
             value={barScale}
-            onChange={setBarScale}
-            onDoubleClick={() => setBarScale(initialBarScale)}
+            onChange={setSelectedBarScale}
+            // Unlocks the bar scale
+            onDoubleClick={() => setSelectedBarScale(null)}
           />
           <span>{barScale.toFixed(3)}x</span>
         </div>
@@ -115,13 +115,4 @@ const DataControls = ({
     </div>
   );
 };
-
-const logSliderToLinear = (value) => {
-  return Math.round((Math.log10(value) + 3) * 1000 / 3);
-};
-
-const linearToLogSlider = (value) => {
-  return Math.pow(10, (value * 3 / 1000) - 3);
-};
-
 export default DataControls;

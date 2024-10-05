@@ -8,13 +8,15 @@ const MAX_PULSE_HEIGHT = 50;
 const LOADING_COLOR = [204, 204, 255];
 const WAVE_FREQUENCY = 2;
 
-export const useRidershipAnimation = (filteredData, prevFilteredData, isLoading) => {
+export const useRidershipAnimation = (data, barScale, isLoading) => {
   const [lineData, setLineData] = useState([]);
   const [animationStart, setAnimationStart] = useState(null);
   const animationFrameRef = useRef(null);
+  const initialHeights = useRef({});
   const lastHeights = useRef({});
 
   const startAnimation = () => {
+    initialHeights.current = Object.fromEntries(data.map(d => [d.station_id, getAbsoluteHeight(d, barScale)]));
     setAnimationStart(Date.now());
   };
 
@@ -30,30 +32,30 @@ export const useRidershipAnimation = (filteredData, prevFilteredData, isLoading)
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [animationStart, filteredData, prevFilteredData, isLoading]);
+  }, [animationStart, data, isLoading]);
 
   const animateLoadingWave = () => {
-    const northmostLat = Math.max(...filteredData.map(d => d.lat));
-    const southmostLat = Math.min(...filteredData.map(d => d.lat));
+    const northmostLat = Math.max(...data.map(d => d.lat));
+    const southmostLat = Math.min(...data.map(d => d.lat));
     const latRange = northmostLat - southmostLat;
 
     const step = () => {
       const time = Date.now() % LOADING_WAVE_DURATION;
       const waveProgress = time / LOADING_WAVE_DURATION;
 
-      const newLineData = filteredData.map((d) => {
+      const newLineData = data.map((d) => {
         const stationProgress = (northmostLat - d.lat) / latRange;
         const wrappedWaveProgress = (waveProgress + 1) % 1;
         const distanceFromWave = Math.abs(wrappedWaveProgress - stationProgress);
         const waveEffect = Math.max(0, 1 - distanceFromWave * 20);
 
-        const height = MIN_PULSE_HEIGHT + (MAX_PULSE_HEIGHT - MIN_PULSE_HEIGHT) * waveEffect;
-        lastHeights.current[d.station_id] = height;
+        const height = (MIN_PULSE_HEIGHT + (MAX_PULSE_HEIGHT - MIN_PULSE_HEIGHT) * waveEffect) * 0.00005;
+        lastHeights.current[d.station_id] = height ;
 
         return {
           ...d,
           basePosition: [d.lon, d.lat],
-          targetHeight: height * 0.00005,
+          targetHeight: height,
           color: LOADING_COLOR,
         };
       });
@@ -70,30 +72,35 @@ export const useRidershipAnimation = (filteredData, prevFilteredData, isLoading)
   const animateToNewHeights = (duration) => {
     const startTime = Date.now();
 
+    const dataWithStationsFromPrevData = [...data]
+    Object.keys(initialHeights.current).forEach((station_id) => {
+        if (!data[station_id]) {
+            dataWithStationsFromPrevData.push({
+                ...data[station_id],
+                ridership: 0,
+            })
+        }
+    })
     const step = () => {
       const elapsedTime = Date.now() - startTime;
       const progress = Math.min(elapsedTime / duration, 1);
 
-      const newLineData = filteredData.map((d) => {
-        const targetHeight = d.ridership < 1 ? 0 : d.ridership * DEFAULT_BAR_HEIGHT_FOR_MAX_RIDERSHIP;
-        
-        let startHeight;
-        if (isLoading) {
-          startHeight = lastHeights.current[d.station_id] || 0;
-        } else {
-          const prevData = prevFilteredData.find(pd => pd.station_id === d.station_id);
-          const prevRidership = prevData ? prevData.ridership : 0;
-          startHeight = prevRidership < 1 ? 0 : prevRidership * DEFAULT_BAR_HEIGHT_FOR_MAX_RIDERSHIP;
-        }
+      const newLineData = dataWithStationsFromPrevData.map((d) => {
+        // We store the normalized (true) heights, but then we divide back to the absolute height
+        // since the bar scale will be applied to the absolute height before rendering.
+        const targetHeightNormalized = getAbsoluteHeight(d, barScale);
+        const startHeightNormalized = initialHeights.current[d.station_id]
+          ?? lastHeights.current[d.station_id]
+          ?? 0;
 
         const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
-        const currentHeight = startHeight + (targetHeight - startHeight) * easeOutCubic(progress);
+        const currentHeight = startHeightNormalized + (targetHeightNormalized - startHeightNormalized) * easeOutCubic(progress);
         
         lastHeights.current[d.station_id] = currentHeight;
         
         return {
           ...d,
-          targetHeight: currentHeight
+          targetHeight: currentHeight / barScale
         };
       });
 
@@ -107,4 +114,8 @@ export const useRidershipAnimation = (filteredData, prevFilteredData, isLoading)
   };
 
   return { lineData, startAnimation };
+};
+
+const getAbsoluteHeight = (d, barScale) => {
+  return d.ridership < 1 ? 0 : d.ridership * DEFAULT_BAR_HEIGHT_FOR_MAX_RIDERSHIP * barScale;
 };
