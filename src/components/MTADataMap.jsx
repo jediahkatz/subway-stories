@@ -106,14 +106,14 @@ const MTADataMap = ({ mapboxToken }) => {
   }, [filteredData, stationIdToTotalRidershipByHour, showPercentage])
 
   const barScaleLocked = selectedBarScale !== null;
-  const initialBarScale = 1 / maxRidershipToday;
+  const initialBarScale = maxRidershipToday > 0 ? 1 / maxRidershipToday : 1;
   const barScale = 
     barScaleLocked ? selectedBarScale :
     showPercentage ? PERCENTAGE_BAR_SCALE : 
                      initialBarScale;
   
   const { lineData, startAnimation, markCurrentBarHeights } = useBarsAnimation(
-    percentageData,
+    data.length > 0 ?percentageData : Object.values(stationIdToStations),
     barScale,
     showPercentage,
     isLoading
