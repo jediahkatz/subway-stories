@@ -8,7 +8,7 @@ const MAX_PULSE_HEIGHT = 50;
 const LOADING_COLOR = [204, 204, 255];
 const WAVE_FREQUENCY = 2;
 
-export const useRidershipAnimation = (data, barScale, isLoading) => {
+export const useRidershipAnimation = (data, barScale, showPercentage, isLoading) => {
   const [lineData, setLineData] = useState([]);
   const [animationStart, setAnimationStart] = useState(null);
   const animationFrameRef = useRef(null);
@@ -16,7 +16,7 @@ export const useRidershipAnimation = (data, barScale, isLoading) => {
   const lastHeights = useRef({});
 
   const startAnimation = () => {
-    initialHeights.current = Object.fromEntries(data.map(d => [d.station_id, getAbsoluteHeight(d, barScale)]));
+    initialHeights.current = Object.fromEntries(data.map(d => [d.station_id, getAbsoluteHeight(d, barScale, showPercentage)]));
     setAnimationStart(Date.now());
   };
 
@@ -88,7 +88,7 @@ export const useRidershipAnimation = (data, barScale, isLoading) => {
       const newLineData = dataWithStationsFromPrevData.map((d) => {
         // We store the normalized (true) heights, but then we divide back to the absolute height
         // since the bar scale will be applied to the absolute height before rendering.
-        const targetHeightNormalized = getAbsoluteHeight(d, barScale);
+        const targetHeightNormalized = getAbsoluteHeight(d, barScale, showPercentage);
         const startHeightNormalized = initialHeights.current[d.station_id]
           ?? lastHeights.current[d.station_id]
           ?? 0;
@@ -116,6 +116,9 @@ export const useRidershipAnimation = (data, barScale, isLoading) => {
   return { lineData, startAnimation };
 };
 
-const getAbsoluteHeight = (d, barScale) => {
+const getAbsoluteHeight = (d, barScale, showPercentage) => {
+  if (showPercentage) {
+    return d.ridership < 1 ? 0 : d.percentage * DEFAULT_BAR_HEIGHT_FOR_MAX_RIDERSHIP * barScale;
+  }
   return d.ridership < 1 ? 0 : d.ridership * DEFAULT_BAR_HEIGHT_FOR_MAX_RIDERSHIP * barScale;
 };

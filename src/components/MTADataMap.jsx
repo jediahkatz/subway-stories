@@ -12,7 +12,7 @@ import { useRidershipAnimation } from '../hooks/useRidershipAnimation';
 import { debounce } from '../lib/debounce';
 import subwayRoutes from '../data/nyc-subway-routes.js';
 import subwayLayerStyles from '../lib/subway-layer-styles.js';
-import { fetchData } from '../lib/data-fetcher';
+import { fetchData, fetchTotalRidership } from '../lib/data-fetcher';
 import MapBarLayer from './MapBarLayer';
 
 const NYC_BOUNDS = {
@@ -75,9 +75,12 @@ const MTADataMap = ({ mapboxToken }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedBarScale, setSelectedBarScale] = useState(null); // number | null (default)
   const [selectedMonths, setSelectedMonths] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+  const [stationIdToTotalRidershipByHour, setStationIdToTotalRidershipByHour] = useState({});
+  const [showPercentage, setShowPercentage] = useState(false);
 
   const maxRidershipToday = React.useMemo(() => Math.max(...data.map(d => d.ridership)), [data]);
 
+  // Sort so that we render stations in correct z-order
   const sortedData = React.useMemo(() =>
     data.sort((a, b) => {
       return b.lat - a.lat;
@@ -87,13 +90,25 @@ const MTADataMap = ({ mapboxToken }) => {
     sortedData.filter(d => d.hour === selectedHour)
     , [sortedData, selectedHour]);
 
-    const barScaleLocked = selectedBarScale !== null;
-    const initialBarScale = 1 / maxRidershipToday;
-    const barScale = barScaleLocked ? selectedBarScale : initialBarScale;
+  const percentageData = React.useMemo(() => {
+    return filteredData.map(d => {
+      const totalRidershipByHour = stationIdToTotalRidershipByHour[d.station_id];
+      const totalRidership = totalRidershipByHour ? totalRidershipByHour[d.hour] ?? 0 : 0;
+      return {
+        ...d,
+        percentage: totalRidership > 0 ? 100 * d.ridership / totalRidership : 0,
+      }
+    })
+  }, [filteredData, stationIdToTotalRidershipByHour, showPercentage])
 
+  const barScaleLocked = selectedBarScale !== null;
+  const initialBarScale = 1 / maxRidershipToday;
+  const barScale = barScaleLocked ? selectedBarScale : initialBarScale;
+  
   const { lineData, startAnimation } = useRidershipAnimation(
-    filteredData,
+    percentageData,
     barScale,
+    showPercentage,
     isLoading
   );
 
@@ -112,14 +127,24 @@ const MTADataMap = ({ mapboxToken }) => {
     handleHourChange(0);
   }, [])
 
+  const handleShowPercentageChange = React.useCallback((newPercentage) => {
+    setShowPercentage(newPercentage)
+    startAnimation();
+  }, [showPercentage, startAnimation])
+
   useEffect(() => {
     setIsLoading(true);
     const abortController = new AbortController();
     const loadData = async () => {
       let aborted = false;
       try {
-        const processedData = await fetchData(selectedDay, selectedStation, selectedDirection, selectedMonths, abortController.signal);
-        setData(processedData);
+        const processedData = fetchData(selectedDay, selectedStation, selectedDirection, selectedMonths, abortController.signal)
+          .then(processedData => setData(processedData));
+        const totalRidership = fetchTotalRidership(selectedDay, selectedMonths, selectedDirection, abortController.signal)
+          .then(stationIdToTotalRidership => setStationIdToTotalRidershipByHour(stationIdToTotalRidership));
+
+        await Promise.all([processedData, totalRidership])
+        
       } catch (error) {
         if (error.name === 'AbortError') {
           aborted = true;
@@ -186,7 +211,10 @@ const MTADataMap = ({ mapboxToken }) => {
           y: info.y,
           stationName,
           stationId: info.object.station_id,
-          ridership: info.object.ridership
+          ridership: info.object.ridership,
+          percentage: info.object.percentage,
+          percentageLabel: selectedDirection === 'goingTo' ? '% of arrivals here' : '% of departures here',
+          showPercentage,
         });
       } else {
         setHoverInfo(null);
@@ -226,7 +254,8 @@ const MTADataMap = ({ mapboxToken }) => {
           stationName,
           stationId: info.object.station_id,
           ridership: totalRidership,
-          ridershipLabel: selectedDirection === 'goingTo' ? 'Total departures' : 'Total arrivals'
+          ridershipLabel: selectedDirection === 'goingTo' ? 'Total departures' : 'Total arrivals',
+          showPercentage: false,
         });
       } else {
         setHoverInfo(null);
@@ -250,6 +279,8 @@ const MTADataMap = ({ mapboxToken }) => {
         initialBarScale={1 / maxRidershipToday}
         selectedMonths={selectedMonths}
         setSelectedMonths={debounce(setSelectedMonths, 1000)}
+        showPercentage={showPercentage}
+        setShowPercentage={handleShowPercentageChange}
       />
       <DeckGL
         initialViewState={viewport}
@@ -279,7 +310,9 @@ const MTADataMap = ({ mapboxToken }) => {
           y={hoverInfo.y}
           stationName={`${hoverInfo.stationName} (${hoverInfo.stationId})`}
           ridership={hoverInfo.ridership}
+          percentage={hoverInfo.showPercentage ? hoverInfo.percentage : null}
           ridershipLabel={hoverInfo.ridershipLabel}
+          percentageLabel={hoverInfo.percentageLabel}
         />
       )}
     </div>
