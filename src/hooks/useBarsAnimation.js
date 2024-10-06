@@ -8,7 +8,7 @@ const MAX_PULSE_HEIGHT = 50;
 const LOADING_COLOR = [204, 204, 255];
 const WAVE_FREQUENCY = 2;
 
-export const useRidershipAnimation = (data, barScale, showPercentage, isLoading) => {
+export const useBarsAnimation = (data, barScale, showPercentage, isLoading) => {
   const [lineData, setLineData] = useState({ type: 'LOADING', data: [] });
   const [animationStart, setAnimationStart] = useState(null);
   const animationFrameRef = useRef(null);
@@ -107,7 +107,6 @@ export const useRidershipAnimation = (data, barScale, showPercentage, isLoading)
         };
       });
 
-      console.log('setLineData 2')
       setLineData({ type: showPercentage ? 'RIDERSHIP_PERCENTAGE' : 'RIDERSHIP', data: newLineData });
 
       if (progress < 1) {

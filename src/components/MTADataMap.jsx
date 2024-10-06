@@ -8,7 +8,8 @@ import Tooltip from './Tooltip';
 import DataControls from './DataControls';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import './MTADataMap.css';
-import { useRidershipAnimation } from '../hooks/useRidershipAnimation';
+import { useBarsAnimation } from '../hooks/useBarsAnimation';
+import { useDotPulseAnimation } from '../hooks/useDotAnimation';
 import { debounce } from '../lib/debounce';
 import subwayRoutes from '../data/nyc-subway-routes.js';
 import subwayLayerStyles from '../lib/subway-layer-styles.js';
@@ -111,7 +112,7 @@ const MTADataMap = ({ mapboxToken }) => {
     showPercentage ? PERCENTAGE_BAR_SCALE : 
                      initialBarScale;
   
-  const { lineData, startAnimation, markCurrentBarHeights } = useRidershipAnimation(
+  const { lineData, startAnimation, markCurrentBarHeights } = useBarsAnimation(
     percentageData,
     barScale,
     showPercentage,
@@ -176,7 +177,6 @@ const MTADataMap = ({ mapboxToken }) => {
   }, 1000), [barScale, showPercentage, startAnimation])
 
   useEffect(() => {
-    console.log('################### loading')
     setIsLoading(true);
     const abortController = new AbortController();
     const loadData = async () => {
@@ -238,9 +238,6 @@ const MTADataMap = ({ mapboxToken }) => {
 
     return colors[colorIndex];
   };
-
-  const d610Data = lineData.data.find(d => d.station_id == 610);
-  console.log('d610heights', d610Data?.targetHeight * barScale, d610Data?.targetHeight, barScale, barScaleForFinalRender)
   
   const mapBarLayer = new MapBarLayer({
     id: 'ridership-composite-layer',
@@ -277,12 +274,34 @@ const MTADataMap = ({ mapboxToken }) => {
     }
   });
 
-  const selectedStationData = stationIdToStations[selectedStation]
+  
+  const selectedStationData = {
+    station_id: selectedStation,
+    position: [Number(stationIdToStations[selectedStation].lon), Number(stationIdToStations[selectedStation].lat)]
+  }
+
+  const pulseCircles = useDotPulseAnimation(selectedDirection);
+  const pulseData = pulseCircles.map(pulseCircle => ({ ...selectedStationData, ...pulseCircle }))
+
+  const mainStationPulse = new ScatterplotLayer({
+    id: 'main-station-pulse-scatterplot-layer',
+    data: pulseData,
+    pickable: false,
+    opacity: 1,
+    stroked: false,
+    filled: true,
+    lineWidthMinPixels: 1,
+    getPosition: d => d.position,
+    getRadius: d => 50 * d.scale,
+    getFillColor: d => [50, 115, 246, d.opacity],
+    updateTriggers: {
+      getRadius: [pulseData]
+    }
+  })
+
   const mainStationPoint = new ScatterplotLayer({
     id: 'main-station-scatterplot-layer',
-    data: selectedStationData ? 
-      [{ station_id: selectedStation, position: [Number(selectedStationData.lon), Number(selectedStationData.lat)] }]
-      : [],
+    data: [selectedStationData],
     pickable: true,
     opacity: 1,
     stroked: false,
@@ -335,7 +354,7 @@ const MTADataMap = ({ mapboxToken }) => {
       <DeckGL
         initialViewState={viewport}
         controller={true}
-        layers={[mapBarLayer, mainStationPoint]}
+        layers={[mapBarLayer, mainStationPulse, mainStationPoint]}
         onViewStateChange={({viewState}) => {
           const constrained = constrainViewState({viewState})
           setViewport(constrained);
