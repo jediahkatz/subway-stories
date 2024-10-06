@@ -33,6 +33,16 @@ body.pointer-cursor {
     gap: 5px;
 }
 
+.map-controls label.inline-checkbox {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.map-controls label.inline-checkbox input[type="checkbox"] {
+    margin: 0;
+}
+
 .map-controls select {
     width: 100%;
     padding: 5px;
@@ -119,4 +129,13 @@ button:focus-visible {
 
 .month-button.selected:hover {
   background-color: #0056b3;
+}
+
+.inline-checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.inline-checkbox input[type="checkbox"] {
+  margin-right: 8px;
 }

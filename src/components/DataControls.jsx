@@ -27,7 +27,9 @@ const DataControls = ({
   barScale,
   setSelectedBarScale,
   selectedMonths, 
-  setSelectedMonths
+  setSelectedMonths,
+  showPercentage,
+  setShowPercentage
 }) => {
   const stations = Object.values(getStations());
   const [isPlaying, setIsPlaying] = useState(false);
@@ -127,6 +129,14 @@ const DataControls = ({
           <span>{barScale.toFixed(3)}x</span>
         </div>
       </div>
+      <label className="inline-checkbox">
+        <input
+          type="checkbox"
+          checked={showPercentage}
+          onChange={(e) => setShowPercentage(e.target.checked)}
+        />
+        <span>Show percentage of ridership</span>
+      </label>
     </div>
   );
 };

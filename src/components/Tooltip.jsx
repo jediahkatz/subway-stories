@@ -1,7 +1,7 @@
 // src/components/Tooltip.js
 import React from 'react';
 
-const Tooltip = ({ x, y, stationName, ridership, ridershipLabel }) => {
+const Tooltip = ({ x, y, stationName, ridership, ridershipLabel, percentage, percentageLabel }) => {
   const style = {
     position: 'absolute',
     top: y,
@@ -18,6 +18,7 @@ const Tooltip = ({ x, y, stationName, ridership, ridershipLabel }) => {
     <strong>{stationName}</strong>
     <br />
     <div>{ridershipLabel || 'Ridership'}: {Math.round(ridership)}</div>
+    {percentage && <div>({percentage.toFixed(2)}{percentageLabel})</div>}
   </div>
   );
 };
