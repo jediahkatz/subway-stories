@@ -74,8 +74,8 @@ const fetchTotalRidership = async (selectedDay: string, selectedMonths: number[]
   const params = {
     $where: `day_of_week='${selectedDay}' AND month IN (${selectedMonths.map(m => m + 1).join(',')})`,
     $select: selectedDirection === 'goingTo'
-      ? `origin_station_complex_id as station_id, hour_of_day as hour, SUM(estimated_average_ridership) / ${numMonthsToAverageOver} as total_ridership`
-      : `destination_station_complex_id as station_id, hour_of_day as hour, SUM(estimated_average_ridership) / ${numMonthsToAverageOver} as total_ridership`,
+      ? `destination_station_complex_id as station_id, hour_of_day as hour, SUM(estimated_average_ridership) / ${numMonthsToAverageOver} as total_ridership`
+      : `origin_station_complex_id as station_id, hour_of_day as hour, SUM(estimated_average_ridership) / ${numMonthsToAverageOver} as total_ridership`,
     $group: "station_id, hour",
     $limit: "100000"
   };
