@@ -23,6 +23,9 @@ const NYC_BOUNDS = {
   minZoom: 10,
 };
 
+const LOADING_BAR_SCALE = 1;
+const PERCENTAGE_BAR_SCALE = 1 / 25;
+
 function constrainViewState({viewState}) {
   const {longitude, latitude, zoom} = viewState;
 
@@ -103,14 +106,28 @@ const MTADataMap = ({ mapboxToken }) => {
 
   const barScaleLocked = selectedBarScale !== null;
   const initialBarScale = 1 / maxRidershipToday;
-  const barScale = barScaleLocked ? selectedBarScale : initialBarScale;
+  const barScale = 
+    barScaleLocked ? selectedBarScale :
+    showPercentage ? PERCENTAGE_BAR_SCALE : 
+                     initialBarScale;
   
-  const { lineData, startAnimation } = useRidershipAnimation(
+  const { lineData, startAnimation, markCurrentBarHeights } = useRidershipAnimation(
     percentageData,
     barScale,
     showPercentage,
     isLoading
   );
+
+  // This is kind of a hack. When we make a change that affects the final rendered bar scale 
+  // and requires re-animating, (e.g. changing showPercentage or entering the loading state)
+  // there's a one-frame delay when the bar scale is changed, but the new lineData hasn't 
+  // been calculated yet. Here we make sure that the bar scale used for the final render is 
+  // set based on the data that we're rendering.
+  const barScaleForFinalRender =
+    lineData.type === 'LOADING'                                 ? LOADING_BAR_SCALE : 
+    !barScaleLocked && lineData.type === 'RIDERSHIP'            ? initialBarScale : 
+    !barScaleLocked && lineData.type === 'RIDERSHIP_PERCENTAGE' ? PERCENTAGE_BAR_SCALE :
+                                                                  barScale;
 
   const getStationName = (id) => {
     // todo fix this linear search
@@ -119,6 +136,7 @@ const MTADataMap = ({ mapboxToken }) => {
   };
 
   const handleHourChange = React.useCallback((newHour) => {
+    markCurrentBarHeights(barScale, showPercentage);
     setSelectedHour(newHour);
     startAnimation();
   }, [selectedHour, startAnimation]);
@@ -127,32 +145,61 @@ const MTADataMap = ({ mapboxToken }) => {
     handleHourChange(0);
   }, [])
 
-  const handleShowPercentageChange = React.useCallback((newPercentage) => {
-    setShowPercentage(newPercentage)
+  const handleShowPercentageChange = React.useCallback((shouldShowPercentage) => {
+    markCurrentBarHeights(barScale, showPercentage);
+    setShowPercentage(shouldShowPercentage)
     startAnimation();
   }, [showPercentage, startAnimation])
 
+  const handleDayChange = React.useCallback((newDay) => {
+    markCurrentBarHeights(barScale, showPercentage);
+    setSelectedDay(newDay);
+    startAnimation();
+  }, [barScale, showPercentage, startAnimation])
+
+  const handleDirectionChange = React.useCallback((newDirection) => {
+    markCurrentBarHeights(barScale, showPercentage);
+    setSelectedDirection(newDirection);
+    startAnimation();
+  }, [barScale, showPercentage, startAnimation])
+
+  const handleStationChange = React.useCallback((newStation) => {
+    markCurrentBarHeights(barScale, showPercentage);
+    setSelectedStation(newStation);
+    startAnimation();
+  }, [barScale, showPercentage, startAnimation])
+
+  const handleMonthsChange = React.useCallback(debounce((newMonths) => {
+    markCurrentBarHeights(barScale, showPercentage);
+    setSelectedMonths(newMonths);
+    startAnimation();
+  }, 1000), [barScale, showPercentage, startAnimation])
+
   useEffect(() => {
+    console.log('################### loading')
     setIsLoading(true);
     const abortController = new AbortController();
     const loadData = async () => {
-      let aborted = false;
+      let abortedDueToAnotherLoad = false;
       try {
-        const processedData = fetchData(selectedDay, selectedStation, selectedDirection, selectedMonths, abortController.signal)
-          .then(processedData => setData(processedData));
-        const totalRidership = fetchTotalRidership(selectedDay, selectedMonths, selectedDirection, abortController.signal)
-          .then(stationIdToTotalRidership => setStationIdToTotalRidershipByHour(stationIdToTotalRidership));
+        const [processedData, stationIdToTotalRidership] = await Promise.all([
+          fetchData(selectedDay, selectedStation, selectedDirection, selectedMonths, abortController.signal),
+          fetchTotalRidership(selectedDay, selectedMonths, selectedDirection, abortController.signal)
+        ]);
 
-        await Promise.all([processedData, totalRidership])
-        
+        setData(processedData);
+        setStationIdToTotalRidershipByHour(stationIdToTotalRidership);
+        setIsLoading(false);
+        startAnimation();
+
       } catch (error) {
         if (error.name === 'AbortError') {
-          aborted = true;
+          abortedDueToAnotherLoad = true;
         } else {
           console.error('Failed to load data:', error);
         }
       } finally {
-        if (!aborted) {
+        if (!abortedDueToAnotherLoad) {
           setIsLoading(false);
           startAnimation();
         }
@@ -191,13 +238,16 @@ const MTADataMap = ({ mapboxToken }) => {
 
     return colors[colorIndex];
   };
+
+  const d610Data = lineData.data.find(d => d.station_id == 610);
+  console.log('d610heights', d610Data?.targetHeight * barScale, d610Data?.targetHeight, barScale, barScaleForFinalRender)
   
   const mapBarLayer = new MapBarLayer({
     id: 'ridership-composite-layer',
-    data: lineData,
+    data: lineData.data,
     pickable: true,
     getBasePosition: d => [d.lon, d.lat],
-    getHeight: d => isLoading ? d.targetHeight : d.targetHeight * barScale,
+    getHeight: d => d.targetHeight * barScaleForFinalRender,
     getWidth: _d => 50,
     getColor: d => {
       const color = d.color ?? getColorAbsolute(d.ridership);
@@ -269,16 +319,16 @@ const MTADataMap = ({ mapboxToken }) => {
         selectedHour={selectedHour}
         setSelectedHour={handleHourChange}
         selectedDay={selectedDay}
-        setSelectedDay={setSelectedDay}
+        setSelectedDay={handleDayChange}
         selectedStation={selectedStation}
-        setSelectedStation={setSelectedStation}
+        setSelectedStation={handleStationChange}
         selectedDirection={selectedDirection}
-        setSelectedDirection={setSelectedDirection}
+        setSelectedDirection={handleDirectionChange}
         barScale={barScale}
         setSelectedBarScale={setSelectedBarScale}
-        initialBarScale={1 / maxRidershipToday}
+        initialBarScale={initialBarScale}
         selectedMonths={selectedMonths}
-        setSelectedMonths={debounce(setSelectedMonths, 1000)}
+        setSelectedMonths={handleMonthsChange}
         showPercentage={showPercentage}
         setShowPercentage={handleShowPercentageChange}
       />
