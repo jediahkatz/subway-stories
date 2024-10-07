@@ -16,6 +16,8 @@ import subwayLayerStyles from '../lib/subway-layer-styles.js';
 import { fetchRidershipByStationFromSqlServer, fetchTotalRidershipFromSqlServer } from '../lib/data-fetcher';
 import MapBarLayer from './MapBarLayer';
 import { saveStateToSessionStorage, loadStateFromSessionStorage } from '../lib/sessionManager.js';
+import ViewTabs from './ViewTabs';
+import StoriesView from './StoriesView';
 
 const NYC_BOUNDS = {
   minLng: -74.2591,  // Southwest longitude
@@ -363,59 +365,74 @@ const MTADataMap = ({ mapboxToken }) => {
     saveStateToSessionStorage(stateToSave);
   }, [viewport, selectedHour, selectedDay, selectedStation, selectedDirection, selectedMonths, showPercentage]);
 
+  // Add new state for active view
+  const [activeView, setActiveView] = useState('visualization');
+
+  // Disable map controls when in stories view
+  const isMapInteractive = activeView === 'visualization';
+
   return (
     <div className="map-container">
-      <DataControls
-        selectedHour={selectedHour}
-        setSelectedHour={handleHourChange}
-        selectedDay={selectedDay}
-        setSelectedDay={handleDayChange}
-        selectedStation={selectedStation}
-        setSelectedStation={handleStationChange}
-        selectedDirection={selectedDirection}
-        setSelectedDirection={handleDirectionChange}
-        barScale={barScale}
-        setSelectedBarScale={setSelectedBarScale}
-        initialBarScale={initialBarScale}
-        selectedMonths={selectedMonths}
-        setSelectedMonths={handleMonthsChange}
-        showPercentage={showPercentage}
-        setShowPercentage={handleShowPercentageChange}
-      />
+      <ViewTabs activeView={activeView} setActiveView={setActiveView} />
       <DeckGL
         initialViewState={viewport}
-        controller={true}
+        controller={isMapInteractive}
         layers={[mainStationPulse, mainStationPoint, mapBarLayer]}
         onViewStateChange={({viewState}) => {
-          const constrained = constrainViewState({viewState})
-          setViewport(constrained);
+          if (isMapInteractive) {
+            const constrained = constrainViewState({viewState})
+            setViewport(constrained);
+            saveStateToSessionStorage({ ...loadStateFromSessionStorage(), viewport: constrained });
+            return constrained;
+          }
           saveStateToSessionStorage({ ...loadStateFromSessionStorage(), viewport: constrained });
-          return constrained;
+          return viewState;
         }}
       >
         <ReactMapGL
           {...viewport}
           mapboxAccessToken={mapboxToken}
-          // todo - transition between light & dark styles by rendering both and fading in/out?
           mapStyle="mapbox://styles/mapbox/dark-v11"
-          controller={true}
+          controller={isMapInteractive}
           onLoad={(e) => {
             const map = e.target
             drawSubwayLines(map)
           }}
         />
       </DeckGL>
-      {hoverInfo && (
-        <Tooltip
-          x={hoverInfo.x}
-          y={hoverInfo.y}
-          stationName={`${hoverInfo.stationName} (${hoverInfo.stationId})`}
-          ridership={hoverInfo.ridership}
-          percentage={hoverInfo.showPercentage ? hoverInfo.percentage : null}
-          ridershipLabel={hoverInfo.ridershipLabel}
-          percentageLabel={hoverInfo.percentageLabel}
-        />
+      {activeView === 'visualization' && (
+        <>
+          <DataControls
+            selectedHour={selectedHour}
+            setSelectedHour={handleHourChange}
+            selectedDay={selectedDay}
+            setSelectedDay={handleDayChange}
+            selectedStation={selectedStation}
+            setSelectedStation={handleStationChange}
+            selectedDirection={selectedDirection}
+            setSelectedDirection={handleDirectionChange}
+            barScale={barScale}
+            setSelectedBarScale={setSelectedBarScale}
+            initialBarScale={initialBarScale}
+            selectedMonths={selectedMonths}
+            setSelectedMonths={handleMonthsChange}
+            showPercentage={showPercentage}
+            setShowPercentage={handleShowPercentageChange}
+          />
+          {hoverInfo && (
+            <Tooltip
+              x={hoverInfo.x}
+              y={hoverInfo.y}
+              stationName={`${hoverInfo.stationName} (${hoverInfo.stationId})`}
+              ridership={hoverInfo.ridership}
+              percentage={hoverInfo.showPercentage ? hoverInfo.percentage : null}
+              ridershipLabel={hoverInfo.ridershipLabel}
+              percentageLabel={hoverInfo.percentageLabel}
+            />
+          )}
+        </>
       )}
+      {activeView === 'stories' && <StoriesView />}
     </div>
   );
 };
