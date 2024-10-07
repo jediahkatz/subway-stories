@@ -1,0 +1,26 @@
+.view-tabs {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.tab {
+  background-color: transparent;
+  border: none;
+  padding: 5px 10px;
+  margin: 0 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+}
+
+.tab.active {
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+}

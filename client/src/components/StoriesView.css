@@ -1,0 +1,44 @@
+.stories-view-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+  pointer-events: all;
+  padding: 50vh 20px 20px; /* Changed top padding to 50vh */
+  scroll-snap-type: y mandatory;
+}
+
+.stories-box {
+  position: relative;
+  width: 300px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  margin-left: auto;
+  margin-bottom: 50vh; /* Changed to 50vh to match top padding */
+  scroll-snap-align: center; /* Changed from start to center */
+}
+
+.stories-box:first-child {
+  margin-top: calc(50vh - 60px); /* Add top margin to first box */
+}
+
+.stories-box:last-child {
+  margin-bottom: calc(50vh + 20px); /* Adjust bottom margin of last box */
+}
+
+.stories-box h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.stories-box p {
+  margin-bottom: 15px;
+  line-height: 1.6;
+  color: #333;
+}
