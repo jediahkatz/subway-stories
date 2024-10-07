@@ -1,5 +1,5 @@
 // src/components/MTADataMap.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { DeckGL, LineLayer, ScatterplotLayer } from 'deck.gl';
 import { Matrix4 } from '@math.gl/core';
 import ReactMapGL from 'react-map-gl';
@@ -18,6 +18,7 @@ import MapBarLayer from './MapBarLayer';
 import { saveStateToSessionStorage, loadStateFromSessionStorage } from '../lib/sessionManager.js';
 import ViewTabs from './ViewTabs';
 import StoriesView from './StoriesView';
+import { FlyToInterpolator } from 'deck.gl';
 
 const NYC_BOUNDS = {
   minLng: -74.2591,  // Southwest longitude
@@ -71,6 +72,8 @@ const MTADataMap = ({ mapboxToken }) => {
       pitch: 0,
       width: '100vw',
       height: '100vh',
+      transitionDuration: 2000,
+      transitionInterpolator: new FlyToInterpolator(),
     };
   });
 
@@ -366,34 +369,39 @@ const MTADataMap = ({ mapboxToken }) => {
   }, [viewport, selectedHour, selectedDay, selectedStation, selectedDirection, selectedMonths, showPercentage]);
 
   // Add new state for active view
-  const [activeView, setActiveView] = useState('visualization');
+  const [activeView, setActiveView] = useState('stories'); // Set initial view to 'stories'
 
-  // Disable map controls when in stories view
+  const handleStoryViewportChange = useCallback((newViewport) => {
+    setViewport(prev => ({
+      ...prev,
+      ...newViewport,
+      transitionDuration: 2000,
+      transitionInterpolator: new FlyToInterpolator(),
+    }));
+  }, []);
+
+  const MemoizedStoriesView = useMemo(() => React.memo(StoriesView), []);
+
   const isMapInteractive = activeView === 'visualization';
 
   return (
     <div className="map-container">
       <ViewTabs activeView={activeView} setActiveView={setActiveView} />
       <DeckGL
-        initialViewState={viewport}
+        viewState={viewport}
         controller={isMapInteractive}
         layers={[mainStationPulse, mainStationPoint, mapBarLayer]}
         onViewStateChange={({viewState}) => {
-          if (isMapInteractive) {
-            const constrained = constrainViewState({viewState})
-            setViewport(constrained);
-            saveStateToSessionStorage({ ...loadStateFromSessionStorage(), viewport: constrained });
-            return constrained;
-          }
+          const constrained = constrainViewState({viewState})
+          setViewport(constrained);
           saveStateToSessionStorage({ ...loadStateFromSessionStorage(), viewport: constrained });
-          return viewState;
+          return constrained;
         }}
       >
         <ReactMapGL
           {...viewport}
           mapboxAccessToken={mapboxToken}
           mapStyle="mapbox://styles/mapbox/dark-v11"
-          controller={isMapInteractive}
           onLoad={(e) => {
             const map = e.target
             drawSubwayLines(map)
@@ -432,7 +440,7 @@ const MTADataMap = ({ mapboxToken }) => {
           )}
         </>
       )}
-      {activeView === 'stories' && <StoriesView />}
+      {activeView === 'stories' && <MemoizedStoriesView setViewport={handleStoryViewportChange} />}
     </div>
   );
 };
