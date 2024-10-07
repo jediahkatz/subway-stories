@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import MTADataMap from './components/MTADataMap';
 import PasswordPage from './components/Password';
 import './App.css';
+import { getEnvVar } from './lib/env';
 
-const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN ?? process.env.VITE_MAPBOX_TOKEN;
+const mapboxToken = getEnvVar('VITE_MAPBOX_TOKEN');
 
 const App = () => {
   return (
