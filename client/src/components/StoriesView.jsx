@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import scrollama from 'scrollama';
 import './StoriesView.css';
+import { FlyToInterpolator } from 'deck.gl';
 
 const stories = [
   {
@@ -31,7 +32,11 @@ const StoriesView = React.memo(({ setViewport }) => {
 
   const handleStepEnter = useCallback((response) => {
     const { index } = response;
-    setViewport(stories[index].viewport);
+    setViewport({ 
+      ...stories[index].viewport,
+      transitionDuration: 'auto',
+      transitionInterpolator: new FlyToInterpolator(),
+    });
   }, [setViewport]);
 
   useEffect(() => {
