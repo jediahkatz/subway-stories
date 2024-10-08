@@ -1,7 +1,6 @@
 // src/components/MTADataMap.jsx
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { DeckGL, LineLayer, ScatterplotLayer } from 'deck.gl';
-import { Matrix4 } from '@math.gl/core';
+import { DeckGL, ScatterplotLayer } from 'deck.gl';
 import ReactMapGL from 'react-map-gl';
 import { stationIdToStation, stations } from '../lib/stations';
 import Tooltip from './Tooltip';
@@ -370,26 +369,24 @@ const MTADataMap = ({ mapboxToken }) => {
 
   // Add new state for active view
   const [activeView, setActiveView] = useState('stories'); // Set initial view to 'stories'
-
+  
   const handleStoryViewportChange = useCallback((newViewport) => {
     setViewport(prev => ({
       ...prev,
       ...newViewport,
-      transitionDuration: 2000,
+      transitionDuration: 'auto',
       transitionInterpolator: new FlyToInterpolator(),
     }));
   }, []);
 
   const MemoizedStoriesView = useMemo(() => React.memo(StoriesView), []);
 
-  const isMapInteractive = activeView === 'visualization';
-
   return (
     <div className="map-container">
       <ViewTabs activeView={activeView} setActiveView={setActiveView} />
       <DeckGL
         viewState={viewport}
-        controller={isMapInteractive}
+        controller={true}
         layers={[mainStationPulse, mainStationPoint, mapBarLayer]}
         onViewStateChange={({viewState}) => {
           const constrained = constrainViewState({viewState})
