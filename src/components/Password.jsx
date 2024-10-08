@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { getEnvVar } from '../lib/env';
+import { isAuthenticated as hasAuthToken } from '../lib/sessionManager';
 
 const correctPassword = getEnvVar('VITE_PASSWORD');
 
 const PasswordPage = ({ onCorrectPassword, children }) => {
+  const isPreAuthenticated = correctPassword === '' || hasAuthToken();
+     
   const [password, setPassword] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(correctPassword === '');
+  const [isAuthenticated, setIsAuthenticated] = useState(isPreAuthenticated);
 
   const handleSubmit = (e) => {
     e.preventDefault();

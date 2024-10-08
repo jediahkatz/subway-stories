@@ -15,6 +15,7 @@ import subwayRoutes from '../data/nyc-subway-routes.js';
 import subwayLayerStyles from '../lib/subway-layer-styles.js';
 import { fetchData, fetchTotalRidership } from '../lib/data-fetcher';
 import MapBarLayer from './MapBarLayer';
+import { saveStateToSessionStorage, loadStateFromSessionStorage } from '../lib/sessionManager.js';
 
 const NYC_BOUNDS = {
   minLng: -74.2591,  // Southwest longitude
@@ -58,29 +59,50 @@ const drawSubwayLines = (map) => {
 }
 
 const MTADataMap = ({ mapboxToken }) => {
-  const [viewport, setViewport] = useState({
-    latitude: 40.700292,
-    longitude: -73.925618,
-    zoom: 12,
-    bearing: 0,
-    pitch: 0,
-    width: '100vw',
-    height: '100vh',
+  const [viewport, setViewport] = useState(() => {
+    const savedState = loadStateFromSessionStorage();
+    return savedState?.viewport || {
+      latitude: 40.700292,
+      longitude: -73.925618,
+      zoom: 12,
+      bearing: 0,
+      pitch: 0,
+      width: '100vw',
+      height: '100vh',
+    };
   });
 
   const stationIdToStations = getStations();
   const stations = Object.values(stationIdToStations);
   const [data, setData] = useState([]);
   const [hoverInfo, setHoverInfo] = useState(null);
-  const [selectedHour, setSelectedHour] = useState(0);
-  const [selectedDay, setSelectedDay] = useState('Monday');
-  const [selectedStation, setSelectedStation] = useState('126');
-  const [selectedDirection, setSelectedDirection] = useState('goingTo');
+  const [selectedHour, setSelectedHour] = useState(() => {
+    const savedState = loadStateFromSessionStorage();
+    return savedState?.selectedHour || 0;
+  });
+  const [selectedDay, setSelectedDay] = useState(() => {
+    const savedState = loadStateFromSessionStorage();
+    return savedState?.selectedDay || 'Monday';
+  });
+  const [selectedStation, setSelectedStation] = useState(() => {
+    const savedState = loadStateFromSessionStorage();
+    return savedState?.selectedStation || '126';
+  });
+  const [selectedDirection, setSelectedDirection] = useState(() => {
+    const savedState = loadStateFromSessionStorage();
+    return savedState?.selectedDirection || 'goingTo';
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [selectedBarScale, setSelectedBarScale] = useState(null); // number | null (default)
-  const [selectedMonths, setSelectedMonths] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+  const [selectedMonths, setSelectedMonths] = useState(() => {
+    const savedState = loadStateFromSessionStorage();
+    return savedState?.selectedMonths || [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+  });
   const [stationIdToTotalRidershipByHour, setStationIdToTotalRidershipByHour] = useState({});
-  const [showPercentage, setShowPercentage] = useState(false);
+  const [showPercentage, setShowPercentage] = useState(() => {
+    const savedState = loadStateFromSessionStorage();
+    return savedState?.showPercentage || false;
+  });
 
   const maxRidershipToday = React.useMemo(() => Math.max(...data.map(d => d.ridership)), [data]);
 
@@ -332,6 +354,19 @@ const MTADataMap = ({ mapboxToken }) => {
     }
   })
 
+  useEffect(() => {
+    const stateToSave = {
+      viewport,
+      selectedHour,
+      selectedDay,
+      selectedStation,
+      selectedDirection,
+      selectedMonths,
+      showPercentage,
+    };
+    saveStateToSessionStorage(stateToSave);
+  }, [viewport, selectedHour, selectedDay, selectedStation, selectedDirection, selectedMonths, showPercentage]);
+
   return (
     <div className="map-container">
       <DataControls
@@ -358,6 +393,7 @@ const MTADataMap = ({ mapboxToken }) => {
         onViewStateChange={({viewState}) => {
           const constrained = constrainViewState({viewState})
           setViewport(constrained);
+          saveStateToSessionStorage({ ...loadStateFromSessionStorage(), viewport: constrained });
           return constrained;
         }}
       >

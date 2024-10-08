@@ -4,7 +4,7 @@ const cache = new Map();
 
 const baseUrl2023 = "https://data.ny.gov/resource/uhf3-t34z.json";
 const baseUrl2024 = "https://data.ny.gov/resource/jsu2-fbtj.json";
-const baseUrl = baseUrl2024;
+const baseUrl = baseUrl2023;
 
 const appToken = getEnvVar('VITE_MTA_APPTOKEN');
 
