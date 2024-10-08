@@ -1,6 +1,6 @@
 // src/components/MTADataMap.jsx
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { DeckGL, ScatterplotLayer } from 'deck.gl';
+import { DeckGL, ScatterplotLayer, ColumnLayer } from 'deck.gl';
 import ReactMapGL from 'react-map-gl';
 import { getStations } from '../lib/stations';
 import Tooltip from './Tooltip';
@@ -9,11 +9,10 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import './MTADataMap.css';
 import { useBarsAnimation } from '../hooks/useBarsAnimation';
 import { useDotPulseAnimation } from '../hooks/useDotAnimation';
-import { debounce } from '../lib/debounce';
+import { debounce, throttle } from '../lib/debounce';
 import subwayRoutes from '../data/nyc-subway-routes.js';
 import subwayLayerStyles from '../lib/subway-layer-styles.js';
 import { fetchData, fetchTotalRidership } from '../lib/data-fetcher';
-import MapBarLayer from './MapBarLayer';
 import ViewTabs from './ViewTabs';
 import StoriesView from './StoriesView';
 import { FlyToInterpolator } from 'deck.gl';
@@ -26,24 +25,48 @@ const NYC_BOUNDS = {
   minZoom: 10,
 };
 
+const OLD_INITIAL_VIEW_STATE = {
+  latitude: 40.700292,
+  longitude: -73.925618,
+  zoom: 12,
+  bearing: 0,
+  pitch: 0,
+  width: '100vw',
+  height: '100vh',
+};
+
+const INITIAL_VIEW_STATE = {
+  latitude: 40.64241141868929,
+  longitude: -73.99280168202375,
+  zoom: 11.710437975814141,
+  bearing: -47.768014059753945,
+  pitch: 49.55978007781784,
+  width: '100vw',
+  height: '100vh',
+};
+
 const LOADING_BAR_SCALE = 1;
 const PERCENTAGE_BAR_SCALE = 1 / 25;
 
 function constrainViewState({viewState}) {
-  const {longitude, latitude, zoom} = viewState;
+  const {longitude, latitude, zoom, pitch, bearing} = viewState;
 
   // Constrain longitude and latitude to NYC bounds
   const constrainedLongitude = Math.max(Math.min(longitude, NYC_BOUNDS.maxLng), NYC_BOUNDS.minLng);
   const constrainedLatitude = Math.max(Math.min(latitude, NYC_BOUNDS.maxLat), NYC_BOUNDS.minLat);
   const constrainedZoom = Math.max(NYC_BOUNDS.minZoom, zoom);
 
+  // Constrain pitch and bearing (optional)
+  const constrainedPitch = Math.max(0, Math.min(pitch, 60));  // Limit pitch to 0-60 degrees
+  const constrainedBearing = bearing % 360;  // Keep bearing within 0-360 degrees
+
   return {
     ...viewState,
     longitude: constrainedLongitude,
     latitude: constrainedLatitude,
     zoom: constrainedZoom,
-    bearing: 0,
-    pitch: 0
+    pitch: constrainedPitch,
+    bearing: constrainedBearing,
   };
 }
 
@@ -61,13 +84,7 @@ const drawSubwayLines = (map) => {
 
 const MTADataMap = ({ mapboxToken }) => {
   const [viewport, setViewport] = useState({
-    latitude: 40.700292,
-    longitude: -73.925618,
-    zoom: 12,
-    bearing: 0,
-    pitch: 0,
-    width: '100vw',
-    height: '100vh',
+    ...INITIAL_VIEW_STATE,
   });
 
   const stationIdToStations = getStations();
@@ -241,16 +258,27 @@ const MTADataMap = ({ mapboxToken }) => {
     return colors[colorIndex];
   };
   
-  const mapBarLayer = new MapBarLayer({
-    id: 'ridership-composite-layer',
-    data: lineData.data,
+  const mapBarLayer = new ColumnLayer({
+    id: 'ridership-column-layer',
+    data: lineData.data.filter(d => d.targetHeight > 0),
     pickable: true,
-    getBasePosition: d => [d.lon, d.lat],
-    getHeight: d => d.targetHeight * barScaleForFinalRender,
-    getWidth: _d => 50,
-    getColor: d => {
+    extruded: true,
+    getPosition: d => [d.lon, d.lat],
+    getElevation: d => d.targetHeight,
+    getFillColor: d => {
       const color = d.color ?? getColorAbsolute(d.ridership);
       return [...color, 255];
+    },
+    getLineColor: [0, 0, 0],
+    lineWidthMinPixels: 1,
+    radius: 25,
+    elevationScale: barScaleForFinalRender * 100000,
+    flatShading: true,
+    material: {
+      ambient: 1,
+      diffuse: 0,
+      shininess: 0,
+      specularColor: [0, 0, 0]
     },
     onHover: (info) => {
       if (info.object) {
@@ -270,9 +298,8 @@ const MTADataMap = ({ mapboxToken }) => {
       }
     },
     updateTriggers: {
-      data: [data],
-      getColor: [data],
-      getHeight: [barScale, data],
+      getElevationValue: [barScaleForFinalRender, data],
+      getFillColor: [data],
     }
   });
 
@@ -335,17 +362,27 @@ const MTADataMap = ({ mapboxToken }) => {
   })
 
   // Add new state for active view
-  const [activeView, setActiveView] = useState('stories'); // Set initial view to 'stories'
-  
+  const [activeView, setActiveView] = useState('visualization'); // Set initial view to 'stories'
+
+  // Move this outside of the component to prevent recreation on each render
+  const throttledLog = useMemo(() => throttle((lat, lon, zoom, pitch, bearing) => {
+    console.log(`Latitude: ${lat}, Longitude: ${lon}, Zoom: ${zoom}, Pitch: ${pitch}, Bearing: ${bearing}`);
+  }, 1000), []); // Empty dependency array ensures this is only created once
+
   return (
     <div className="map-container">
       <ViewTabs activeView={activeView} setActiveView={setActiveView} />
       <DeckGL
         viewState={viewport}
-        controller={true}
+        controller={{
+          dragRotate: true,  // Enable rotation with mouse drag
+          touchRotate: true  // Enable rotation with touch gestures
+        }}
         onViewStateChange={({viewState}) => {
           const constrained = constrainViewState({viewState})
           setViewport(constrained);
+          // Call the throttled function here
+          throttledLog(constrained.latitude, constrained.longitude, constrained.zoom, constrained.pitch, constrained.bearing);
         }}
         layers={[mapBarLayer, mainStationPulse, mainStationPoint]}
       >

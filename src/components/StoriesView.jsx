@@ -5,8 +5,8 @@ import { FlyToInterpolator } from 'deck.gl';
 
 const stories = [
   {
-    title: 'Subway Stories',
-    viewport: { longitude: -73.98, latitude: 40.75, zoom: 11, bearing: 0, pitch: 0 }
+    title: 'Bensonhurst',
+    viewport: { longitude: -73.89, latitude: 40.61, zoom: 12, bearing: 0, pitch: 0 }
   },
   {
     title: 'Rush Hour Tales',
