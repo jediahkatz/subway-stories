@@ -17,7 +17,7 @@ const stories = [
   },
   {
     title: 'Late Night Journeys',
-    viewport: { longitude: -73.94, latitude: 40.68, zoom: 12.5, bearing:0, pitch: 0 }
+    viewport: { longitude: -73.94, latitude: 40.68, zoom: 12.5, bearing: 0, pitch: 0 }
   },
   {
     title: 'Subway Melodies',
