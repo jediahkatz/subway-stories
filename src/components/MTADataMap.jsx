@@ -337,17 +337,6 @@ const MTADataMap = ({ mapboxToken }) => {
   // Add new state for active view
   const [activeView, setActiveView] = useState('stories'); // Set initial view to 'stories'
   
-  const handleStoryViewportChange = useCallback((newViewport) => {
-    setViewport(prev => ({
-      ...prev,
-      ...newViewport,
-      transitionDuration: 'auto',
-      transitionInterpolator: new FlyToInterpolator(),
-    }));
-  }, []);
-
-  const MemoizedStoriesView = useMemo(() => React.memo(StoriesView), []);
-
   return (
     <div className="map-container">
       <ViewTabs activeView={activeView} setActiveView={setActiveView} />
@@ -402,7 +391,7 @@ const MTADataMap = ({ mapboxToken }) => {
           )}
         </>
       )}
-      {activeView === 'stories' && <MemoizedStoriesView setViewport={handleStoryViewportChange} />}
+      {activeView === 'stories' && <StoriesView setViewport={setViewport} />}
     </div>
   );
 };
