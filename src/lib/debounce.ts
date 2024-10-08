@@ -1,11 +1,16 @@
-export function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-    const later = () => {
-        clearTimeout(timeout);
-        func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    };
+import { useRef, useCallback } from 'react';
+
+export function useDebounce(func, wait) {
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    const debouncedFunction = useCallback((...args) => {
+        const later = () => {
+            func(...args);
+        };
+
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        timeoutRef.current = setTimeout(later, wait);
+    }, [func, wait]);
+
+    return debouncedFunction;
 }

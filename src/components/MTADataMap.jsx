@@ -10,7 +10,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import './MTADataMap.css';
 import { useBarsAnimation } from '../hooks/useBarsAnimation';
 import { useDotPulseAnimation } from '../hooks/useDotAnimation';
-import { debounce } from '../lib/debounce';
+import { useDebounce } from '../lib/debounce';
 import subwayRoutes from '../data/nyc-subway-routes.js';
 import subwayLayerStyles from '../lib/subway-layer-styles.js';
 import { fetchData, fetchTotalRidership } from '../lib/data-fetcher';
@@ -192,7 +192,7 @@ const MTADataMap = ({ mapboxToken }) => {
     startAnimation();
   }, [barScale, showPercentage, startAnimation])
 
-  const handleMonthsChange = React.useCallback(debounce((newMonths) => {
+  const handleMonthsChange = React.useCallback(useDebounce((newMonths) => {
     markCurrentBarHeights(barScale, showPercentage);
     setSelectedMonths(newMonths);
     startAnimation();
