@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { getStations } from '../lib/stations';
+import { stations } from '../lib/stations';
 import { Slider, LogarithmicSlider } from './Slider';
 import MonthSelector from './MonthSelector';
 
@@ -31,7 +31,6 @@ const DataControls = ({
   showPercentage,
   setShowPercentage
 }) => {
-  const stations = Object.values(getStations());
   const [isPlaying, setIsPlaying] = useState(false);
 
   const togglePlay = useCallback(() => {
