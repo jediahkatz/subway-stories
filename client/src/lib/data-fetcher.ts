@@ -1,14 +1,17 @@
 import { getEnvVar } from "./env";
+import { stationIdToStation } from "./stations";
 
 const cache = new Map();
 
-const baseUrl2023 = "https://data.ny.gov/resource/uhf3-t34z.json";
-const baseUrl2024 = "https://data.ny.gov/resource/jsu2-fbtj.json";
-const baseUrl = baseUrl2023;
+const mtaBaseUrl2023 = "https://data.ny.gov/resource/uhf3-t34z.json";
+const mtaBaseUrl2024 = "https://data.ny.gov/resource/jsu2-fbtj.json";
+const mtaBaseUrl = mtaBaseUrl2023;
+
+const sqlServerBaseUrl = getEnvVar('VITE_SQL_SERVER_URL');
 
 const appToken = getEnvVar('VITE_MTA_APPTOKEN');
 
-const fetchData = async (selectedDay: string, selectedStation: string, selectedDirection: string, selectedMonths: number[], signal?: AbortSignal) => {
+const fetchRidershipByStationFromMtaApi = async (selectedDay: string, selectedStation: string, selectedDirection: string, selectedMonths: number[], signal?: AbortSignal) => {
   const cacheKey = `${selectedDay}-${selectedStation}-${selectedDirection}-${selectedMonths}`;
   
   if (cache.has(cacheKey)) {
@@ -31,7 +34,7 @@ const fetchData = async (selectedDay: string, selectedStation: string, selectedD
     $$app_token: appToken
   };
   const queryString = new URLSearchParams(params).toString();
-  const url = `${baseUrl}?${queryString}`;
+  const url = `${mtaBaseUrl}?${queryString}`;
 
   try {
     const start = Date.now();
@@ -66,7 +69,7 @@ const fetchData = async (selectedDay: string, selectedStation: string, selectedD
 };
 
 // Get total ridership for a given day, month, and direction, grouped by station and hour
-const fetchTotalRidership = async (selectedDay: string, selectedMonths: number[], selectedDirection: string, signal?: AbortSignal) => {
+const fetchTotalRidershipFromMtaApi = async (selectedDay: string, selectedMonths: number[], selectedDirection: string, signal?: AbortSignal) => {
   const cacheKey = `total-${selectedDay}-${selectedDirection}-${selectedMonths}`;
   
   if (cache.has(cacheKey)) {
@@ -87,7 +90,7 @@ const fetchTotalRidership = async (selectedDay: string, selectedMonths: number[]
   };
   
   const queryString = new URLSearchParams(params).toString();
-  const url = `${baseUrl}?${queryString}`;
+  const url = `${mtaBaseUrl}?${queryString}`;
 
   try {
     const start = Date.now();
@@ -121,6 +124,95 @@ const fetchTotalRidership = async (selectedDay: string, selectedMonths: number[]
   }
 };
 
+const fetchRidershipByStationFromSqlServer = async (selectedDay: string, selectedStation: string, selectedDirection: string, selectedMonths: number[], signal?: AbortSignal) => {
+  const cacheKey = `${selectedDay}-${selectedStation}-${selectedDirection}-${selectedMonths}`;
+  
+  if (cache.has(cacheKey)) {
+    console.log('Returning cached data');
+    return cache.get(cacheKey);
+  }
+
+  const params = new URLSearchParams({
+    selectedDay,
+    selectedStation,
+    selectedDirection,
+    selectedMonths: selectedMonths.map(m => m + 1).join(',')
+  });
+
+  const url = `${sqlServerBaseUrl}/ridership-by-station?${params}`;
+
+  try {
+    const start = Date.now();
+    const response = await fetch(url, { signal });
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      throw new Error(`Network response was not ok:\n${JSON.stringify(errorResponse, null, 2)}`);
+    }
+    console.log(`Successfully fetched origin-destination (${selectedDay}, ${selectedStation}, ${selectedDirection}) data in ${Date.now() - start} ms`);
+    const result = await response.json();
+
+    const processedData = result.data.map(item => ({
+      ...item,
+      lon: stationIdToStation[item.station_id].lon,
+      lat: stationIdToStation[item.station_id].lat,
+    }));
+
+    cache.set(cacheKey, processedData);
+    console.log('Cache memory usage:', getCacheMemoryUsageInBytes(), cache.size);
+    return processedData;
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      console.log('Fetch aborted');
+    } else {
+      console.error('Failed to fetch data:', error);
+    }
+    throw error;
+  }
+};
+
+const fetchTotalRidershipFromSqlServer = async (selectedDay: string, selectedMonths: number[], selectedDirection: string, signal?: AbortSignal) => {
+  const cacheKey = `total-${selectedDay}-${selectedDirection}-${selectedMonths}`;
+  
+  if (cache.has(cacheKey)) {
+    console.log('Returning cached total ridership data');
+    return cache.get(cacheKey);
+  }
+
+  const params = new URLSearchParams({
+    selectedDay,
+    selectedMonths: selectedMonths.map(m => m + 1).join(','),
+    selectedDirection
+  });
+
+  const url = `${sqlServerBaseUrl}/total-ridership?${params}`;
+
+  console.log('Fetching total ridership from SQL Server:', url);
+
+  try {
+    const start = Date.now();
+    const response = await fetch(url, { signal });
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      throw new Error(`Network response was not ok:\n${JSON.stringify(errorResponse, null, 2)}`);
+    }
+    console.log(`Successfully fetched total ridership data in ${Date.now() - start} ms`);
+    const result = await response.json();
+
+    const stationIdToTotalRidershipByHour = result.data;
+
+    cache.set(cacheKey, stationIdToTotalRidershipByHour);
+    console.log('Cache memory usage:', getCacheMemoryUsageInBytes(), cache.size);
+    return stationIdToTotalRidershipByHour;
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      console.log('Fetch aborted');
+    } else {
+      console.error('Failed to fetch total ridership data:', error);
+    }
+    throw error;
+  }
+};
+
 const getCacheMemoryUsageInBytes = () => {
   let total = 0;
   for (const value of cache.values()) {
@@ -129,4 +221,4 @@ const getCacheMemoryUsageInBytes = () => {
   return total;
 };
 
-export { fetchData, fetchTotalRidership };
+export { fetchRidershipByStationFromMtaApi, fetchTotalRidershipFromMtaApi, fetchRidershipByStationFromSqlServer, fetchTotalRidershipFromSqlServer };

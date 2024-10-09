@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { DeckGL, LineLayer, ScatterplotLayer } from 'deck.gl';
 import { Matrix4 } from '@math.gl/core';
 import ReactMapGL from 'react-map-gl';
-import { getStations } from '../lib/stations';
+import { stationIdToStation, stations } from '../lib/stations';
 import Tooltip from './Tooltip';
 import DataControls from './DataControls';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -13,7 +13,7 @@ import { useDotPulseAnimation } from '../hooks/useDotAnimation';
 import { useDebounce } from '../lib/debounce';
 import subwayRoutes from '../data/nyc-subway-routes.js';
 import subwayLayerStyles from '../lib/subway-layer-styles.js';
-import { fetchData, fetchTotalRidership } from '../lib/data-fetcher';
+import { fetchRidershipByStationFromSqlServer, fetchTotalRidershipFromSqlServer } from '../lib/data-fetcher';
 import MapBarLayer from './MapBarLayer';
 import { saveStateToSessionStorage, loadStateFromSessionStorage } from '../lib/sessionManager.js';
 
@@ -72,8 +72,6 @@ const MTADataMap = ({ mapboxToken }) => {
     };
   });
 
-  const stationIdToStations = getStations();
-  const stations = Object.values(stationIdToStations);
   const [data, setData] = useState([]);
   const [hoverInfo, setHoverInfo] = useState(null);
   const [selectedHour, setSelectedHour] = useState(() => {
@@ -98,7 +96,7 @@ const MTADataMap = ({ mapboxToken }) => {
     const savedState = loadStateFromSessionStorage();
     return savedState?.selectedMonths || [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
   });
-  const [stationIdToTotalRidershipByHour, setStationIdToTotalRidershipByHour] = useState({});
+  const [stationIdToTotalRidershipByHour, setStationIdToTotalRidershipByHour] = useState(null);
   const [showPercentage, setShowPercentage] = useState(() => {
     const savedState = loadStateFromSessionStorage();
     return savedState?.showPercentage || false;
@@ -117,6 +115,8 @@ const MTADataMap = ({ mapboxToken }) => {
     , [sortedData, selectedHour]);
 
   const percentageData = React.useMemo(() => {
+    if (!showPercentage || !stationIdToTotalRidershipByHour) return filteredData;
+
     return filteredData.map(d => {
       const totalRidershipByHour = stationIdToTotalRidershipByHour[d.station_id];
       const totalRidership = totalRidershipByHour ? totalRidershipByHour[d.hour] ?? 0 : 0;
@@ -135,7 +135,7 @@ const MTADataMap = ({ mapboxToken }) => {
                      initialBarScale;
   
   const { lineData, startAnimation, markCurrentBarHeights } = useBarsAnimation(
-    data.length > 0 ?percentageData : Object.values(stationIdToStations),
+    data.length > 0 ? percentageData : stations,
     barScale,
     showPercentage,
     isLoading
@@ -205,8 +205,8 @@ const MTADataMap = ({ mapboxToken }) => {
       let abortedDueToAnotherLoad = false;
       try {
         const [processedData, stationIdToTotalRidership] = await Promise.all([
-          fetchData(selectedDay, selectedStation, selectedDirection, selectedMonths, abortController.signal),
-          fetchTotalRidership(selectedDay, selectedMonths, selectedDirection, abortController.signal)
+          fetchRidershipByStationFromSqlServer(selectedDay, selectedStation, selectedDirection, selectedMonths, abortController.signal),
+          showPercentage ? fetchTotalRidershipFromSqlServer(selectedDay, selectedMonths, selectedDirection, abortController.signal) : null
         ]);
 
         setData(processedData);
@@ -229,7 +229,7 @@ const MTADataMap = ({ mapboxToken }) => {
     };
     loadData();
     return () => abortController.abort();
-  }, [selectedDay, selectedStation, selectedDirection, selectedMonths]);
+  }, [selectedDay, selectedStation, selectedDirection, selectedMonths, showPercentage]);
 
   const getColorRelative = (value, max) => {
     const colorscale = [
@@ -299,7 +299,7 @@ const MTADataMap = ({ mapboxToken }) => {
   
   const selectedStationData = {
     station_id: selectedStation,
-    position: [Number(stationIdToStations[selectedStation].lon), Number(stationIdToStations[selectedStation].lat)]
+    position: [Number(stationIdToStation[selectedStation].lon), Number(stationIdToStation[selectedStation].lat)]
   }
 
   const pulseCircles = useDotPulseAnimation(selectedDirection);
