@@ -1,0 +1,26 @@
+# fly.toml app configuration file generated for subway-stories-sql-server on 2024-10-09T19:03:31-04:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'subway-stories-sql-server'
+primary_region = 'ewr'
+
+[build]
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ['app']
+
+[[vm]]
+  memory = '512'
+  cpu_kind = 'shared'
+  cpus = 2
+
+[mounts]
+  source = "mta_data"
+  destination = "/app/data"
