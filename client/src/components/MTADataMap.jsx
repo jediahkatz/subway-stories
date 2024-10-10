@@ -389,7 +389,7 @@ const MTADataMap = ({ mapboxToken }) => {
       <DeckGL
         initialViewState={viewport}
         controller={true}
-        layers={[mapBarLayer, mainStationPulse, mainStationPoint]}
+        layers={[mainStationPulse, mainStationPoint, mapBarLayer]}
         onViewStateChange={({viewState}) => {
           const constrained = constrainViewState({viewState})
           setViewport(constrained);
