@@ -58,15 +58,17 @@ app.get('/total-ridership', (req, res) => {
   const { selectedDay, selectedMonths, selectedDirection } = req.query;
   const monthsArray = selectedMonths.split(',');
   const numMonthsToAverageOver = monthsArray.length;
+  const shouldSelectDestinations = selectedDirection === 'goingTo';
 
   const sqlQuery = `
     SELECT complex_id as station_id, hour_of_day as hour, total_ridership / ? as total_ridership 
     FROM precomputed_total_ridership 
     WHERE day_of_week = ?
+      AND is_destination = ?
       AND month IN (${monthsArray.map(() => '?').join(',')})
   `;
   
-  db.all(sqlQuery, [numMonthsToAverageOver, selectedDay, ...monthsArray], (err, rows) => {
+  db.all(sqlQuery, [numMonthsToAverageOver, selectedDay, shouldSelectDestinations, ...monthsArray], (err, rows) => {
     console.log('SQL Query done at', new Date().toISOString());
     if (err) {
       res.status(500).json({ error: err.message });
