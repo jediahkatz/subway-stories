@@ -76,11 +76,11 @@ const MTADataMap = ({ mapboxToken }) => {
   const [hoverInfo, setHoverInfo] = useState(null);
   const [selectedHour, setSelectedHour] = useState(() => {
     const savedState = loadStateFromSessionStorage();
-    return savedState?.selectedHour || 0;
+    return savedState?.selectedHour || 2;
   });
   const [selectedDay, setSelectedDay] = useState(() => {
     const savedState = loadStateFromSessionStorage();
-    return savedState?.selectedDay || 'Monday';
+    return savedState?.selectedDay || 'Saturday';
   });
   const [selectedStation, setSelectedStation] = useState(() => {
     const savedState = loadStateFromSessionStorage();
@@ -163,10 +163,6 @@ const MTADataMap = ({ mapboxToken }) => {
     setSelectedHour(newHour);
     startAnimation();
   }, [selectedHour, startAnimation]);
-
-  useEffect(() => {
-    handleHourChange(0);
-  }, [])
 
   const handleShowPercentageChange = React.useCallback((shouldShowPercentage) => {
     markCurrentBarHeights(barScale, showPercentage);
