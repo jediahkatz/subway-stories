@@ -1,7 +1,8 @@
 import { getEnvVar } from "./env";
+import LRUCache from "./lru-cache";
 import { stationIdToStation } from "./stations";
 
-const cache = new Map();
+const cache = new LRUCache<any[]>({ max: 50 });
 
 const mtaBaseUrl2023 = "https://data.ny.gov/resource/uhf3-t34z.json";
 const mtaBaseUrl2024 = "https://data.ny.gov/resource/jsu2-fbtj.json";
@@ -126,10 +127,19 @@ const fetchTotalRidershipFromMtaApi = async (selectedDay: string, selectedMonths
 
 const fetchRidershipByStationFromSqlServer = async (selectedDay: string, selectedStation: string, selectedDirection: string, selectedMonths: number[], signal?: AbortSignal) => {
   const cacheKey = `${selectedDay}-${selectedStation}-${selectedDirection}-${selectedMonths}`;
+
+  const processData = (data: any[]) => {
+    return data.map(item => ({
+      ...item,
+      lon: stationIdToStation[item.station_id].lon,
+      lat: stationIdToStation[item.station_id].lat,
+    }));
+  }
   
   if (cache.has(cacheKey)) {
     console.log('Returning cached data');
-    return cache.get(cacheKey);
+    const unprocessedData = cache.get(cacheKey)!;
+    return processData(unprocessedData);
   }
 
   const params = new URLSearchParams({
@@ -150,14 +160,14 @@ const fetchRidershipByStationFromSqlServer = async (selectedDay: string, selecte
     }
     console.log(`Successfully fetched origin-destination (${selectedDay}, ${selectedStation}, ${selectedDirection}) data in ${Date.now() - start} ms`);
     const result = await response.json();
-
+    
+    cache.set(cacheKey, result.data);
     const processedData = result.data.map(item => ({
       ...item,
       lon: stationIdToStation[item.station_id].lon,
       lat: stationIdToStation[item.station_id].lat,
     }));
 
-    cache.set(cacheKey, processedData);
     console.log('Cache memory usage:', getCacheMemoryUsageInBytes(), cache.size);
     return processedData;
   } catch (error) {
