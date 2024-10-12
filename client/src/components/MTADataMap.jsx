@@ -367,7 +367,7 @@ const MTADataMap = ({ mapboxToken }) => {
   }, [viewport, selectedHour, selectedDay, selectedStation, selectedDirection, selectedMonths, showPercentage]);
 
   // Add new state for active view
-  const [activeView, setActiveView] = useState('stories'); // Set initial view to 'stories'
+  const [activeView, setActiveView] = useState('visualization');
   
   return (
     <div className="map-container">
