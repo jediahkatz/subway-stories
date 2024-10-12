@@ -5,9 +5,10 @@
   right: 0;
   bottom: 0;
   overflow-y: auto;
-  pointer-events: all;
+  pointer-events: none;
   padding: 50vh 20px 20px; /* Changed top padding to 50vh */
   scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
 }
 
 .stories-box {
@@ -20,7 +21,9 @@
   z-index: 1000;
   margin-left: auto;
   margin-bottom: 50vh; /* Changed to 50vh to match top padding */
-  scroll-snap-align: center; /* Changed from start to center */
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  pointer-events: all;
 }
 
 .stories-box:first-child {
