@@ -9,14 +9,13 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import './MTADataMap.css';
 import { useBarsAnimation } from '../hooks/useBarsAnimation';
 import { useDotPulseAnimation } from '../hooks/useDotAnimation';
-import { useDebounce } from '../lib/debounce';
 import subwayRoutes from '../data/nyc-subway-routes.js';
 import subwayLayerStyles from '../lib/subway-layer-styles.js';
 import { fetchRidershipByStationFromSqlServer, fetchTotalRidershipFromSqlServer } from '../lib/data-fetcher';
 import MapBarLayer from './MapBarLayer';
 import { saveStateToSessionStorage, loadStateFromSessionStorage } from '../lib/sessionManager.js';
 import ViewTabs from './ViewTabs';
-import StoriesView from './StoriesView';
+import StoriesView, { ALL_MONTHS } from './StoriesView';
 import { FlyToInterpolator } from 'deck.gl';
 
 const NYC_BOUNDS = {
@@ -98,7 +97,7 @@ const MTADataMap = ({ mapboxToken }) => {
   const [selectedBarScale, setSelectedBarScale] = useState(null); // number | null (default)
   const [selectedMonths, setSelectedMonths] = useState(() => {
     const savedState = loadStateFromSessionStorage();
-    return savedState?.selectedMonths || [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    return savedState?.selectedMonths || ALL_MONTHS;
   });
   const [stationIdToTotalRidershipByHour, setStationIdToTotalRidershipByHour] = useState(null);
   const [showPercentage, setShowPercentage] = useState(() => {
@@ -192,11 +191,11 @@ const MTADataMap = ({ mapboxToken }) => {
     startAnimation();
   }, [barScale, showPercentage, startAnimation])
 
-  const handleMonthsChange = React.useCallback(useDebounce((newMonths) => {
+  const handleMonthsChange = React.useCallback((newMonths) => {
     markCurrentBarHeights(barScale, showPercentage);
     setSelectedMonths(newMonths);
     startAnimation();
-  }, 1000), [barScale, showPercentage, startAnimation])
+  }, [barScale, showPercentage, startAnimation])
 
   useEffect(() => {
     setIsLoading(true);
@@ -229,7 +228,7 @@ const MTADataMap = ({ mapboxToken }) => {
     };
     loadData();
     return () => abortController.abort();
-  }, [selectedDay, selectedStation, selectedDirection, selectedMonths, showPercentage]);
+  }, [selectedDay, selectedStation, selectedDirection, JSON.stringify(selectedMonths), showPercentage]);
 
   const getColorRelative = (value, max) => {
     const colorscale = [
@@ -375,7 +374,7 @@ const MTADataMap = ({ mapboxToken }) => {
       <ViewTabs activeView={activeView} setActiveView={setActiveView} />
       <DeckGL
         viewState={viewport}
-        controller={true}
+        controller={activeView === 'visualization' ? true : { scrollZoom: false }}
         layers={[mainStationPulse, mainStationPoint, mapBarLayer]}
         onViewStateChange={({viewState}) => {
           const constrained = constrainViewState({viewState})
@@ -394,39 +393,45 @@ const MTADataMap = ({ mapboxToken }) => {
           }}
         />
       </DeckGL>
-      {activeView === 'visualization' && (
-        <>
-          <DataControls
-            selectedHour={selectedHour}
-            setSelectedHour={handleHourChange}
-            selectedDay={selectedDay}
-            setSelectedDay={handleDayChange}
-            selectedStation={selectedStation}
-            setSelectedStation={handleStationChange}
-            selectedDirection={selectedDirection}
-            setSelectedDirection={handleDirectionChange}
-            barScale={barScale}
-            setSelectedBarScale={setSelectedBarScale}
-            initialBarScale={initialBarScale}
-            selectedMonths={selectedMonths}
-            setSelectedMonths={handleMonthsChange}
-            showPercentage={showPercentage}
-            setShowPercentage={handleShowPercentageChange}
-          />
-          {hoverInfo && (
-            <Tooltip
-              x={hoverInfo.x}
-              y={hoverInfo.y}
-              stationName={`${hoverInfo.stationName} (${hoverInfo.stationId})`}
-              ridership={hoverInfo.ridership}
-              percentage={hoverInfo.showPercentage ? hoverInfo.percentage : null}
-              ridershipLabel={hoverInfo.ridershipLabel}
-              percentageLabel={hoverInfo.percentageLabel}
-            />
-          )}
-        </>
+      {activeView === 'visualization' && 
+        <DataControls
+          selectedHour={selectedHour}
+          setSelectedHour={handleHourChange}
+          selectedDay={selectedDay}
+          setSelectedDay={handleDayChange}
+          selectedStation={selectedStation}
+          setSelectedStation={handleStationChange}
+          selectedDirection={selectedDirection}
+          setSelectedDirection={handleDirectionChange}
+          barScale={barScale}
+          setSelectedBarScale={setSelectedBarScale}
+          initialBarScale={initialBarScale}
+          selectedMonths={selectedMonths}
+          setSelectedMonths={handleMonthsChange}
+          showPercentage={showPercentage}
+          setShowPercentage={handleShowPercentageChange}
+        />
+      }
+      {activeView === 'stories' && <StoriesView 
+        setViewport={setViewport} 
+        setSelectedStation={handleStationChange} 
+        setSelectedDirection={handleDirectionChange} 
+        setSelectedDay={handleDayChange} 
+        setSelectedHour={handleHourChange} 
+        setSelectedMonths={handleMonthsChange} 
+        setSelectedBarScale={setSelectedBarScale} 
+      />}
+      {hoverInfo && (
+        <Tooltip
+          x={hoverInfo.x}
+          y={hoverInfo.y}
+          stationName={`${hoverInfo.stationName} (${hoverInfo.stationId})`}
+          ridership={hoverInfo.ridership}
+          percentage={hoverInfo.showPercentage ? hoverInfo.percentage : null}
+          ridershipLabel={hoverInfo.ridershipLabel}
+          percentageLabel={hoverInfo.percentageLabel}
+        />
       )}
-      {activeView === 'stories' && <StoriesView setViewport={setViewport} />}
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { stations } from '../lib/stations';
 import { Slider, LogarithmicSlider } from './Slider';
 import MonthSelector from './MonthSelector';
+import { useDebounce } from '../lib/debounce';
 
 const ANIMATE_HOUR_PERIOD = 500
 
@@ -33,6 +34,8 @@ const DataControls = ({
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
 
+  const debouncedSetSelectedMonths = useDebounce(setSelectedMonths, 1000);
+
   const togglePlay = useCallback(() => {
     setIsPlaying(prev => !prev);
   }, []);
@@ -49,7 +52,7 @@ const DataControls = ({
 
   // horrible ai generated code but works
   const handleMonthToggle = (monthIndex) => {
-    setSelectedMonths(prev => {
+    debouncedSetSelectedMonths(prev => {
       if (prev.includes(monthIndex)) {
         return prev.filter(m => m !== monthIndex);
       } else {
@@ -60,7 +63,7 @@ const DataControls = ({
 
   return (
     <div className="map-controls">
-      <MonthSelector initialSelectedMonths={selectedMonths} onMonthsChange={setSelectedMonths} />
+      <MonthSelector initialSelectedMonths={selectedMonths} onMonthsChange={debouncedSetSelectedMonths} />
       <label>
         Select day:
         <select
