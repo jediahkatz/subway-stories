@@ -167,39 +167,39 @@ const subwayLayerStyles = [
           }
        }
     },
-    // {
-    //    "id":"subway_blue",
-    //    "source":"nyc-subway-routes",
-    //    "type":"line",
-    //    "filter":[
-    //       "any",
-    //       [
-    //          "==",
-    //          "rt_symbol",
-    //          "A"
-    //       ],
-    //       [
-    //          "==",
-    //          "rt_symbol",
-    //          "SI"
-    //       ]
-    //    ],
-    //    "paint":{
-    //       "line-color":"rgba(0, 57, 166, 0.2)",
-    //       "line-width":{
-    //          "stops":[
-    //             [
-    //                10,
-    //                1
-    //             ],
-    //             [
-    //                15,
-    //                4
-    //             ]
-    //          ]
-    //       }
-    //    }
-    // },
+    {
+       "id":"subway_blue",
+       "source":"nyc-subway-routes",
+       "type":"line",
+       "filter":[
+          "any",
+          [
+             "==",
+             "rt_symbol",
+             "A"
+          ],
+          [
+             "==",
+             "rt_symbol",
+             "SI"
+          ]
+       ],
+       "paint":{
+          "line-color":"rgba(0, 57, 166, 0.2)",
+          "line-width":{
+             "stops":[
+                [
+                   10,
+                   1
+                ],
+                [
+                   15,
+                   4
+                ]
+             ]
+          }
+       }
+    },
     {
        "id":"subway_purple",
        "source":"nyc-subway-routes",
