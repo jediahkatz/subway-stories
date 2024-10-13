@@ -178,11 +178,11 @@ const subwayLayerStyles = [
              ["get", "rt_symbol"],
              "A"
           ],
-          [
-             "==",
-             ["get", "rt_symbol"],
-             "SI"
-          ]
+         //  [
+         //     "==",
+         //     ["get", "rt_symbol"],
+         //     "SI"
+         //  ]
        ],
        "paint":{
           "line-color":"rgba(0, 57, 166, 0.2)",
