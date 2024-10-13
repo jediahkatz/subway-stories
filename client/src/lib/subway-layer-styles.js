@@ -7,7 +7,7 @@ const subwayLayerStyles = [
           "all",
           [
              "==",
-             "rt_symbol",
+             ["get", "rt_symbol"],
              "4"
           ]
        ],
@@ -35,7 +35,7 @@ const subwayLayerStyles = [
           "all",
           [
              "==",
-             "rt_symbol",
+             ["get", "rt_symbol"],
              "N"
           ]
        ],
@@ -63,7 +63,7 @@ const subwayLayerStyles = [
           "all",
           [
              "==",
-             "rt_symbol",
+             ["get", "rt_symbol"],
              "L"
           ]
        ],
@@ -91,7 +91,7 @@ const subwayLayerStyles = [
           "all",
           [
              "==",
-             "rt_symbol",
+             ["get", "rt_symbol"],
              "J"
           ]
        ],
@@ -119,7 +119,7 @@ const subwayLayerStyles = [
           "all",
           [
              "==",
-             "rt_symbol",
+             ["get", "rt_symbol"],
              "G"
           ]
        ],
@@ -147,7 +147,7 @@ const subwayLayerStyles = [
           "all",
           [
              "==",
-             "rt_symbol",
+             ["get", "rt_symbol"],
              "B"
           ]
        ],
@@ -175,12 +175,12 @@ const subwayLayerStyles = [
           "any",
           [
              "==",
-             "rt_symbol",
+             ["get", "rt_symbol"],
              "A"
           ],
           [
              "==",
-             "rt_symbol",
+             ["get", "rt_symbol"],
              "SI"
           ]
        ],
@@ -208,7 +208,7 @@ const subwayLayerStyles = [
           "all",
           [
              "==",
-             "rt_symbol",
+             ["get", "rt_symbol"],
              "7"
           ]
        ],
@@ -236,7 +236,7 @@ const subwayLayerStyles = [
           "all",
           [
              "==",
-             "rt_symbol",
+             ["get", "rt_symbol"],
              "1"
           ]
        ],

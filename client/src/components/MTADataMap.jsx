@@ -1,5 +1,5 @@
 // src/components/MTADataMap.jsx
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { DeckGL, ScatterplotLayer } from 'deck.gl';
 import ReactMapGL from 'react-map-gl';
 import { stationIdToStation, stations } from '../lib/stations';
@@ -47,18 +47,6 @@ function constrainViewState({viewState}) {
   };
 }
 
-const drawSubwayLines = (map) => {
-  map.addSource('nyc-subway-routes', {
-    type: 'geojson',
-    data: subwayRoutes,
-  })
-
-  // add layers by iterating over the styles in the array defined in subway-layer-styles.js
-  subwayLayerStyles.forEach((style) => {
-    map.addLayer(style)
-  })
-}
-
 const MTADataMap = ({ mapboxToken }) => {
   const [viewport, setViewport] = useState(() => {
     const savedState = loadStateFromSessionStorage();
@@ -104,6 +92,8 @@ const MTADataMap = ({ mapboxToken }) => {
     const savedState = loadStateFromSessionStorage();
     return savedState?.showPercentage || false;
   });
+
+  const mapRef = useRef(null);
 
   const maxRidershipToday = React.useMemo(() => Math.max(...data.map(d => d.ridership)), [data]);
 
@@ -369,9 +359,48 @@ const MTADataMap = ({ mapboxToken }) => {
   // Add new state for active view
   const [activeView, setActiveView] = useState('visualization');
   
+  const drawSubwayLines = useCallback((map) => {
+    map.addSource('nyc-subway-routes', {
+      type: 'geojson',
+      data: subwayRoutes,
+    });
+
+    subwayLayerStyles.forEach((style) => {
+      const layerId = `subway-line-${style.id}`;
+
+      const newStyle = {
+        ...style,
+        id: layerId,
+      };
+
+      map.addLayer(newStyle);
+    });
+  }, []);
+
+  const limitVisibleLines = useCallback((visibleLines) => {
+
+    const map = mapRef.current
+    subwayLayerStyles.forEach((style) => {
+      const layerId = `subway-line-${style.id}`;
+
+      if (!visibleLines) {
+        map.setFilter(layerId, style.filter)
+      } else {
+        map.setFilter(layerId, [
+          'all',
+          [...style.filter],
+          ['any',
+            ...visibleLines.map(line => ['in', line, ['get', 'symbols']]),
+          ]
+        ]);
+      }
+
+    });
+  }, [])
+
   return (
     <div className="map-container">
-      <ViewTabs activeView={activeView} setActiveView={setActiveView} />
+      <ViewTabs activeView={activeView} setActiveView={setActiveView} limitVisibleLines={limitVisibleLines} />
       <DeckGL
         viewState={viewport}
         controller={activeView === 'visualization' ? true : { scrollZoom: false }}
@@ -388,8 +417,9 @@ const MTADataMap = ({ mapboxToken }) => {
           mapboxAccessToken={mapboxToken}
           mapStyle="mapbox://styles/mapbox/dark-v11"
           onLoad={(e) => {
-            const map = e.target
-            drawSubwayLines(map)
+            const map = e.target;
+            mapRef.current = map;
+            drawSubwayLines(map);
           }}
         />
       </DeckGL>
@@ -419,7 +449,8 @@ const MTADataMap = ({ mapboxToken }) => {
         setSelectedDay={handleDayChange} 
         setSelectedHour={handleHourChange} 
         setSelectedMonths={handleMonthsChange} 
-        setSelectedBarScale={setSelectedBarScale} 
+        setSelectedBarScale={setSelectedBarScale}
+        limitVisibleLines={limitVisibleLines}
       />}
       {hoverInfo && (
         <Tooltip
