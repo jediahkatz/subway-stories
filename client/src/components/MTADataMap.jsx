@@ -394,7 +394,6 @@ const MTADataMap = ({ mapboxToken }) => {
           ]
         ]);
       }
-
     });
   }, [])
 
@@ -443,7 +442,7 @@ const MTADataMap = ({ mapboxToken }) => {
         />
       }
       {activeView === 'stories' && <StoriesView 
-        setViewport={setViewport} 
+        setViewport={setViewport}
         setSelectedStation={setSelectedStation} 
         setSelectedDirection={setSelectedDirection} 
         setSelectedDay={setSelectedDay} 
