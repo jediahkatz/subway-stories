@@ -74,7 +74,7 @@ const stories = [
   },
   {
     description: <>
-      On the weekend, straphangers pour back into Flushing for another reason: the food. [name some restaurants or cuisines]. Restaurant workers are out the door first at 7 and 8 a.m. For lunch and dinner, the Corona crowd is joined by a new set of younger, affluent Chinese from Long Island City. While LIC isn't a Chinatown in its own right, its population has swelled with tech workers, who seek modern amenities and proximity to both Flushing and Midtown.
+      On the weekend, straphangers pour back into Flushing for another reason: the food. [name some restaurants or cuisines]. Restaurant workers are out the door first at 7 and 8 a.m. For dinner, the Corona crowd is joined by a new set of younger, affluent Chinese from Long Island City. Its population has swelled with tech workers, who seek modern amenities and proximity to both Flushing and Midtown.
     </>,
     // viewport: { longitude: -73.882, latitude: 40.745, zoom: 12, bearing: 0, pitch: 0 },
     // Flushing-Main St (7) and Vernon Blvd-Jackson Av (7)
@@ -83,7 +83,7 @@ const stories = [
       station: '447', // Flushing-Main St (7)
       direction: 'comingFrom',
       day: 'Saturday',
-      hour: 11,
+      hour: 17,
       months: ALL_MONTHS,
       visibleLines: ['7']
     },
@@ -102,6 +102,7 @@ const StoriesView = React.memo(({
   setSelectedMonths, 
   setSelectedBarScale,
   limitVisibleLines,
+  markCurrentBarHeights,
 }) => {
   const containerRef = useRef(null);
   const scrollerRef = useRef(scrollama());
@@ -118,14 +119,16 @@ const StoriesView = React.memo(({
   const handleStepEnter = useCallback((response) => {
     const { index } = response;
 
-    const newViewport = getViewportForBounds({
-      pointsToInclude: stories[index].pointsToInclude,
-      viewportWidth: window.innerWidth,
-      viewportHeight: window.innerHeight,
-      padding: getPadding(),
-    });
+    markCurrentBarHeights();
 
     setViewport(viewport => {
+      const newViewport = getViewportForBounds({
+        pointsToInclude: stories[index].pointsToInclude,
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+        padding: getPadding(),
+      });
+
       const transition = areViewportsNearlyEqual(viewport, newViewport) ? {} : {
         transitionDuration: 1000,
         transitionInterpolator: new FlyToInterpolator(),

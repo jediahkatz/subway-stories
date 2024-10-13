@@ -10,7 +10,7 @@ import './MTADataMap.css';
 import { useBarsAnimation } from '../hooks/useBarsAnimation';
 import { useDotPulseAnimation } from '../hooks/useDotAnimation';
 import subwayRoutes from '../data/nyc-subway-routes.js';
-import subwayLayerStyles from '../lib/subway-layer-styles.js';
+import subwayLayerStyles from '../data/subway-layer-styles.js';
 import { fetchRidershipByStationFromSqlServer, fetchTotalRidershipFromSqlServer } from '../lib/data-fetcher';
 import MapBarLayer from './MapBarLayer';
 import { saveStateToSessionStorage, loadStateFromSessionStorage } from '../lib/sessionManager.js';
@@ -252,7 +252,7 @@ const MTADataMap = ({ mapboxToken }) => {
   
   const mapBarLayer = new MapBarLayer({
     id: 'ridership-composite-layer',
-    data: lineData.data,
+    data: lineData.data.filter(d => d.targetHeight > 0),
     pickable: true,
     getBasePosition: d => [d.lon, d.lat],
     getHeight: d => d.targetHeight * barScaleForFinalRender,
@@ -450,8 +450,9 @@ const MTADataMap = ({ mapboxToken }) => {
         setSelectedMonths={setSelectedMonths} 
         setSelectedBarScale={setSelectedBarScale}
         limitVisibleLines={limitVisibleLines}
+        markCurrentBarHeights={() => markCurrentBarHeights(barScale, showPercentage)}
       />}
-      {hoverInfo && (
+      {hoverInfo && !isLoading && (
         <Tooltip
           x={hoverInfo.x}
           y={hoverInfo.y}

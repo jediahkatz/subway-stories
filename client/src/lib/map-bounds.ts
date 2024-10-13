@@ -15,8 +15,6 @@ export const getViewportForBounds = (
     const mapWidth = viewportWidth - paddingLeft - paddingRight;
     const mapHeight = viewportHeight - paddingTop - paddingBottom;
 
-    console.log({ mapWidth, mapHeight });
-
     const { minLon, maxLon, minLat, maxLat } = getBoundsFromPoints(pointsToInclude);
     const longitudeDelta = maxLon - minLon;
     const latitudeDelta = maxLat - minLat;
@@ -29,8 +27,6 @@ export const getViewportForBounds = (
     const paddingRightInDegrees = (paddingRight / mapWidth) * longitudeDelta;
     const paddingTopInDegrees = (paddingTop / mapHeight) * latitudeDelta;
     const paddingBottomInDegrees = (paddingBottom / mapHeight) * latitudeDelta;
-    console.log({ minLon, maxLon, longitudeDelta });
-    console.log({ paddingLeftInDegrees, paddingRightInDegrees, paddingLeft, paddingRight, mapWidth });
 
     const centerLonWithPadding = centerLon - (paddingLeftInDegrees - paddingRightInDegrees) / 2;
     const centerLatWithPadding = centerLat - (paddingTopInDegrees - paddingBottomInDegrees) / 2;
@@ -65,5 +61,3 @@ export const areViewportsNearlyEqual = (v1: any, v2: any) => {
     const THRESHOLD = 0.000001;
     return Math.abs(v1.latitude - v2.latitude) < THRESHOLD && Math.abs(v1.longitude - v2.longitude) < THRESHOLD && Math.abs(v1.zoom - v2.zoom) < THRESHOLD;
 }
-
-// export const areNearlyEqual;
