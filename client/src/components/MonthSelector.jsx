@@ -7,18 +7,47 @@ const months = [
 
 const MonthSelector = ({ initialSelectedMonths, onMonthsChange }) => {
   const [localSelectedMonths, setLocalSelectedMonths] = useState(initialSelectedMonths);
+  const [isDragging, setIsDragging] = useState(false);
+  const [lastToggledMonth, setLastToggledMonth] = useState(null);
 
   useEffect(() => {
     setLocalSelectedMonths(initialSelectedMonths);
   }, [initialSelectedMonths]);
 
   const handleMonthToggle = (index) => {
-    const newSelectedMonths = localSelectedMonths.includes(index)
-      ? localSelectedMonths.filter(m => m !== index)
-      : [...localSelectedMonths, index].sort((a, b) => a - b);
-    setLocalSelectedMonths(newSelectedMonths);
-    onMonthsChange(newSelectedMonths);
+    setLocalSelectedMonths(prevSelected => {
+      const newSelectedMonths = prevSelected.includes(index)
+        ? prevSelected.filter(m => m !== index)
+        : [...prevSelected, index].sort((a, b) => a - b);
+      return newSelectedMonths;
+    });
   };
+
+  const handleMouseDown = (index) => {
+    setIsDragging(true);
+    setLastToggledMonth(index);
+    handleMonthToggle(index);
+  };
+
+  const handleMouseEnter = (index) => {
+    if (isDragging && lastToggledMonth !== index) {
+      handleMonthToggle(index);
+      setLastToggledMonth(index);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    setLastToggledMonth(null);
+    onMonthsChange(localSelectedMonths);
+  };
+
+  useEffect(() => {
+    document.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [localSelectedMonths]);
 
   return (
     <div className="month-selector">
@@ -26,7 +55,8 @@ const MonthSelector = ({ initialSelectedMonths, onMonthsChange }) => {
         <button
           key={month}
           className={`month-button ${localSelectedMonths.includes(index) ? 'selected' : ''}`}
-          onClick={() => handleMonthToggle(index)}
+          onMouseDown={() => handleMouseDown(index)}
+          onMouseEnter={() => handleMouseEnter(index)}
         >
           {month}
         </button>
