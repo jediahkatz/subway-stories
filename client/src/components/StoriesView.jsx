@@ -18,6 +18,7 @@ const stories = [
       day: 'Saturday',
       hour: 8,
       months: ALL_MONTHS,
+      visibleLines: ['B', 'D', 'N', 'F', 'R', 'Q'],
     },
   },
   {
@@ -31,6 +32,7 @@ const stories = [
       day: 'Saturday',
       hour: 8,
       months: ALL_MONTHS,
+      visibleLines: ['D'],
     },
   },
   {
@@ -44,6 +46,7 @@ const stories = [
       day: 'Saturday',
       hour: 8,
       months: ALL_MONTHS,
+      visibleLines: ['7', '6', 'D', 'N']
     },
   },
   {
@@ -57,6 +60,7 @@ const stories = [
       day: 'Monday',
       hour: 7,
       months: ALL_MONTHS,
+      visibleLines: ['7']
     },
   },
   {
@@ -70,6 +74,7 @@ const stories = [
       day: 'Saturday',
       hour: 11,
       months: ALL_MONTHS,
+      visibleLines: ['7']
     },
   }
 ];
@@ -81,7 +86,8 @@ const StoriesView = React.memo(({
   setSelectedDay, 
   setSelectedHour, 
   setSelectedMonths, 
-  setSelectedBarScale 
+  setSelectedBarScale,
+  limitVisibleLines,
 }) => {
   const containerRef = useRef(null);
   const scrollerRef = useRef(scrollama());
@@ -98,7 +104,8 @@ const StoriesView = React.memo(({
     setSelectedDirection(stories[index].dataview.direction);
     setSelectedDay(stories[index].dataview.day);
     setSelectedHour(stories[index].dataview.hour);
-    // setSelectedMonths(stories[index].dataview.months);
+    limitVisibleLines(stories[index].dataview.visibleLines);
+    setSelectedMonths(stories[index].dataview.months);
   }, [setViewport, setSelectedStation, setSelectedDirection, setSelectedDay, setSelectedHour, setSelectedMonths]);
 
   useEffect(() => {
