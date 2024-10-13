@@ -444,11 +444,11 @@ const MTADataMap = ({ mapboxToken }) => {
       }
       {activeView === 'stories' && <StoriesView 
         setViewport={setViewport} 
-        setSelectedStation={handleStationChange} 
-        setSelectedDirection={handleDirectionChange} 
-        setSelectedDay={handleDayChange} 
-        setSelectedHour={handleHourChange} 
-        setSelectedMonths={handleMonthsChange} 
+        setSelectedStation={setSelectedStation} 
+        setSelectedDirection={setSelectedDirection} 
+        setSelectedDay={setSelectedDay} 
+        setSelectedHour={setSelectedHour} 
+        setSelectedMonths={setSelectedMonths} 
         setSelectedBarScale={setSelectedBarScale}
         limitVisibleLines={limitVisibleLines}
       />}

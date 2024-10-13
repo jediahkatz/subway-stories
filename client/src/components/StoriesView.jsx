@@ -97,7 +97,7 @@ const StoriesView = React.memo(({
 
     setViewport({
       ...stories[index].viewport,
-      transitionDuration: 'auto',
+      transitionDuration: 1000,
       transitionInterpolator: new FlyToInterpolator(),
     });
     setSelectedStation(stories[index].dataview.station);
