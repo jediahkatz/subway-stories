@@ -8,9 +8,9 @@ const mtaBaseUrl2023 = "https://data.ny.gov/resource/uhf3-t34z.json";
 const mtaBaseUrl2024 = "https://data.ny.gov/resource/jsu2-fbtj.json";
 const mtaBaseUrl = mtaBaseUrl2023;
 
-const sqlServerBaseUrl = getEnvVar('VITE_SQL_SERVER_URL');
+const SERVER_BASE_URL = getEnvVar('VITE_SQL_SERVER_URL');
 
-const appToken = getEnvVar('VITE_MTA_APPTOKEN');
+const MTA_APP_TOKEN = getEnvVar('VITE_MTA_APPTOKEN');
 
 const fetchRidershipByStationFromMtaApi = async (selectedDay: string, selectedStation: string, selectedDirection: string, selectedMonths: number[], signal?: AbortSignal) => {
   const cacheKey = `${selectedDay}-${selectedStation}-${selectedDirection}-${selectedMonths}`;
@@ -32,7 +32,7 @@ const fetchRidershipByStationFromMtaApi = async (selectedDay: string, selectedSt
       : `origin_station_complex_id as station_id, hour_of_day as hour, sum(estimated_average_ridership) / ${numMonthsToAverageOver} as ridership, origin_latitude as lat, origin_longitude as lon`,
     $group: "station_id,hour,lat,lon",
     $limit: "100000",
-    $$app_token: appToken
+    $$app_token: MTA_APP_TOKEN
   };
   const queryString = new URLSearchParams(params).toString();
   const url = `${mtaBaseUrl}?${queryString}`;
@@ -87,7 +87,7 @@ const fetchTotalRidershipFromMtaApi = async (selectedDay: string, selectedMonths
       : `origin_station_complex_id as station_id, hour_of_day as hour, SUM(estimated_average_ridership) / ${numMonthsToAverageOver} as total_ridership`,
     $group: "station_id, hour",
     $limit: "100000",
-    $$app_token: appToken
+    $$app_token: MTA_APP_TOKEN
   };
   
   const queryString = new URLSearchParams(params).toString();
@@ -149,7 +149,7 @@ const fetchRidershipByStationFromSqlServer = async (selectedDay: string, selecte
     selectedMonths: selectedMonths.map(m => m + 1).join(',')
   });
 
-  const url = `${sqlServerBaseUrl}/ridership-by-station?${params}`;
+  const url = `${SERVER_BASE_URL}/ridership-by-station?${params}`;
 
   try {
     const start = Date.now();
@@ -194,7 +194,7 @@ const fetchTotalRidershipFromSqlServer = async (selectedDay: string, selectedMon
     selectedDirection
   });
 
-  const url = `${sqlServerBaseUrl}/total-ridership?${params}`;
+  const url = `${SERVER_BASE_URL}/total-ridership?${params}`;
 
   console.log('Fetching total ridership from SQL Server:', url);
 

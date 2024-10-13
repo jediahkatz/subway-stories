@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
+const fs = require('fs').promises;
+const { Mutex } = require('./lib');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -87,6 +89,57 @@ app.get('/total-ridership', (req, res) => {
       });
     }
   });
+});
+
+// Route 3: Tracking Mapbox Loads
+const MAX_ALLOWED_LOADS_PER_MONTH = 48_000; // it's really 50k, but let's be conservative
+const usageFileMutex = new Mutex();
+app.post('/mapbox-load', async (req, res) => {
+  const unlock = await usageFileMutex.lock();
+  try {
+
+    const countFilePath = process.env.MAPBOX_COUNT_PATH;
+    let usageCounts = [];
+
+    // Read existing counts or create a new array if file doesn't exist
+    try {
+      const data = await fs.readFile(countFilePath, 'utf8');
+      usageCounts = JSON.parse(data);
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        throw error;
+      }
+    }
+
+    // Remove entries older than past month
+    const now = new Date();
+    const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+    usageCounts = usageCounts.filter(entry => new Date(entry.date) >= oneMonthAgo);
+
+    // Calculate total count for the month
+    const totalCount = usageCounts.reduce((sum, entry) => sum + entry.count, 0);
+    const shouldLoad = totalCount < MAX_ALLOWED_LOADS_PER_MONTH;
+
+    // Update count for current day
+    if (shouldLoad) {
+      const today = usageCounts.find(entry => new Date(entry.date).toDateString() === now.toDateString());
+      if (today) {
+        today.count += 1;
+      } else {
+        usageCounts.push({ date: now.toISOString(), count: 1 });
+      }
+    }
+
+    // Write updated counts back to file
+    await fs.writeFile(countFilePath, JSON.stringify(usageCounts), 'utf8');
+
+    res.json({ message: 'success', shouldLoad });
+  } catch (error) {
+    console.error('Error tracking Mapbox load:', error);
+    res.status(500).json({ error: 'Failed to track Mapbox load' });
+  } finally {
+    unlock();
+  }
 });
 
 // Start the server
