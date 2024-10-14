@@ -90,8 +90,11 @@ const stories = [
   }
 ];
 
+// todo: make this dynamic based on the width of the screen
 const STORY_BOX_WIDTH = 300 + 20 + 20;
 const STORY_BOX_RIGHT_OFFSET = 20;
+const FLOATING_INFO_BAR_HEIGHT = 54;
+const FLOATING_INFO_BAR_OFFSET = 20;
 
 const StoriesView = React.memo(({
   setViewport, 
@@ -103,6 +106,11 @@ const StoriesView = React.memo(({
   setSelectedBarScale,
   limitVisibleLines,
   markCurrentBarHeights,
+  selectedStation,
+  selectedDirection,
+  selectedDay,
+  selectedHour,
+  selectedMonths,
 }) => {
   const containerRef = useRef(null);
   const scrollerRef = useRef(scrollama());
@@ -110,7 +118,7 @@ const StoriesView = React.memo(({
   const getPadding = () => {
     return {
       top: window.innerHeight * 0.05,
-      bottom: window.innerHeight * 0.05,
+      bottom: window.innerHeight * 0.05 + FLOATING_INFO_BAR_HEIGHT + FLOATING_INFO_BAR_OFFSET,
       left: window.innerWidth * 0.05,
       right: window.innerWidth * 0.05 + STORY_BOX_WIDTH + STORY_BOX_RIGHT_OFFSET,
     };
@@ -165,8 +173,36 @@ const StoriesView = React.memo(({
           </p>
         </div>
       ))}
+      <div className="floating-info-bar">
+        {formatInfoBarText(selectedDirection, selectedStation, selectedHour, selectedDay, selectedMonths)}
+      </div>
     </div>
   );
 });
+
+const formatInfoBarText = (direction, stationId, hour, day, selectedMonths) => {
+  const stationName = stationIdToStation[stationId]?.display_name.split('(')[0].trim() || 'here';
+  const formattedHour = hour % 12 || 12;
+  const amPm = hour < 12 ? 'a.m.' : 'p.m.';
+  const directionText = direction === 'comingFrom' ? 'going to' : 'coming from';
+
+  let monthText = '';
+  if (selectedMonths.length < 12) {
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+    if (selectedMonths.length === 1) {
+      monthText = ` in ${monthNames[selectedMonths[0]]}`;
+    } else {
+      const firstMonth = monthNames[selectedMonths[0]];
+      const lastMonth = monthNames[selectedMonths[selectedMonths.length - 1]];
+      monthText = ` from ${firstMonth} – ${lastMonth}`;
+    }
+  }
+
+  return (
+    <>
+      Who's {directionText} <span className="highlight-station">{stationName}</span> at <span className="highlight-time">{formattedHour} {amPm} on a {day}{monthText}</span>?
+    </>
+  );
+};
 
 export default StoriesView;

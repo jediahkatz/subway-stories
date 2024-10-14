@@ -29,7 +29,7 @@ export const getViewportForBounds = (
     const paddingBottomInDegrees = (paddingBottom / mapHeight) * latitudeDelta;
 
     const centerLonWithPadding = centerLon - (paddingLeftInDegrees - paddingRightInDegrees) / 2;
-    const centerLatWithPadding = centerLat - (paddingTopInDegrees - paddingBottomInDegrees) / 2;
+    const centerLatWithPadding = centerLat - (paddingBottomInDegrees - paddingTopInDegrees) / 2;
 
     // Calculate zoom for width (longitude)
     const zoomX = Math.log2(mapWidth / (longitudeDelta * (WORLD_DIM.width / 360)));

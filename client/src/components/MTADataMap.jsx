@@ -451,6 +451,11 @@ const MTADataMap = ({ mapboxToken }) => {
         setSelectedBarScale={setSelectedBarScale}
         limitVisibleLines={limitVisibleLines}
         markCurrentBarHeights={() => markCurrentBarHeights(barScale, showPercentage)}
+        selectedStation={selectedStation}
+        selectedDirection={selectedDirection}
+        selectedDay={selectedDay}
+        selectedHour={selectedHour}
+        selectedMonths={selectedMonths}
       />}
       {hoverInfo && !isLoading && (
         <Tooltip
