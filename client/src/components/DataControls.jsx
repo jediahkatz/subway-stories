@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { stations } from '../lib/stations';
-import { Slider, LogarithmicSlider } from './Slider';
+import { Slider, LogarithmicSlider, CoolSlider } from './Slider';
 import MonthSelector from './MonthSelector';
 import { useDebounce } from '../lib/debounce';
 
@@ -83,12 +83,12 @@ const DataControls = ({
           <p className="map-controls-label">Hour {selectedHour}:00</p>
         </label>
         <div className="slider-container">
-          <Slider
+          <CoolSlider
             min={0}
             max={23}
             disabled={isPlaying}
             value={selectedHour}
-            onChange={e => setSelectedHour(Number(e.target.value), selectedHour)}
+            onChange={newValue => setSelectedHour(newValue, selectedHour) }
           />
           {/* <button onClick={togglePlay} className="play-button">
             {isPlaying ? '⏸' : '▶'}
