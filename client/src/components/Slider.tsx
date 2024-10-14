@@ -73,6 +73,7 @@ export const LogarithmicSlider = ({ value, onChange, onDoubleClick, disabled = f
   );
 }
 
+// Inspired by https://www.facebook.com/share/v/bv5vsJQgVs5aKgUG/
 export const CoolSlider: React.FC<{
   value: number;
   onChange: (value: number) => void;
