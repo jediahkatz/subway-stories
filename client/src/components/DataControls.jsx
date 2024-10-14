@@ -97,6 +97,7 @@ const DataControls = ({
       <label htmlFor="ridership-controls">
         <p className="map-controls-label">Ridership</p>
         <div id="ridership-controls">
+          <p className="where-are-they">Where are they...</p>
           <div id="direction-selector" className={`direction-selector ${selectedDirection === 'goingTo' ? 'going-to' : ''}`}>
               <button 
                 className={`direction-button ${selectedDirection === 'comingFrom' ? 'active' : ''}`}
