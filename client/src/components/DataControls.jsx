@@ -65,7 +65,7 @@ const DataControls = ({
     <div className="map-controls">
       <MonthSelector initialSelectedMonths={selectedMonths} onMonthsChange={debouncedSetSelectedMonths} />
       <label>
-        Select day:
+        <p className="map-controls-label">Day</p>
         <select
           value={selectedDay}
           onChange={e => setSelectedDay(e.target.value)}
@@ -79,7 +79,8 @@ const DataControls = ({
       </label>
       <div className="hour-control">
         <label>
-          Select hour: {selectedHour}:00
+          {/* Select hour: {selectedHour}:00 */}
+          <p className="map-controls-label">Hour {selectedHour}:00</p>
         </label>
         <div className="slider-container">
           <Slider
@@ -95,7 +96,7 @@ const DataControls = ({
         </div>
       </div>
       <label>
-        Select station:
+        <p className="map-controls-label">Station</p>
         <select
           value={selectedStation}
           onChange={e => setSelectedStation(e.target.value)}
@@ -108,7 +109,7 @@ const DataControls = ({
         </select>
       </label>
       <label>
-        Direction: Where are they...
+        <p className="map-controls-label">Direction</p>
         <select
           value={selectedDirection}
           onChange={e => setSelectedDirection(e.target.value)}
@@ -119,7 +120,7 @@ const DataControls = ({
       </label>
       <div className="bar-scale-control">
         <label>
-          Bar height (double-click to reset):
+          <p className="map-controls-label">Bar height (double-click to reset)</p>
         </label>
         <div className="slider-container">
           <LogarithmicSlider
@@ -130,6 +131,7 @@ const DataControls = ({
           />
           <span>{barScale.toFixed(3)}x</span>
         </div>
+
       </div>
       <label className="inline-checkbox">
         <input
