@@ -94,32 +94,34 @@ const DataControls = ({
           </button> */}
         </div>
       </div>
-      <label>
+      <label htmlFor="ridership-controls">
         <p className="map-controls-label">Ridership</p>
-        <div id="direction-selector" className={`direction-selector ${selectedDirection === 'goingTo' ? 'going-to' : ''}`}>
-            <button 
-              className={`direction-button ${selectedDirection === 'comingFrom' ? 'active' : ''}`}
-              onClick={() => setSelectedDirection('comingFrom')}
-            >
-              Coming from
-            </button>
-            <button 
-              className={`direction-button ${selectedDirection === 'goingTo' ? 'active' : ''}`}
-              onClick={() => setSelectedDirection('goingTo')}
-            >
-              Going to
-            </button>
+        <div id="ridership-controls">
+          <div id="direction-selector" className={`direction-selector ${selectedDirection === 'goingTo' ? 'going-to' : ''}`}>
+              <button 
+                className={`direction-button ${selectedDirection === 'comingFrom' ? 'active' : ''}`}
+                onClick={() => setSelectedDirection('comingFrom')}
+              >
+                Coming from
+              </button>
+              <button 
+                className={`direction-button ${selectedDirection === 'goingTo' ? 'active' : ''}`}
+                onClick={() => setSelectedDirection('goingTo')}
+              >
+                Going to
+              </button>
+          </div>
+          <select
+            value={selectedStation}
+            onChange={e => setSelectedStation(e.target.value)}
+          >
+            {stations.sort((a, b) => a.display_name.localeCompare(b.display_name)).map(station => (
+              <option key={station.complex_id} value={station.complex_id}>
+                {station.display_name}
+              </option>
+            ))}
+          </select>
         </div>
-        <select
-          value={selectedStation}
-          onChange={e => setSelectedStation(e.target.value)}
-        >
-          {stations.sort((a, b) => a.display_name.localeCompare(b.display_name)).map(station => (
-            <option key={station.complex_id} value={station.complex_id}>
-              {station.display_name}
-            </option>
-          ))}
-        </select>
       </label>
       {showMoreControls && (
         <>
