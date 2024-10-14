@@ -79,8 +79,7 @@ const DataControls = ({
       </label>
       <div className="hour-control">
         <label>
-          {/* Select hour: {selectedHour}:00 */}
-          <p className="map-controls-label">Hour {selectedHour}:00</p>
+          <p className="map-controls-label">Hour</p>
         </label>
         <div className="slider-container">
           <CoolSlider
