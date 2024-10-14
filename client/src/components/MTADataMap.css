@@ -103,6 +103,7 @@ body.pointer-cursor {
   padding: 2px;
   position: relative;
   overflow: hidden;
+  margin-bottom: 10px;
 }
 
 .direction-button {
@@ -151,7 +152,6 @@ body.pointer-cursor {
     text-align: center;
     color: rgba(255, 255, 255, 0.7);
     cursor: pointer;
-    margin-top: 10px;
     font-size: 14px;
     display: flex;
     align-items: center;
