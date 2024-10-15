@@ -95,23 +95,8 @@ const DataControls = ({
         </div>
       </div>
       <label>
-        <p className="map-controls-label">Station</p>
-        <select
-          value={selectedStation}
-          onChange={e => setSelectedStation(e.target.value)}
-        >
-          {stations.sort((a, b) => a.display_name.localeCompare(b.display_name)).map(station => (
-            <option key={station.complex_id} value={station.complex_id}>
-              {station.display_name}
-            </option>
-          ))}
-        </select>
-      </label>
-      <div>
-        <label htmlFor="direction-selector">
-          <p className="map-controls-label">Direction</p>
-        </label>
-          <div id="direction-selector" className={`direction-selector ${selectedDirection === 'goingTo' ? 'going-to' : ''}`}>
+        <p className="map-controls-label">Ridership</p>
+        <div id="direction-selector" className={`direction-selector ${selectedDirection === 'goingTo' ? 'going-to' : ''}`}>
             <button 
               className={`direction-button ${selectedDirection === 'comingFrom' ? 'active' : ''}`}
               onClick={() => setSelectedDirection('comingFrom')}
@@ -124,8 +109,18 @@ const DataControls = ({
             >
               Going to
             </button>
-          </div>
-      </div>
+        </div>
+        <select
+          value={selectedStation}
+          onChange={e => setSelectedStation(e.target.value)}
+        >
+          {stations.sort((a, b) => a.display_name.localeCompare(b.display_name)).map(station => (
+            <option key={station.complex_id} value={station.complex_id}>
+              {station.display_name}
+            </option>
+          ))}
+        </select>
+      </label>
       {showMoreControls && (
         <>
           <MonthSelector initialSelectedMonths={selectedMonths} onMonthsChange={debouncedSetSelectedMonths} />
