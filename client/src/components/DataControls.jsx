@@ -108,9 +108,10 @@ const DataControls = ({
         </select>
       </label>
       <div>
-        <label>
-        <p className="map-controls-label">Direction</p>
-          <div className={`direction-selector ${selectedDirection === 'goingTo' ? 'going-to' : ''}`}>
+        <label htmlFor="direction-selector">
+          <p className="map-controls-label">Direction</p>
+        </label>
+          <div id="direction-selector" className={`direction-selector ${selectedDirection === 'goingTo' ? 'going-to' : ''}`}>
             <button 
               className={`direction-button ${selectedDirection === 'comingFrom' ? 'active' : ''}`}
               onClick={() => setSelectedDirection('comingFrom')}
@@ -124,7 +125,6 @@ const DataControls = ({
               Going to
             </button>
           </div>
-        </label>
       </div>
       {/* <div className="bar-scale-control">
         <label>
