@@ -33,6 +33,7 @@ const DataControls = ({
   setShowPercentage
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [showMoreControls, setShowMoreControls] = useState(false);
 
   const debouncedSetSelectedMonths = useDebounce(setSelectedMonths, 1000);
 
@@ -63,7 +64,6 @@ const DataControls = ({
 
   return (
     <div className="map-controls">
-      {/* <MonthSelector initialSelectedMonths={selectedMonths} onMonthsChange={debouncedSetSelectedMonths} /> */}
       <label>
         <p className="map-controls-label">Day</p>
         <select
@@ -126,29 +126,40 @@ const DataControls = ({
             </button>
           </div>
       </div>
-      {/* <div className="bar-scale-control">
-        <label>
-          <p className="map-controls-label">Bar height (double-click to reset)</p>
-        </label>
-        <div className="slider-container">
-          <LogarithmicSlider
-            value={barScale}
-            onChange={setSelectedBarScale}
-            // Unlocks the bar scale
-            onDoubleClick={() => setSelectedBarScale(null)}
-          />
-          <span>{barScale.toFixed(3)}x</span>
-        </div>
-
+      {showMoreControls && (
+        <>
+          <MonthSelector initialSelectedMonths={selectedMonths} onMonthsChange={debouncedSetSelectedMonths} />
+          <div className="bar-scale-control">
+            <label>
+              <p className="map-controls-label">Bar height (double-click to reset)</p>
+            </label>
+            <div className="slider-container">
+              <LogarithmicSlider
+                value={barScale}
+                onChange={setSelectedBarScale}
+                onDoubleClick={() => setSelectedBarScale(null)}
+              />
+              <span>{barScale.toFixed(3)}x</span>
+            </div>
+          </div>
+          <label className="inline-checkbox">
+            <input
+              type="checkbox"
+              checked={showPercentage}
+              onChange={(e) => setShowPercentage(e.target.checked)}
+            />
+            <span>Show percentage of ridership</span>
+          </label>
+        </>
+      )}
+      
+      <div 
+        className="see-more" 
+        onClick={() => setShowMoreControls(!showMoreControls)}
+      >
+        See {showMoreControls ? 'less' : 'more'}
+        <span className={`caret ${showMoreControls ? 'up' : ''}`}></span>
       </div>
-      <label className="inline-checkbox">
-        <input
-          type="checkbox"
-          checked={showPercentage}
-          onChange={(e) => setShowPercentage(e.target.checked)}
-        />
-        <span>Show percentage of ridership</span>
-      </label> */}
     </div>
   );
 };
