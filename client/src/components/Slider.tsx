@@ -80,6 +80,7 @@ export const CoolSlider: React.FC<{
   const [isDragging, setIsDragging] = useState(false);
   const [localValue, setLocalValue] = useState(value);
   const sliderRef = useRef<HTMLDivElement>(null);
+  const handleRef = useRef<HTMLDivElement>(null);
   const rectRef = useRef<DOMRect | null>(null);
 
   useEffect(() => {
@@ -89,75 +90,87 @@ export const CoolSlider: React.FC<{
   }, [value, isDragging]);
 
 
-  const handleMouseDown = useCallback(() => {
-    // setLocalValue(localValue + 1);
-    // onChange(localValue + 1);
-    setIsDragging(true);
+  const handleDragStart = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    setIsDragging(true);    
     if (sliderRef.current) {
       rectRef.current = sliderRef.current.getBoundingClientRect();
     }
+    if (handleRef.current) {
+      handleRef.current.setPointerCapture(e.pointerId);
+    }
+    handlePointerMove(e);
   }, [localValue, onChange]);
 
-  const handleMouseUp = useCallback(() => {
+  const handleDragEnd = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     setIsDragging(false);
     rectRef.current = null;
+    if (handleRef.current) {
+      handleRef.current.releasePointerCapture(e.pointerId);
+    }
   }, []);
 
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (isDragging && rectRef.current) {
-      console.log('handleMouseMove!')
       const newValue = Math.max(0, Math.min(23, Math.floor((e.clientX - rectRef.current.left) / (rectRef.current.width / 24))));
-      setLocalValue(newValue);
-      onChange(newValue);
+      if (newValue !== localValue) {
+        setLocalValue(newValue);
+        onChange(newValue);
+      }
     }
-  }, [isDragging, onChange]);
+  }, [isDragging, onChange, localValue]);
 
   const formatTime = useCallback((hour: number) => {
-    const period = hour < 12 ? 'AM' : 'PM';
+    const period = hour < 12 ? 'a.m.' : 'p.m.';
     const displayHour = hour % 12 || 12;
-    return `${displayHour}${period}`;
+    return `${displayHour} ${period}`;
   }, []);
 
-  // const tickMarks = useMemo(() => 
-  //   Array.from({ length: 24 }, (_, i) => (
-  //     <div
-  //       key={i}
-  //       className={`tick-mark ${Math.abs(i - localValue) <= 1 ? 'adjacent' : ''}`}
-  //       data-index={i}
-  //     />
-  //   ))
-  // , [localValue]);
+  const TICK_WIDTH = 3;
+
+  const calculateHandlePosition = useCallback(() => {
+    if (sliderRef.current) {
+      const sliderWidth = sliderRef.current.clientWidth - TICK_WIDTH;
+      const stepWidth = sliderWidth / 23;
+      return (TICK_WIDTH / 2) + (localValue * stepWidth);
+    }
+    return 0;
+  }, [localValue]);
+
+  useEffect(() => {
+    if (handleRef.current) {
+      handleRef.current.style.left = `${calculateHandlePosition()}px`;
+    }
+  }, [localValue, calculateHandlePosition]);
 
   return (
-    <>
-    <Slider min={0} max={23} value={localValue} onChange={onChange} step={1} onDoubleClick={handleMouseDown} />
-    {/* <div 
-      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '10px', height: '10px', backgroundColor: 'red' }}
-      onDoubleClick={handleMouseDown}
-    /> */}
     <div
       ref={sliderRef}
       className="cool-slider"
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-      onMouseMove={handleMouseMove}
+      onPointerDown={handleDragStart}
+      onPointerUp={handleDragEnd}
+      onPointerMove={handlePointerMove}
     >
       <div className="tick-marks">
-        {Array.from({ length: 24 }, (_, i) => (
-          <div
-            key={i}
-            className={`tick-mark ${Math.abs(i - localValue) <= 1 ? 'adjacent' : ''} ${isDragging ? 'growing' : ''}`}
-          />
-        ))}
+        {Array.from({ length: 24 }, (_, i) => {
+          const adjacentClass = 
+            i === localValue ? 'equal' :
+            Math.abs(i - localValue) === 1 ? 'adjacent' :
+            Math.abs(i - localValue) === 2 ? 'adjacent2' :  
+                                             '';
+          return (
+            <div
+              key={i}
+              className={`tick-mark ${adjacentClass} ${isDragging ? 'growing' : ''}`}
+            />
+          );
+        })}
       </div>
       <div
+        ref={handleRef}
         className={`handle ${isDragging ? 'dragging' : ''}`}
-        style={{ left: `${(localValue / 23) * 100}%` }}
       >
         <div className="time-display">{formatTime(localValue)}</div>
       </div>
     </div>
-    </>
   );
 };
