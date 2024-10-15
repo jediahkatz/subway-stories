@@ -106,13 +106,13 @@ const DataControls = ({
                 className={`direction-button ${selectedDirection === 'comingFrom' ? 'active' : ''}`}
                 onClick={() => setSelectedDirection('comingFrom')}
               >
-                Coming from
+                Arriving at
               </button>
               <button 
                 className={`direction-button ${selectedDirection === 'goingTo' ? 'active' : ''}`}
                 onClick={() => setSelectedDirection('goingTo')}
               >
-                Going to
+                Departing from
               </button>
           </div>
           {/* <select
