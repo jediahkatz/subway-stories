@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import './CoolSlider.css';
+import './DataControls.css';
 
 export const Slider = ({ min, max, value, disabled, onChange, step, onMouseDown, onMouseUp, onTouchStart, onTouchEnd, onDoubleClick }: {
   min: number;

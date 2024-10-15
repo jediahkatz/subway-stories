@@ -1,8 +1,10 @@
 import React, { useState, useCallback } from 'react';
-import { stations } from '../lib/stations';
+import { stationIdToStation, stations } from '../lib/stations';
 import { Slider, LogarithmicSlider, CoolSlider } from './Slider';
 import MonthSelector from './MonthSelector';
 import { useDebounce } from '../lib/debounce';
+import SearchableDropdown from './SearchableDropdown';
+import './DataControls.css';
 
 const ANIMATE_HOUR_PERIOD = 500
 
@@ -14,7 +16,9 @@ const daysOfWeek = [
   'Friday',
   'Saturday',
   'Sunday'
-]; 
+];
+
+const sortedStations = stations.sort((a, b) => a.display_name.localeCompare(b.display_name));
 
 const DataControls = ({ 
   selectedHour, 
@@ -97,7 +101,6 @@ const DataControls = ({
       <label htmlFor="ridership-controls">
         <p className="map-controls-label">Ridership</p>
         <div id="ridership-controls">
-          <p className="where-are-they">Where are they...</p>
           <div id="direction-selector" className={`direction-selector ${selectedDirection === 'goingTo' ? 'going-to' : ''}`}>
               <button 
                 className={`direction-button ${selectedDirection === 'comingFrom' ? 'active' : ''}`}
@@ -112,7 +115,7 @@ const DataControls = ({
                 Going to
               </button>
           </div>
-          <select
+          {/* <select
             value={selectedStation}
             onChange={e => setSelectedStation(e.target.value)}
           >
@@ -121,7 +124,14 @@ const DataControls = ({
                 {station.display_name}
               </option>
             ))}
-          </select>
+          </select> */}
+          <SearchableDropdown 
+            options={sortedStations}
+            label="display_name"
+            id="station-selector"
+            selectedVal={stationIdToStation[selectedStation]}
+            handleChange={(station) => setSelectedStation(station.complex_id)}
+          />
         </div>
       </label>
       {showMoreControls && (
