@@ -89,6 +89,16 @@ export const CoolSlider: React.FC<{
     }
   }, [value, isDragging]);
 
+  const updateSliderPosition = useCallback((clientX: number, localValue: number, onChange: (value: number) => void) => {
+    if (rectRef.current) {
+      const newValue = Math.max(0, Math.min(23, Math.floor((clientX - rectRef.current.left) / (rectRef.current.width / 24))));
+      if (newValue !== localValue) {
+        setLocalValue(newValue);
+        onChange(newValue);
+      }
+    }
+  }, []);
+
 
   const handleDragStart = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     setIsDragging(true);    
@@ -98,7 +108,7 @@ export const CoolSlider: React.FC<{
     if (handleRef.current) {
       handleRef.current.setPointerCapture(e.pointerId);
     }
-    handlePointerMove(e);
+    updateSliderPosition(e.clientX, localValue, onChange);
   }, [localValue, onChange]);
 
   const handleDragEnd = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
@@ -110,12 +120,8 @@ export const CoolSlider: React.FC<{
   }, []);
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (isDragging && rectRef.current) {
-      const newValue = Math.max(0, Math.min(23, Math.floor((e.clientX - rectRef.current.left) / (rectRef.current.width / 24))));
-      if (newValue !== localValue) {
-        setLocalValue(newValue);
-        onChange(newValue);
-      }
+    if (isDragging) {
+      updateSliderPosition(e.clientX, localValue, onChange);
     }
   }, [isDragging, onChange, localValue]);
 

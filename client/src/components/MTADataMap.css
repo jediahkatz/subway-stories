@@ -66,6 +66,7 @@ body.pointer-cursor {
 }
 
 .map-controls input[type="range"] {
+    appearance: none;
     -webkit-appearance: none;
     height: 8px;
     background: rgba(255, 255, 255, 0.3);
