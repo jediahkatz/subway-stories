@@ -63,7 +63,7 @@ const DataControls = ({
 
   return (
     <div className="map-controls">
-      <MonthSelector initialSelectedMonths={selectedMonths} onMonthsChange={debouncedSetSelectedMonths} />
+      {/* <MonthSelector initialSelectedMonths={selectedMonths} onMonthsChange={debouncedSetSelectedMonths} /> */}
       <label>
         <p className="map-controls-label">Day</p>
         <select
@@ -90,9 +90,9 @@ const DataControls = ({
             value={selectedHour}
             onChange={e => setSelectedHour(Number(e.target.value), selectedHour)}
           />
-          <button onClick={togglePlay} className="play-button">
+          {/* <button onClick={togglePlay} className="play-button">
             {isPlaying ? '⏸' : '▶'}
-          </button>
+          </button> */}
         </div>
       </div>
       <label>
@@ -108,17 +108,26 @@ const DataControls = ({
           ))}
         </select>
       </label>
-      <label>
+      <div>
+        <label>
         <p className="map-controls-label">Direction</p>
-        <select
-          value={selectedDirection}
-          onChange={e => setSelectedDirection(e.target.value)}
-        >
-          <option value="goingTo">Going to</option>
-          <option value="comingFrom">Coming from</option>
-        </select>
-      </label>
-      <div className="bar-scale-control">
+          <div className={`direction-selector ${selectedDirection === 'goingTo' ? 'going-to' : ''}`}>
+            <button 
+              className={`direction-button ${selectedDirection === 'comingFrom' ? 'active' : ''}`}
+              onClick={() => setSelectedDirection('comingFrom')}
+            >
+              Coming from
+            </button>
+            <button 
+              className={`direction-button ${selectedDirection === 'goingTo' ? 'active' : ''}`}
+              onClick={() => setSelectedDirection('goingTo')}
+            >
+              Going to
+            </button>
+          </div>
+        </label>
+      </div>
+      {/* <div className="bar-scale-control">
         <label>
           <p className="map-controls-label">Bar height (double-click to reset)</p>
         </label>
@@ -140,7 +149,7 @@ const DataControls = ({
           onChange={(e) => setShowPercentage(e.target.checked)}
         />
         <span>Show percentage of ridership</span>
-      </label>
+      </label> */}
     </div>
   );
 };
