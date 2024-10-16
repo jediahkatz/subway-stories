@@ -115,16 +115,6 @@ const DataControls = ({
                 Departing from
               </button>
           </div>
-          {/* <select
-            value={selectedStation}
-            onChange={e => setSelectedStation(e.target.value)}
-          >
-            {stations.sort((a, b) => a.display_name.localeCompare(b.display_name)).map(station => (
-              <option key={station.complex_id} value={station.complex_id}>
-                {station.display_name}
-              </option>
-            ))}
-          </select> */}
           <SearchableStationDropdown 
             options={sortedStations}
             label="display_name"

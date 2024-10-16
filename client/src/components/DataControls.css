@@ -133,6 +133,8 @@
 
 .dropdown .options.open {
     display: block;
+    width: calc(100% + 20px);
+    transform: translateX(-10px);
 }
 
 .dropdown .option {
