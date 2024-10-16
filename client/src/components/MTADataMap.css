@@ -13,7 +13,7 @@ body.pointer-cursor {
 }
 
 .map-controls {
-    max-width: 300px;
+    width: 300px;
     position: absolute;
     top: 10px;
     left: 10px;
@@ -214,12 +214,4 @@ body.pointer-cursor {
   background-color: rgba(255, 255, 255, 0.6);
   color: black;
   border: 1px solid #ccc;
-}
-
-.where-are-they {
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 5px;
-  margin-top: 0px;
-  color: rgba(255, 255, 255, 0.7);
 }
