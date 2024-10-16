@@ -41,13 +41,7 @@ const SearchableStationDropdown = ({
     setIsOpen(e && (e.target === inputRef.current || e.target.classList.contains('arrow')));
     setQuery("");
   }
-
-  const getDisplayValue = () => {
-    if (query !== "") return query;
-    if (selectedVal) return selectedVal[label];
-    return "";
-  };
-
+  
   const getPlaceholder = () => {
     if (query !== "" || !selectedVal) return "";
     return selectedVal[label];
@@ -62,7 +56,7 @@ const SearchableStationDropdown = ({
     const allCharsAreLines = queryCharSet.isSubsetOf(linesSet);
     if (allCharsAreLines) {
       return optionsWithLines.filter(
-        (option) => option.lines.every(line => queryCharSet.has(line))
+        (option) => queryCharSet.isSubsetOf(new Set(option.lines))
       );
     }
     return optionsWithLines.filter(
