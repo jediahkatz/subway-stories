@@ -28,6 +28,7 @@ export function useDotPulseAnimation(direction: string) {
     });
   }, [direction]);
 
+  // replace this useEffect with a function that gets called imperatively
   useEffect(() => {
     let animationFrame: number;
 

@@ -36,7 +36,7 @@ const DataControls = ({
   showPercentage,
   setShowPercentage
 }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [showMoreControls, setShowMoreControls] = useState(false);
 
   const debouncedSetSelectedMonths = useDebounce(setSelectedMonths, 1000);
@@ -45,15 +45,16 @@ const DataControls = ({
     setIsPlaying(prev => !prev);
   }, []);
 
-  React.useEffect(() => {
-    let intervalId;
-    if (isPlaying) {
-      intervalId = setInterval(() => {
-        setSelectedHour(prevHour => (prevHour + 1) % 24, selectedHour);
-      }, ANIMATE_HOUR_PERIOD);
-    }
-    return () => clearInterval(intervalId);
-  }, [isPlaying, setSelectedHour, selectedHour]);
+  // remove this useEffect
+  // React.useEffect(() => {
+  //   let intervalId;
+  //   if (isPlaying) {
+  //     intervalId = setInterval(() => {
+  //       setSelectedHour(prevHour => (prevHour + 1) % 24, selectedHour);
+  //     }, ANIMATE_HOUR_PERIOD);
+  //   }
+  //   return () => clearInterval(intervalId);
+  // }, [isPlaying, setSelectedHour, selectedHour]);
 
   // horrible ai generated code but works
   const handleMonthToggle = (monthIndex) => {

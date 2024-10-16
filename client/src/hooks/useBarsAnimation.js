@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { stationIdToStation } from '../lib/stations';
 
 export const ANIMATE_BAR_CHANGE_DURATION = 500;
 const LOADING_WAVE_DURATION = 3000;
@@ -6,14 +7,18 @@ const DEFAULT_BAR_HEIGHT_FOR_MAX_RIDERSHIP = 0.02;
 const MIN_PULSE_HEIGHT = 1;
 const MAX_PULSE_HEIGHT = 50;
 const LOADING_COLOR = [204, 204, 255];
-const WAVE_FREQUENCY = 2;
+const WAVE_SPEED = 0.0005; // Adjust this value to change the speed of the wave
+const WAVE_WIDTH = 0.1; // Adjust this to change the width of the wave
 
-export const useBarsAnimation = (data, barScale, showPercentage, isLoading) => {
+
+export const useBarsAnimation = (data, barScale, showPercentage, isLoading, loadCount, selectedStation, selectedDirection) => {
   const [lineData, setLineData] = useState({ type: 'LOADING', data: [] });
   const [animationStart, setAnimationStart] = useState(null);
   const animationFrameRef = useRef(null);
   const initialHeights = useRef({});
   const lastHeights = useRef({});
+  const lastLoadCount = useRef(0);
+  const cycleCompletionRef = useRef(null);
 
   const startAnimation = () => {
     setAnimationStart(Date.now());
@@ -23,9 +28,17 @@ export const useBarsAnimation = (data, barScale, showPercentage, isLoading) => {
     initialHeights.current = Object.fromEntries(data.map(d => [d.station_id, getAbsoluteHeight(d, barScale, showPercentage)]));
   };
 
+  // replace this useEffect with a function that gets called imperatively when we start the animation
   useEffect(() => {
-    if (isLoading) {
-      animateLoadingWave();
+    console.log({ loadCount, lastLoadCount: lastLoadCount.current })
+    if (isLoading || loadCount != lastLoadCount.current) {
+      lastLoadCount.current = loadCount;
+      cycleCompletionRef.current = 0;
+      animateLoadingWaveRadial(
+        [stationIdToStation[selectedStation].lon, stationIdToStation[selectedStation].lat],
+        selectedDirection === 'comingFrom' ? 'inwards' : 'outwards'
+      );
+      // animateLoadingWave();
     } else if (animationStart) {
       animateToNewHeights(ANIMATE_BAR_CHANGE_DURATION);
     }
@@ -35,7 +48,66 @@ export const useBarsAnimation = (data, barScale, showPercentage, isLoading) => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [animationStart, isLoading]);
+  }, [animationStart, isLoading, loadCount]);
+
+  const animateLoadingWaveRadial = (startLocation, direction = 'outwards') => {
+    const [startLon, startLat] = startLocation;
+    const startTime = Date.now();
+
+    // Calculate the maximum distance for normalization
+    const maxDistance = Math.sqrt(
+      Math.max(...data.map(d => 
+        Math.pow(d.lon - startLon, 2) + Math.pow(d.lat - startLat, 2)
+      ))
+    );
+
+    const step = () => {
+      const time = (Date.now() - startTime) * WAVE_SPEED;
+      const waveProgress = (time % 1 + 1) % 1; // Ensures waveProgress is between 0 and 1
+      if (cycleCompletionRef.current < waveProgress) {
+        cycleCompletionRef.current = waveProgress;
+      }
+
+      const newLineData = data.map((d) => {
+        const distance = Math.sqrt(
+          Math.pow(d.lon - startLon, 2) + Math.pow(d.lat - startLat, 2)
+        );
+        
+        // Normalize the distance.
+        const normalizedDistance = distance / maxDistance;
+        
+        // Calculate the wave effect based on the distance from the wave center
+        let distanceFromWave;
+        if (direction === 'outwards') {
+          distanceFromWave = Math.abs(normalizedDistance - waveProgress);
+        } else { // inwards
+          distanceFromWave = Math.abs((1 - normalizedDistance) - waveProgress);
+        }
+
+        // Create a smooth wave effect
+        const waveEffect = Math.max(0, 1 - (distanceFromWave / WAVE_WIDTH));
+
+        const height = (MIN_PULSE_HEIGHT + (MAX_PULSE_HEIGHT - MIN_PULSE_HEIGHT) * waveEffect) * 0.00005;
+        lastHeights.current[d.station_id] = height;
+
+        return {
+          ...d,
+          basePosition: [d.lon, d.lat],
+          targetHeight: height,
+          color: LOADING_COLOR,
+        };
+      });
+
+      setLineData({ type: 'LOADING', data: newLineData });
+
+      if (isLoading || cycleCompletionRef.current < 0.99) {
+        animationFrameRef.current = requestAnimationFrame(step);
+      } else {
+        startAnimation();
+      }
+    };
+    animationFrameRef.current = requestAnimationFrame(step);
+  };  
 
   const animateLoadingWave = () => {
     const northmostLat = Math.max(...data.map(d => d.lat));
@@ -45,7 +117,6 @@ export const useBarsAnimation = (data, barScale, showPercentage, isLoading) => {
     const step = () => {
       const time = Date.now() % LOADING_WAVE_DURATION;
       const waveProgress = time / LOADING_WAVE_DURATION;
-
       const newLineData = data.map((d) => {
         const stationProgress = (northmostLat - d.lat) / latRange;
         const wrappedWaveProgress = (waveProgress + 1) % 1;

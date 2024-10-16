@@ -82,6 +82,8 @@ const MTADataMap = ({ mapboxToken }) => {
     return savedState?.selectedDirection || 'goingTo';
   });
   const [isLoading, setIsLoading] = useState(false);
+  // we need to overhaul the animation system and get rid of loadCount.
+  const [loadCount, setLoadCount] = useState(0);
   const [selectedBarScale, setSelectedBarScale] = useState(null); // number | null (default)
   const [selectedMonths, setSelectedMonths] = useState(() => {
     const savedState = loadStateFromSessionStorage();
@@ -131,7 +133,10 @@ const MTADataMap = ({ mapboxToken }) => {
     data.length > 0 ? percentageData : stations,
     barScale,
     showPercentage,
-    isLoading
+    isLoading,
+    loadCount,
+    selectedStation,
+    selectedDirection
   );
 
   // This is kind of a hack. When we make a change that affects the final rendered bar scale 
@@ -187,8 +192,10 @@ const MTADataMap = ({ mapboxToken }) => {
     startAnimation();
   }, [barScale, showPercentage, startAnimation])
 
+  // replace this useEffect with a function that gets called imperatively when the data settings change
   useEffect(() => {
-    setIsLoading(true);
+    console.log('hi')
+    setLoadCount(loadCount => loadCount + 1);
     const abortController = new AbortController();
     const loadData = async () => {
       let abortedDueToAnotherLoad = false;
@@ -284,7 +291,7 @@ const MTADataMap = ({ mapboxToken }) => {
       getHeight: [barScale, data],
     }
   });
-
+  
   
   const selectedStationData = {
     station_id: selectedStation,
@@ -343,6 +350,7 @@ const MTADataMap = ({ mapboxToken }) => {
     }
   })
 
+  // replace this useEffect with a function that gets called imperatively when the data settings change
   useEffect(() => {
     const stateToSave = {
       viewport,
@@ -358,6 +366,10 @@ const MTADataMap = ({ mapboxToken }) => {
 
   // Add new state for active view
   const [activeView, setActiveView] = useState('visualization');
+  const handleSetActiveView = (view) => {
+    setLoadCount(loadCount => loadCount + 1)
+    setActiveView(view)
+  };
   
   const drawSubwayLines = useCallback((map) => {
     map.addSource('nyc-subway-routes', {
@@ -399,7 +411,7 @@ const MTADataMap = ({ mapboxToken }) => {
 
   return (
     <div className="map-container">
-      <ViewTabs activeView={activeView} setActiveView={setActiveView} limitVisibleLines={limitVisibleLines} />
+      <ViewTabs activeView={activeView} setActiveView={handleSetActiveView} limitVisibleLines={limitVisibleLines} />
       <DeckGL
         viewState={viewport}
         controller={activeView === 'visualization' ? true : { scrollZoom: false }}
