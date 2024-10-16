@@ -18,6 +18,11 @@ const SubwayLineSymbol = ({ line }) => {
     return colors[line] || '#000000'; // Default to black if color not found
   };
 
+  const getLineTextColor = (line) => 
+    ['N', 'Q', 'R', 'W'].includes(line) 
+      ? '#000000' 
+      : '#ffffff';
+
   return (
     <span
       style={{
@@ -26,7 +31,7 @@ const SubwayLineSymbol = ({ line }) => {
         height: '1.5em',
         borderRadius: '50%',
         backgroundColor: getLineColor(line),
-        color: '#ffffff',
+        color: getLineTextColor(line),
         textAlign: 'center',
         fontWeight: 'bold',
         marginRight: '0.5em',
@@ -101,8 +106,8 @@ const SearchableDropdown = ({
   };
 
   const renderOptionContent = (option) => {
-    const name = option[label].split(' (')[0];
-    const lines = option[label].match(/\((.*?)\)/)?.[1]?.split(' ') || [];
+    const name = option[label].slice(0, option[label].lastIndexOf('(')).trim();
+    const lines = option[label].slice(option[label].lastIndexOf('(') + 1, option[label].lastIndexOf(')')).split(' ') || [];
 
     return (
       <>
