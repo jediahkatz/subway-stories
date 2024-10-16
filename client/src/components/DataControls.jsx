@@ -3,7 +3,7 @@ import { stationIdToStation, stations } from '../lib/stations';
 import { Slider, LogarithmicSlider, CoolSlider } from './Slider';
 import MonthSelector from './MonthSelector';
 import { useDebounce } from '../lib/debounce';
-import SearchableDropdown from './SearchableDropdown';
+import SearchableStationDropdown from './SearchableDropdown';
 import './DataControls.css';
 
 const ANIMATE_HOUR_PERIOD = 500
@@ -125,7 +125,7 @@ const DataControls = ({
               </option>
             ))}
           </select> */}
-          <SearchableDropdown 
+          <SearchableStationDropdown 
             options={sortedStations}
             label="display_name"
             id="station-selector"
