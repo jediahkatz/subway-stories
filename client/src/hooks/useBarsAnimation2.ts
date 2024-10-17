@@ -204,11 +204,6 @@ const createBarChangeAnimation = (animation: BarChangeAnimation): { animationRes
             const initialHeight = initialBarHeights[stationId] ?? 0;
             const newBarHeight = newBarHeights[stationId] ?? 0;
             const newHeight = initialHeight + (newBarHeight - initialHeight) * easeOutCubic(progress);
-            const newHeightIsANumber = typeof newHeight === 'number';
-            if (!newHeightIsANumber) {
-                console.log('newHeight is not a number', newHeight, initialHeight, newBarHeights[stationId]);
-                throw new Error('newHeight is not a number');
-            }
             acc[stationId] = { currentHeight: newHeight };
             return acc;
         }, {});
