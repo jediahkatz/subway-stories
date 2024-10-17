@@ -13,6 +13,11 @@ type WaveRadialAnimation = {
     otherStationLocations: { [key: string]: [number, number] }
 }
 
+type WaveVerticalAnimation = {
+    type: 'WAVE_VERTICAL_DOWN'
+    stationLocations: { [key: string]: [number, number] }
+}
+
 type BarChangeAnimation = {
     type: 'ANIMATE_BAR_CHANGE'
     // maps station_id to absolute bar height
@@ -31,7 +36,7 @@ type BarChangeNoAnimation = {
     }
 }
 
-type Animation = WaveRadialAnimation | BarChangeAnimation | BarChangeNoAnimation
+type Animation = WaveRadialAnimation | WaveVerticalAnimation | BarChangeAnimation | BarChangeNoAnimation
 
 type AnimationState = {
     animation: Animation
@@ -55,7 +60,8 @@ export const useBarsAnimation = () => {
 
         switch (currentAnimation.current.animation.type) {
             case 'WAVE_RADIAL_IN':
-            case 'WAVE_RADIAL_OUT': {
+            case 'WAVE_RADIAL_OUT':
+            case 'WAVE_VERTICAL_DOWN': {
                 const newBarData = currentAnimation.current.animationResultFunc(progress % 1);
                 setBarData(newBarData);
 
@@ -65,7 +71,7 @@ export const useBarsAnimation = () => {
                         resolveAnimationRef.current = null;
                     }
                 }
-                // The wave radial animation can go on forever!
+                // These loading animations can go on forever!
                 animationFrameRef.current = requestAnimationFrame(animateFrame);
                 break;
             }
@@ -94,6 +100,13 @@ export const useBarsAnimation = () => {
                     currentAnimation.current = {
                         animation: animation,
                         ...createWaveRadialAnimation(animation),
+                    };
+                    break;
+                case 'WAVE_VERTICAL_DOWN':
+                    resolveAnimationRef.current = resolve;
+                    currentAnimation.current = {
+                        animation: animation,
+                        ...createWaveVerticalAnimation(animation),
                     };
                     break;
                 case 'ANIMATE_BAR_CHANGE':
@@ -230,6 +243,41 @@ const createBarChangeNoAnimation = (animation: BarChangeNoAnimation): { animatio
 
         return {
             type: 'DATA' as const,
+            heights: heights
+        };
+    }
+
+    return { animationResultFunc, getProgress };
+}
+
+const WAVE_VERTICAL_DURATION = 3000;
+const createWaveVerticalAnimation = (animation: WaveVerticalAnimation): { animationResultFunc: AnimationResultFunc, getProgress: () => number } => {
+    const { stationLocations, type } = animation;
+    const northmostLat = Math.max(...Object.values(stationLocations).map(([_, lat]) => lat));
+    const southmostLat = Math.min(...Object.values(stationLocations).map(([_, lat]) => lat));
+    const latRange = northmostLat - southmostLat;
+
+    const startTime = Date.now();
+
+    const getProgress = () => {
+        return (Date.now() - startTime) / WAVE_VERTICAL_DURATION;
+    }
+
+    const animationResultFunc = (progress: number) => {
+        const heights = Object.keys(stationLocations).reduce((acc, stationId) => {
+            const [_, lat] = stationLocations[stationId];
+            const stationProgress = (northmostLat - lat) / latRange;
+            const wrappedWaveProgress = (progress + 1) % 1;
+            const distanceFromWave = Math.abs(wrappedWaveProgress - stationProgress);
+            const waveEffect = Math.max(0, 1 - distanceFromWave * 20);
+
+            const height = (MIN_PULSE_HEIGHT + (MAX_PULSE_HEIGHT - MIN_PULSE_HEIGHT) * waveEffect) * 0.00005;
+            acc[stationId] = { currentHeight: height };
+            return acc;
+        }, {});
+
+        return {
+            type: 'LOADING' as const,
             heights: heights
         };
     }

@@ -19,6 +19,7 @@ import { useFetchData } from '../hooks/useFetchData';
 import { useBarsAnimation } from '../hooks/useBarsAnimation';
 import { getAbsoluteHeight } from '../lib/bar-heights';
 import { usePrevious } from '../hooks/usePrevious';
+import { ALL_STATIONS_ID } from '../lib/all-stations';
 
 const NYC_BOUNDS = {
   minLng: -74.2591,  // Southwest longitude
@@ -106,8 +107,7 @@ const MTADataMap = ({ mapboxToken }) => {
   const mapRef = useRef(null);
 
   const barScaleLocked = useRef(selectedBarScale !== null);
-  const maxRidershipToday = useRef(Math.max(...data.current.map(d => d.ridership)));
-  const initialBarScale = useRef(maxRidershipToday.current > 0 ? 1 / maxRidershipToday.current : 1);
+  const initialBarScale = useRef(getInitialBarScale(data.current, selectedStation));
   const barScale = useRef(
     barScaleLocked ? selectedBarScale :
     showPercentage ? PERCENTAGE_BAR_SCALE : 
@@ -162,7 +162,7 @@ const MTADataMap = ({ mapboxToken }) => {
                              initialFetch;
 
     const shouldAnimateBarChange = shouldFetchData || hourChanged;
-    const shouldCompletePulseAnimationOnce = stationChanged || directionChanged || initialFetch;
+    const shouldCompletePulseAnimationOnce = (stationChanged || directionChanged || initialFetch) && newSelectedStation !== ALL_STATIONS_ID;
 
     if (dayChanged) setSelectedDay(newSelectedDay);
     if (stationChanged) setSelectedStation(newSelectedStation);
@@ -182,11 +182,18 @@ const MTADataMap = ({ mapboxToken }) => {
       // This is kind of shitty GPT code, but it makes sure that unless shouldCompletePulseAnimationOnce is true,
       // we wait 50ms for the data to load before starting the pulse animation (in case it's cached)
       const startLoadingAnimation = () => {
-        animationCompletedOncePromise = startBarAnimation({
-          type: newSelectedDirection === 'comingFrom' ? 'WAVE_RADIAL_IN' : 'WAVE_RADIAL_OUT',
-          centerLocation: [stationIdToStation[newSelectedStation].lon, stationIdToStation[newSelectedStation].lat],
-          otherStationLocations: Object.fromEntries(stations.map(d => [d.complex_id, [d.lon, d.lat]]))
-        });
+        if (newSelectedStation === ALL_STATIONS_ID) {
+          animationCompletedOncePromise = startBarAnimation({
+            type: 'WAVE_VERTICAL_DOWN',
+            stationLocations: Object.fromEntries(stations.map(d => [d.complex_id, [d.lon, d.lat]]))
+          });
+        } else {
+          animationCompletedOncePromise = startBarAnimation({
+            type: newSelectedDirection === 'comingFrom' ? 'WAVE_RADIAL_IN' : 'WAVE_RADIAL_OUT',
+            centerLocation: [stationIdToStation[newSelectedStation].lon, stationIdToStation[newSelectedStation].lat],
+            otherStationLocations: Object.fromEntries(stations.map(d => [d.complex_id, [d.lon, d.lat]]))
+          });
+        }
         loadingAnimationStarted = true;
       }
 
@@ -220,14 +227,13 @@ const MTADataMap = ({ mapboxToken }) => {
           return b.lat - a.lat;
         });
 
-        maxRidershipToday.current = Math.max(...sortedData.map(d => d.ridership));
-        initialBarScale.current = maxRidershipToday.current > 0 ? 1 / maxRidershipToday.current : 1;
+        initialBarScale.current = getInitialBarScale(sortedData, newSelectedStation);
         barScale.current = barScaleLocked.current ? newSelectedBarScale :
                                newShowPercentage  ? PERCENTAGE_BAR_SCALE : 
                                                     initialBarScale.current;
 
         data.current = sortedData;
-        if (newShowPercentage) {
+        if (newShowPercentage && stationIdToTotalRidershipByHour) {
           data.current = data.current.map(d => {
             const totalRidershipByHour = stationIdToTotalRidershipByHour[d.station_id];
             const totalRidership = totalRidershipByHour ? totalRidershipByHour[d.hour] ?? 0 : 0;
@@ -315,7 +321,7 @@ const MTADataMap = ({ mapboxToken }) => {
   };
 
   const getColorAbsolute = (value) => {
-    const intervals = [0, 10, 20, 40, 80, 160, 320, 640, 1280];
+    const intervals = [0, 10, 20, 40, 80, 160, 320, 640, 1280, 5120];
     const colors = [
       [255, 255, 240], // Light cream
       [240, 220, 200], // Very light tan
@@ -325,7 +331,8 @@ const MTADataMap = ({ mapboxToken }) => {
       [200, 100, 80],  // Muted orange
       [180, 60, 50],   // Deep orange-red
       [140, 40, 30],   // Brick red
-      [100, 20, 20]    // Dark brick red
+      [150, 20, 20],
+      [220, 20, 20],
     ];
 
     let colorIndex = intervals.findIndex(interval => value < interval) - 1;
@@ -380,63 +387,8 @@ const MTADataMap = ({ mapboxToken }) => {
       getHeight: [barScale, filteredDataWithStationsAnimatingToZero, barData],
     }
   });
-    
-  const selectedStationData = {
-    station_id: selectedStation,
-    position: [Number(stationIdToStation[selectedStation].lon), Number(stationIdToStation[selectedStation].lat)]
-  }
 
-  const pulseCircles = useDotPulseAnimation(selectedDirection);
-  const pulseData = pulseCircles.map(pulseCircle => ({ ...selectedStationData, ...pulseCircle }))
-
-  const mainStationPulse = new ScatterplotLayer({
-    id: 'main-station-pulse-scatterplot-layer',
-    data: pulseData,
-    pickable: false,
-    opacity: 1,
-    stroked: false,
-    filled: true,
-    lineWidthMinPixels: 1,
-    getPosition: d => d.position,
-    getRadius: d => 50 * d.scale,
-    getFillColor: d => [50, 115, 246, d.opacity],
-    updateTriggers: {
-      getRadius: [pulseData]
-    }
-  })
-
-  const mainStationPoint = new ScatterplotLayer({
-    id: 'main-station-scatterplot-layer',
-    data: [selectedStationData],
-    pickable: true,
-    opacity: 1,
-    stroked: false,
-    filled: true,
-    lineWidthMinPixels: 1,
-    getPosition: d => d.position,
-    getRadius: 50,
-    getFillColor: [50, 115, 246],
-    updateTriggers: {
-      getPosition: [selectedStationData]
-    },
-    onHover: (info) => {
-      if (info.object) {
-        const stationName = getStationName(info.object.station_id);
-        const totalRidership = filteredData.current.reduce((acc, d) => acc + d.ridership, 0);
-        setHoverInfo({
-          x: info.x,
-          y: info.y,
-          stationName,
-          stationId: info.object.station_id,
-          ridership: totalRidership,
-          ridershipLabel: selectedDirection === 'goingTo' ? 'Total departures' : 'Total arrivals',
-          showPercentage: false,
-        });
-      } else {
-        setHoverInfo(null);
-      }
-    }
-  })
+  const mainStationIndicatorLayers = useMainStationIndicatorLayers(selectedStation, selectedDirection);
 
   // replace this useEffect with a function that gets called imperatively when the data settings change
   useEffect(() => {
@@ -499,7 +451,7 @@ const MTADataMap = ({ mapboxToken }) => {
       <DeckGL
         viewState={viewport}
         controller={activeView === 'visualization' ? true : { scrollZoom: false }}
-        layers={[mainStationPulse, mainStationPoint, mapBarLayer]}
+        layers={[...mainStationIndicatorLayers, mapBarLayer]}
         onViewStateChange={({viewState}) => {
           const constrained = constrainViewState({viewState})
           setViewport(constrained);
@@ -561,5 +513,79 @@ const MTADataMap = ({ mapboxToken }) => {
     </div>
   );
 };
+
+const useMainStationIndicatorLayers = (selectedStation, selectedDirection) => {
+  const pulseCircles = useDotPulseAnimation(selectedDirection);
+
+  if (selectedStation === ALL_STATIONS_ID) {
+    return []
+  }
+
+  const selectedStationData = {
+    station_id: selectedStation,
+    position: [Number(stationIdToStation[selectedStation].lon), Number(stationIdToStation[selectedStation].lat)]
+  }
+  const pulseData = pulseCircles.map(pulseCircle => ({ ...selectedStationData, ...pulseCircle }))
+
+  const mainStationPulse = new ScatterplotLayer({
+    id: 'main-station-pulse-scatterplot-layer',
+    data: pulseData,
+    pickable: false,
+    opacity: 1,
+    stroked: false,
+    filled: true,
+    lineWidthMinPixels: 1,
+    getPosition: d => d.position,
+    getRadius: d => 50 * d.scale,
+    getFillColor: d => [50, 115, 246, d.opacity],
+    updateTriggers: {
+      getRadius: [pulseData]
+    }
+  })
+
+  const mainStationPoint = new ScatterplotLayer({
+    id: 'main-station-scatterplot-layer',
+    data: [selectedStationData],
+    pickable: true,
+    opacity: 1,
+    stroked: false,
+    filled: true,
+    lineWidthMinPixels: 1,
+    getPosition: d => d.position,
+    getRadius: 50,
+    getFillColor: [50, 115, 246],
+    updateTriggers: {
+      getPosition: [selectedStationData]
+    },
+    onHover: (info) => {
+      if (info.object) {
+        const stationName = getStationName(info.object.station_id);
+        const totalRidership = filteredData.current.reduce((acc, d) => acc + d.ridership, 0);
+        setHoverInfo({
+          x: info.x,
+          y: info.y,
+          stationName,
+          stationId: info.object.station_id,
+          ridership: totalRidership,
+          ridershipLabel: selectedDirection === 'goingTo' ? 'Total departures' : 'Total arrivals',
+          showPercentage: false,
+        });
+      } else {
+        setHoverInfo(null);
+      }
+    }
+  })
+
+  return [mainStationPulse, mainStationPoint]
+}
+
+const getInitialBarScale = (data, selectedStation) => {
+  if (selectedStation === ALL_STATIONS_ID) {
+    return 0.001
+  } 
+
+  const maxRidershipToday = Math.max(...data.map(d => d.ridership));
+  return 1 / maxRidershipToday
+}
 
 export default MTADataMap;

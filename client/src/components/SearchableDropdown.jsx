@@ -14,6 +14,10 @@ const SearchableStationDropdown = ({
   const dropdownRef = useRef(null);
 
   const optionsWithLines = useMemo(() => options.map(option => {
+    const containsLines = option[label].includes('(');
+    if (!containsLines) {
+      return { ...option, name: option[label], lines: [] };
+    }
     const name = option[label].slice(0, option[label].lastIndexOf('(')).trim();
     const lines = option[label].slice(option[label].lastIndexOf('(') + 1, option[label].lastIndexOf(')')).split(' ') || [];
     return { ...option, name, lines };
@@ -72,8 +76,8 @@ const SearchableStationDropdown = ({
   };
 
   const renderOptionContent = useCallback((option) => {
-    const name = option[label].slice(0, option[label].lastIndexOf('(')).trim();
-    const lines = option[label].slice(option[label].lastIndexOf('(') + 1, option[label].lastIndexOf(')')).split(' ') || [];
+    const name = option.name;
+    const lines = option.lines;
 
     return (
       <>
@@ -86,18 +90,18 @@ const SearchableStationDropdown = ({
   }, [label]);
 
   const renderedOptions = useMemo(() => {
-    return filter(options).map((option, index) => {
-          return (
-            <div
-              onClick={() => selectOption(option)}
-              className={`option ${
-                option[label] === selectedVal ? "selected" : ""
-              }`}
-              key={`${id}-${index}`}
-            >
-              {renderOptionContent(option)}
-            </div>
-          );
+    return filter(optionsWithLines).map((option, index) => {
+        return (
+        <div
+            onClick={() => selectOption(option)}
+            className={`option ${
+            option[label] === selectedVal ? "selected" : ""
+            }`}
+            key={`${id}-${index}`}
+        >
+            {renderOptionContent(option)}
+        </div>
+        );
     });
   }, [options, selectedVal, id, renderOptionContent, filter]);
   
