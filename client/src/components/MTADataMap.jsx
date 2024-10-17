@@ -181,7 +181,7 @@ const MTADataMap = ({ mapboxToken }) => {
       const startLoadingAnimation = () => {
         animationCompletedOncePromise = startBarAnimation({
           type: newSelectedDirection === 'comingFrom' ? 'WAVE_RADIAL_IN' : 'WAVE_RADIAL_OUT',
-          centerLocation: [stationIdToStation[selectedStation].lon, stationIdToStation[selectedStation].lat],
+          centerLocation: [stationIdToStation[newSelectedStation].lon, stationIdToStation[newSelectedStation].lat],
           otherStationLocations: Object.fromEntries(stations.map(d => [d.complex_id, [d.lon, d.lat]]))
         });
         loadingAnimationStarted = true;
@@ -524,12 +524,7 @@ const MTADataMap = ({ mapboxToken }) => {
       }
       {activeView === 'stories' && <StoriesView 
         setViewport={setViewport}
-        setSelectedStation={setSelectedStation} 
-        setSelectedDirection={setSelectedDirection} 
-        setSelectedDay={setSelectedDay} 
-        setSelectedHour={setSelectedHour} 
-        setSelectedMonths={setSelectedMonths} 
-        setSelectedBarScale={setSelectedBarScale}
+        handleDataSettingsChange={handleDataSettingsChange}
         limitVisibleLines={limitVisibleLines}
         selectedStation={selectedStation}
         selectedDirection={selectedDirection}
