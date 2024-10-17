@@ -1,7 +1,10 @@
 import { useCallback, useRef, useState } from 'react';
 import { stationIdToStation, stations } from '../lib/stations';
 
-type BarData = { [key: string]: { currentHeight: number, color: number[] } }
+type BarData = { 
+    type: 'LOADING' | 'DATA',
+    heights: { [key: string]: { currentHeight: number } }
+}
 type AnimationResultFunc = (progress: number) => BarData
 
 type WaveRadialAnimation = {
@@ -40,6 +43,8 @@ export const useBarsAnimation2 = () => {
     const currentAnimation = useRef<AnimationState | null>(null);
     const animationFrameRef = useRef<number | null>(null);
     const [barData, setBarData] = useState<BarData>({});
+    // Only used for wave radial animations. Allows us to know when it completed once
+    const resolveAnimationRef = useRef<(() => void) | null>(null);
 
     const animateFrame = useCallback((_timestamp: number) => {
         if (!currentAnimation.current) {
@@ -47,42 +52,66 @@ export const useBarsAnimation2 = () => {
         }
 
         const progress = currentAnimation.current.getProgress();
-        const newBarData = currentAnimation.current.animationResultFunc(progress);
-        setBarData(newBarData);
 
-        if (progress < 1) {
-            animationFrameRef.current = requestAnimationFrame(animateFrame);
-        } else {
-            cancelAnimation();
+        switch (currentAnimation.current.animation.type) {
+            case 'WAVE_RADIAL_IN':
+            case 'WAVE_RADIAL_OUT': {
+                const newBarData = currentAnimation.current.animationResultFunc(progress % 1);
+                setBarData(newBarData);
+
+                if (progress >= 1) {
+                    if (resolveAnimationRef.current) {
+                        resolveAnimationRef.current();
+                        resolveAnimationRef.current = null;
+                    }
+                }
+                // The wave radial animation can go on forever!
+                animationFrameRef.current = requestAnimationFrame(animateFrame);
+                break;
+            }
+            default: {
+                const newBarData = currentAnimation.current.animationResultFunc(progress);
+                setBarData(newBarData);
+
+                if (progress < 1) {
+                    animationFrameRef.current = requestAnimationFrame(animateFrame);
+                } else {
+                    cancelAnimation();
+                }
+                break;
+            }
         }
     }, []);
 
-    const startAnimation = useCallback(async (animation: Animation) => {
+    const startAnimation = useCallback((animation: Animation): Promise<void> => {
         cancelAnimation();
 
-        switch (animation.type) {
-            case 'WAVE_RADIAL_IN':
-            case 'WAVE_RADIAL_OUT':
-                currentAnimation.current = {
-                    animation: animation,
-                    ...createWaveRadialAnimation(animation),
-                };
-                break;
-            case 'ANIMATE_BAR_CHANGE':
-                currentAnimation.current = {
-                    animation: animation,
-                    ...createBarChangeAnimation(animation),
-                };
-                break;
-            case 'NO_ANIMATE_BAR_CHANGE':
-                // Special case: not really an animation, just set the bar data to the new bar heights
-                const { animationResultFunc } = createBarChangeNoAnimation(animation);
-                setBarData(animationResultFunc(1));
-                return;
-            default:
-                throw new Error('Unknown animation type');
-        }
-        animationFrameRef.current = requestAnimationFrame(animateFrame);
+        return new Promise((resolve) => {
+            switch (animation.type) {
+                case 'WAVE_RADIAL_IN':
+                case 'WAVE_RADIAL_OUT':
+                    resolveAnimationRef.current = resolve;
+                    currentAnimation.current = {
+                        animation: animation,
+                        ...createWaveRadialAnimation(animation),
+                    };
+                    break;
+                case 'ANIMATE_BAR_CHANGE':
+                    currentAnimation.current = {
+                        animation: animation,
+                        ...createBarChangeAnimation(animation),
+                    };
+                    break;
+                case 'NO_ANIMATE_BAR_CHANGE':
+                    // Special case: not really an animation, just set the bar data to the new bar heights
+                    const { animationResultFunc } = createBarChangeNoAnimation(animation);
+                    setBarData(animationResultFunc(1));
+                    return;
+                default:
+                    throw new Error('Unknown animation type');
+            }
+            animationFrameRef.current = requestAnimationFrame(animateFrame);
+        });
     }, []);
 
     const cancelAnimation = useCallback(() => {
@@ -91,6 +120,10 @@ export const useBarsAnimation2 = () => {
             cancelAnimationFrame(animationFrameRef.current);
             animationFrameRef.current = null;
         }
+        if (resolveAnimationRef.current) {
+            resolveAnimationRef.current();
+            resolveAnimationRef.current = null;
+        }
     }, []);
 
     return { barData, startAnimation, cancelAnimation };
@@ -98,7 +131,6 @@ export const useBarsAnimation2 = () => {
 
 const MIN_PULSE_HEIGHT = 1;
 const MAX_PULSE_HEIGHT = 50;
-const LOADING_COLOR = [204, 204, 255];
 // We multiply the progress by 1.1 so that the wave has time to complete its cycle.
 const PROGRESS_ALL_WAY_COEFF = 1.1;
 const WAVE_SPEED = 0.0005 / PROGRESS_ALL_WAY_COEFF;
@@ -124,7 +156,7 @@ const createWaveRadialAnimation = (animation: WaveRadialAnimation): { animationR
 
         const stationIdToHeight = Object.entries(otherStationLocations).reduce((acc, [stationId, [lon, lat]]) => {
             if (lon === centerX && lat === centerY) {
-                acc[stationId] = { currentHeight: 0, color: LOADING_COLOR };
+                acc[stationId] = { currentHeight: 0 };
                 return acc;
             }
 
@@ -148,7 +180,10 @@ const createWaveRadialAnimation = (animation: WaveRadialAnimation): { animationR
             return acc;
         }, {})
 
-        return stationIdToHeight;
+        return {
+            type: 'LOADING' as const,
+            heights: stationIdToHeight
+        };
     }
 
     return { animationResultFunc, getProgress };
@@ -165,7 +200,7 @@ const createBarChangeAnimation = (animation: BarChangeAnimation): { animationRes
     }
 
     const animationResultFunc = (progress: number) => {
-        return Object.keys(stationIdToStation).reduce((acc, stationId) => {
+        const heights = Object.keys(stationIdToStation).reduce((acc, stationId) => {
             const initialHeight = initialBarHeights[stationId] ?? 0;
             const newBarHeight = newBarHeights[stationId] ?? 0;
             const newHeight = initialHeight + (newBarHeight - initialHeight) * easeOutCubic(progress);
@@ -177,6 +212,11 @@ const createBarChangeAnimation = (animation: BarChangeAnimation): { animationRes
             acc[stationId] = { currentHeight: newHeight };
             return acc;
         }, {});
+
+        return {
+            type: 'DATA' as const,
+            heights: heights
+        };
     }
 
     return { animationResultFunc, getProgress };
@@ -187,13 +227,17 @@ const createBarChangeNoAnimation = (animation: BarChangeNoAnimation): { animatio
 
     const getProgress = () => 1;
     const animationResultFunc = (progress: number) => {
-        return Object.keys(stationIdToStation).reduce((acc, stationId) => {
+        const heights = Object.keys(stationIdToStation).reduce((acc, stationId) => {
             const newHeight = newBarHeights[stationId] ?? 0;
             acc[stationId] = { currentHeight: newHeight };
             return acc;
         }, {});
+
+        return {
+            type: 'DATA' as const,
+            heights: heights
+        };
     }
 
     return { animationResultFunc, getProgress };
 }
-

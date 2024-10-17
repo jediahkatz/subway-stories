@@ -29,9 +29,8 @@ const NYC_BOUNDS = {
   minZoom: 10,
 };
 
-const initialBarHeights = Object.fromEntries(stations.map(s => [s.complex_id, 0.01]));
+const LOADING_COLOR = [204, 204, 255];
 
-const LOADING_BAR_SCALE = 1;
 const PERCENTAGE_BAR_SCALE = 1 / 25;
 
 function constrainViewState({viewState}) {
@@ -114,7 +113,7 @@ const MTADataMap = ({ mapboxToken }) => {
 
   const { barData, startAnimation: startBarAnimation, cancelAnimation: cancelBarAnimation } = useBarsAnimation2();
   // This may be bad, if it turns out to be a problem we can recompute it in handleDataSettingsChange
-  const previousBarData = usePrevious(barData) || Object.fromEntries(stations.map(s => [s.complex_id, { currentHeight: 0, color: [204, 204, 255] }]));
+  const previousBarHeights = usePrevious(barData.heights) || Object.fromEntries(stations.map(s => [s.complex_id, { currentHeight: 0 }]));
 
   const getStationName = (id) => {
     // todo fix this linear search
@@ -160,6 +159,7 @@ const MTADataMap = ({ mapboxToken }) => {
                              initialFetch;
 
     const shouldAnimateBarChange = shouldFetchData || hourChanged;
+    const shouldCompletePulseAnimationOnce = stationChanged || directionChanged;
 
     if (dayChanged) setSelectedDay(newSelectedDay);
     if (stationChanged) setSelectedStation(newSelectedStation);
@@ -172,20 +172,46 @@ const MTADataMap = ({ mapboxToken }) => {
     if (shouldFetchData) {
       console.log('fetching data')
       setIsLoading(true);
-      startBarAnimation({
-        type: 'WAVE_RADIAL_IN',
-        centerLocation: [stationIdToStation[selectedStation].lon, stationIdToStation[selectedStation].lat],
-        otherStationLocations: Object.fromEntries(stations.map(d => [d.complex_id, [d.lon, d.lat]]))
-      });
+      let animationCompletedOncePromise;
+      let loadingAnimationStarted = false;
       let abortedDueToAnotherLoad = false;
+
+      // This is kind of shitty GPT code, but it makes sure that unless shouldCompletePulseAnimationOnce is true,
+      // we wait 50ms for the data to load before starting the pulse animation (in case it's cached)
+      const startLoadingAnimation = () => {
+        animationCompletedOncePromise = startBarAnimation({
+          type: newSelectedDirection === 'comingFrom' ? 'WAVE_RADIAL_IN' : 'WAVE_RADIAL_OUT',
+          centerLocation: [stationIdToStation[selectedStation].lon, stationIdToStation[selectedStation].lat],
+          otherStationLocations: Object.fromEntries(stations.map(d => [d.complex_id, [d.lon, d.lat]]))
+        });
+        loadingAnimationStarted = true;
+      }
+
+      if (shouldCompletePulseAnimationOnce) {
+        startLoadingAnimation();
+      }
+
+      const animationTimeoutPromise = new Promise(resolve => {
+        setTimeout(() => {
+          if (!loadingAnimationStarted) {
+            startLoadingAnimation();
+            loadingAnimationStarted = true;
+          }
+          resolve();
+        }, 50);
+      });
+
       try {
-        const { processedData, stationIdToTotalRidership: stationIdToTotalRidershipByHour } = await fetchData({
+        const fetchDataPromise = fetchData({
           selectedDay: newSelectedDay,
           selectedStation: newSelectedStation,
           selectedDirection: newSelectedDirection,
           selectedMonths: newSelectedMonths,
           showPercentage: newShowPercentage
         });
+
+        const [{ processedData, stationIdToTotalRidership: stationIdToTotalRidershipByHour }] = 
+          await Promise.all([fetchDataPromise, animationTimeoutPromise]);
 
         const sortedData = processedData.sort((a, b) => {
           return b.lat - a.lat;
@@ -209,6 +235,10 @@ const MTADataMap = ({ mapboxToken }) => {
           })
         }
         filteredData.current = data.current.filter(d => d.hour === newSelectedHour);
+
+        if (shouldCompletePulseAnimationOnce) {
+          await animationCompletedOncePromise;
+        }
 
         setIsLoading(false);
 
@@ -238,7 +268,7 @@ const MTADataMap = ({ mapboxToken }) => {
     if (shouldAnimateBarChange) {
       startBarAnimation({
         type: 'ANIMATE_BAR_CHANGE',
-        initialBarHeights: Object.fromEntries(stations.map(s => [s.complex_id, previousBarData[s.complex_id].currentHeight])),
+        initialBarHeights: Object.fromEntries(stations.map(s => [s.complex_id, previousBarHeights[s.complex_id].currentHeight])),
         newBarHeights: newTargetBarHeights,
       });
     } else if (selectedBarScaleChanged) {
@@ -256,7 +286,7 @@ const MTADataMap = ({ mapboxToken }) => {
     selectedHour, 
     showPercentage, 
     selectedBarScale, 
-    previousBarData, 
+    previousBarHeights, 
   ])
 
   useEffect(() => {
@@ -306,15 +336,10 @@ const MTADataMap = ({ mapboxToken }) => {
     data: filteredData.current,
     pickable: true,
     getBasePosition: d => [d.lon, d.lat],
-    getHeight: d => { 
-      if (!barData[d.station_id]) {
-        console.log('no bar data for', d.station_id, barData)
-      }
-      return barData[d.station_id].currentHeight 
-    },
+    getHeight: d => barData.heights[d.station_id].currentHeight,
     getWidth: _d => 50,
     getColor: d => {
-      const color = d.color ?? getColorAbsolute(d.ridership);
+      const color = barData.type === 'LOADING' ? LOADING_COLOR : getColorAbsolute(d.ridership);
       return [...color, 255];
     },
     onHover: (info) => {
