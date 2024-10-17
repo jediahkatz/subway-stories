@@ -68,7 +68,13 @@ const MTADataMap = ({ mapboxToken }) => {
   });
 
   const data = useRef([]);
-  const filteredData = useRef([]);
+  const filteredData = useRef(stations.map(s => ({
+    station_id: s.complex_id,
+    lon: s.lon,
+    lat: s.lat,
+    ridership: 0,
+    percentage: 0,
+  })));
 
   const [hoverInfo, setHoverInfo] = useState(null);
   const [selectedHour, setSelectedHour] = useState(() => {
@@ -88,8 +94,6 @@ const MTADataMap = ({ mapboxToken }) => {
     return savedState?.selectedDirection || 'goingTo';
   });
   const [isLoading, setIsLoading] = useState(false);
-  // we need to overhaul the animation system and get rid of loadCount.
-  const [loadCount, setLoadCount] = useState(0);
   const [selectedBarScale, setSelectedBarScale] = useState(null); // number | null (default)
   const [selectedMonths, setSelectedMonths] = useState(() => {
     const savedState = loadStateFromSessionStorage();
@@ -159,7 +163,7 @@ const MTADataMap = ({ mapboxToken }) => {
                              initialFetch;
 
     const shouldAnimateBarChange = shouldFetchData || hourChanged;
-    const shouldCompletePulseAnimationOnce = stationChanged || directionChanged;
+    const shouldCompletePulseAnimationOnce = stationChanged || directionChanged || initialFetch;
 
     if (dayChanged) setSelectedDay(newSelectedDay);
     if (stationChanged) setSelectedStation(newSelectedStation);
@@ -336,7 +340,7 @@ const MTADataMap = ({ mapboxToken }) => {
     data: filteredData.current,
     pickable: true,
     getBasePosition: d => [d.lon, d.lat],
-    getHeight: d => barData.heights[d.station_id].currentHeight,
+    getHeight: d => barData.heights[d.station_id]?.currentHeight ?? 0,
     getWidth: _d => 50,
     getColor: d => {
       const color = barData.type === 'LOADING' ? LOADING_COLOR : getColorAbsolute(d.ridership);
@@ -360,9 +364,9 @@ const MTADataMap = ({ mapboxToken }) => {
       }
     },
     updateTriggers: {
-      data: [data.current],
-      getColor: [data.current, barData],
-      getHeight: [barScale, data.current, barData],
+      data: [filteredData.current],
+      getColor: [filteredData.current, barData],
+      getHeight: [barScale, filteredData.current, barData],
     }
   });
     

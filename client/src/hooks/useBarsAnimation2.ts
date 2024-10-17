@@ -42,7 +42,7 @@ type AnimationState = {
 export const useBarsAnimation2 = () => {
     const currentAnimation = useRef<AnimationState | null>(null);
     const animationFrameRef = useRef<number | null>(null);
-    const [barData, setBarData] = useState<BarData>({});
+    const [barData, setBarData] = useState<BarData>({ type: 'LOADING', heights: {} });
     // Only used for wave radial animations. Allows us to know when it completed once
     const resolveAnimationRef = useRef<(() => void) | null>(null);
 
