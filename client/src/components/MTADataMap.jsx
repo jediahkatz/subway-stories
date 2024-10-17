@@ -335,9 +335,21 @@ const MTADataMap = ({ mapboxToken }) => {
     return colors[colorIndex];
   };
 
+  const filteredDataWithStationsAnimatingToZero = useMemo(() => {
+    const stationIds = new Set(filteredData.current.map(d => d.station_id));
+    const missingStations = stations.filter(s => !stationIds.has(s.complex_id));
+    return [...filteredData.current, ...missingStations.map(s => ({
+      station_id: s.complex_id,
+      ridership: 0,
+      percentage: 0,
+      lat: s.lat,
+      lon: s.lon,
+    }))];
+  }, [filteredData.current]);
+
   const mapBarLayer = new MapBarLayer({
     id: 'ridership-composite-layer',
-    data: filteredData.current,
+    data: filteredDataWithStationsAnimatingToZero,
     pickable: true,
     getBasePosition: d => [d.lon, d.lat],
     getHeight: d => barData.heights[d.station_id]?.currentHeight ?? 0,
@@ -364,9 +376,9 @@ const MTADataMap = ({ mapboxToken }) => {
       }
     },
     updateTriggers: {
-      data: [filteredData.current],
-      getColor: [filteredData.current, barData],
-      getHeight: [barScale, filteredData.current, barData],
+      data: [filteredDataWithStationsAnimatingToZero],
+      getColor: [filteredDataWithStationsAnimatingToZero, barData],
+      getHeight: [barScale, filteredDataWithStationsAnimatingToZero, barData],
     }
   });
     
