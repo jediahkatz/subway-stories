@@ -105,7 +105,6 @@ const StoriesView = React.memo(({
   setSelectedMonths, 
   setSelectedBarScale,
   limitVisibleLines,
-  markCurrentBarHeights,
   selectedStation,
   selectedDirection,
   selectedDay,
@@ -126,8 +125,6 @@ const StoriesView = React.memo(({
   
   const handleStepEnter = useCallback((response) => {
     const { index } = response;
-
-    markCurrentBarHeights();
 
     setViewport(viewport => {
       const newViewport = getViewportForBounds({

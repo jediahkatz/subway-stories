@@ -11,12 +11,15 @@ import { useBarsAnimation } from '../hooks/useBarsAnimation';
 import { useDotPulseAnimation } from '../hooks/useDotAnimation';
 import subwayRoutes from '../data/nyc-subway-routes.js';
 import subwayLayerStyles from '../data/subway-layer-styles.js';
-import { fetchRidershipByStationFromSqlServer, fetchTotalRidershipFromSqlServer } from '../lib/data-fetcher';
 import MapBarLayer from './MapBarLayer';
 import { saveStateToSessionStorage, loadStateFromSessionStorage } from '../lib/sessionManager.js';
 import ViewTabs from './ViewTabs';
 import StoriesView, { ALL_MONTHS } from './StoriesView';
 import { FlyToInterpolator } from 'deck.gl';
+import { useFetchData } from '../hooks/useFetchData';
+import { useBarsAnimation2 } from '../hooks/useBarsAnimation2';
+import { getAbsoluteHeight } from '../lib/bar-heights';
+import { usePrevious } from '../hooks/usePrevious';
 
 const NYC_BOUNDS = {
   minLng: -74.2591,  // Southwest longitude
@@ -25,6 +28,8 @@ const NYC_BOUNDS = {
   maxLat: 40.9176,   // Northeast latitude
   minZoom: 10,
 };
+
+const initialBarHeights = Object.fromEntries(stations.map(s => [s.complex_id, 0.01]));
 
 const LOADING_BAR_SCALE = 1;
 const PERCENTAGE_BAR_SCALE = 1 / 25;
@@ -63,7 +68,9 @@ const MTADataMap = ({ mapboxToken }) => {
     };
   });
 
-  const [data, setData] = useState([]);
+  const data = useRef([]);
+  const filteredData = useRef([]);
+
   const [hoverInfo, setHoverInfo] = useState(null);
   const [selectedHour, setSelectedHour] = useState(() => {
     const savedState = loadStateFromSessionStorage();
@@ -89,7 +96,6 @@ const MTADataMap = ({ mapboxToken }) => {
     const savedState = loadStateFromSessionStorage();
     return savedState?.selectedMonths || ALL_MONTHS;
   });
-  const [stationIdToTotalRidershipByHour, setStationIdToTotalRidershipByHour] = useState(null);
   const [showPercentage, setShowPercentage] = useState(() => {
     const savedState = loadStateFromSessionStorage();
     return savedState?.showPercentage || false;
@@ -97,58 +103,18 @@ const MTADataMap = ({ mapboxToken }) => {
 
   const mapRef = useRef(null);
 
-  const maxRidershipToday = React.useMemo(() => Math.max(...data.map(d => d.ridership)), [data]);
-
-  // Sort so that we render stations in correct z-order
-  const sortedData = React.useMemo(() =>
-    data.sort((a, b) => {
-      return b.lat - a.lat;
-    })
-    , [data]);
-  const filteredData = React.useMemo(() => 
-    sortedData.filter(d => d.hour === selectedHour)
-    , [sortedData, selectedHour]);
-
-  const percentageData = React.useMemo(() => {
-    if (!showPercentage || !stationIdToTotalRidershipByHour) return filteredData;
-
-    return filteredData.map(d => {
-      const totalRidershipByHour = stationIdToTotalRidershipByHour[d.station_id];
-      const totalRidership = totalRidershipByHour ? totalRidershipByHour[d.hour] ?? 0 : 0;
-      return {
-        ...d,
-        percentage: totalRidership > 0 ? 100 * d.ridership / totalRidership : 0,
-      }
-    })
-  }, [filteredData, stationIdToTotalRidershipByHour, showPercentage])
-
-  const barScaleLocked = selectedBarScale !== null;
-  const initialBarScale = maxRidershipToday > 0 ? 1 / maxRidershipToday : 1;
-  const barScale = 
+  const barScaleLocked = useRef(selectedBarScale !== null);
+  const maxRidershipToday = useRef(Math.max(...data.current.map(d => d.ridership)));
+  const initialBarScale = useRef(maxRidershipToday.current > 0 ? 1 / maxRidershipToday.current : 1);
+  const barScale = useRef(
     barScaleLocked ? selectedBarScale :
     showPercentage ? PERCENTAGE_BAR_SCALE : 
-                     initialBarScale;
-  
-  const { lineData, startAnimation, markCurrentBarHeights } = useBarsAnimation(
-    data.length > 0 ? percentageData : stations,
-    barScale,
-    showPercentage,
-    isLoading,
-    loadCount,
-    selectedStation,
-    selectedDirection
+                     initialBarScale.current
   );
 
-  // This is kind of a hack. When we make a change that affects the final rendered bar scale 
-  // and requires re-animating, (e.g. changing showPercentage or entering the loading state)
-  // there's a one-frame delay when the bar scale is changed, but the new lineData hasn't 
-  // been calculated yet. Here we make sure that the bar scale used for the final render is 
-  // set based on the data that we're rendering.
-  const barScaleForFinalRender =
-    lineData.type === 'LOADING'                                 ? LOADING_BAR_SCALE : 
-    !barScaleLocked && lineData.type === 'RIDERSHIP'            ? initialBarScale : 
-    !barScaleLocked && lineData.type === 'RIDERSHIP_PERCENTAGE' ? PERCENTAGE_BAR_SCALE :
-                                                                  barScale;
+  const { barData, startAnimation: startBarAnimation, cancelAnimation: cancelBarAnimation } = useBarsAnimation2();
+  // This may be bad, if it turns out to be a problem we can recompute it in handleDataSettingsChange
+  const previousBarData = usePrevious(barData) || Object.fromEntries(stations.map(s => [s.complex_id, { currentHeight: 0, color: [204, 204, 255] }]));
 
   const getStationName = (id) => {
     // todo fix this linear search
@@ -156,59 +122,95 @@ const MTADataMap = ({ mapboxToken }) => {
     return station ? station.display_name : 'Unknown Station';
   };
 
-  const handleHourChange = React.useCallback((newHour) => {
-    markCurrentBarHeights(barScale, showPercentage);
-    setSelectedHour(newHour);
-    startAnimation();
-  }, [selectedHour, startAnimation]);
+  const { fetchData } = useFetchData();
 
-  const handleShowPercentageChange = React.useCallback((shouldShowPercentage) => {
-    markCurrentBarHeights(barScale, showPercentage);
-    setShowPercentage(shouldShowPercentage)
-    startAnimation();
-  }, [showPercentage, startAnimation])
+  const handleDataSettingsChange = React.useCallback(async ({ 
+    newSelectedDay, 
+    newSelectedStation, 
+    newSelectedDirection, 
+    newSelectedMonths, 
+    newSelectedHour, 
+    newShowPercentage,
+    newSelectedBarScale,
+    initialFetch = false,
+  }) => {
+    const dayChanged = newSelectedDay !== undefined && newSelectedDay !== selectedDay;
+    const stationChanged = newSelectedStation !== undefined && newSelectedStation !== selectedStation;
+    const directionChanged = newSelectedDirection !== undefined && newSelectedDirection !== selectedDirection;
+    const monthsChanged = newSelectedMonths !== undefined && newSelectedMonths !== selectedMonths;
+    const hourChanged = newSelectedHour !== undefined && newSelectedHour !== selectedHour;
+    const showPercentageChanged = newShowPercentage !== undefined && newShowPercentage !== showPercentage;
+    const selectedBarScaleChanged = newSelectedBarScale !== undefined && newSelectedBarScale !== selectedBarScale;
 
-  const handleDayChange = React.useCallback((newDay) => {
-    markCurrentBarHeights(barScale, showPercentage);
-    setSelectedDay(newDay);
-    startAnimation();
-  }, [barScale, showPercentage, startAnimation])
+    newSelectedDay = dayChanged ? newSelectedDay : selectedDay;
+    newSelectedStation = stationChanged ? newSelectedStation : selectedStation;
+    newSelectedDirection = directionChanged ? newSelectedDirection : selectedDirection;
+    newSelectedMonths = monthsChanged ? newSelectedMonths : selectedMonths;
+    newSelectedHour = hourChanged ? newSelectedHour : selectedHour;
+    newShowPercentage = showPercentageChanged ? newShowPercentage : showPercentage;
+    newSelectedBarScale = selectedBarScaleChanged ? newSelectedBarScale : selectedBarScale;
 
-  const handleDirectionChange = React.useCallback((newDirection) => {
-    markCurrentBarHeights(barScale, showPercentage);
-    setSelectedDirection(newDirection);
-    startAnimation();
-  }, [barScale, showPercentage, startAnimation])
+    barScaleLocked.current = newSelectedBarScale !== null;
 
-  const handleStationChange = React.useCallback((newStation) => {
-    markCurrentBarHeights(barScale, showPercentage);
-    setSelectedStation(newStation);
-    startAnimation();
-  }, [barScale, showPercentage, startAnimation])
+    const shouldFetchData = dayChanged ||
+                             stationChanged ||
+                             directionChanged ||
+                             monthsChanged ||
+                             showPercentageChanged ||
+                             initialFetch;
 
-  const handleMonthsChange = React.useCallback((newMonths) => {
-    markCurrentBarHeights(barScale, showPercentage);
-    setSelectedMonths(newMonths);
-    startAnimation();
-  }, [barScale, showPercentage, startAnimation])
+    const shouldAnimateBarChange = shouldFetchData || hourChanged;
 
-  // replace this useEffect with a function that gets called imperatively when the data settings change
-  useEffect(() => {
-    console.log('hi')
-    setLoadCount(loadCount => loadCount + 1);
-    const abortController = new AbortController();
-    const loadData = async () => {
+    if (dayChanged) setSelectedDay(newSelectedDay);
+    if (stationChanged) setSelectedStation(newSelectedStation);
+    if (directionChanged) setSelectedDirection(newSelectedDirection);
+    if (monthsChanged) setSelectedMonths(newSelectedMonths);
+    if (hourChanged) setSelectedHour(newSelectedHour);
+    if (showPercentageChanged) setShowPercentage(newShowPercentage);
+    if (selectedBarScaleChanged) setSelectedBarScale(newSelectedBarScale);
+    
+    if (shouldFetchData) {
+      console.log('fetching data')
+      setIsLoading(true);
+      startBarAnimation({
+        type: 'WAVE_RADIAL_IN',
+        centerLocation: [stationIdToStation[selectedStation].lon, stationIdToStation[selectedStation].lat],
+        otherStationLocations: Object.fromEntries(stations.map(d => [d.complex_id, [d.lon, d.lat]]))
+      });
       let abortedDueToAnotherLoad = false;
       try {
-        const [processedData, stationIdToTotalRidership] = await Promise.all([
-          fetchRidershipByStationFromSqlServer(selectedDay, selectedStation, selectedDirection, selectedMonths, abortController.signal),
-          showPercentage ? fetchTotalRidershipFromSqlServer(selectedDay, selectedMonths, selectedDirection, abortController.signal) : null
-        ]);
+        const { processedData, stationIdToTotalRidership: stationIdToTotalRidershipByHour } = await fetchData({
+          selectedDay: newSelectedDay,
+          selectedStation: newSelectedStation,
+          selectedDirection: newSelectedDirection,
+          selectedMonths: newSelectedMonths,
+          showPercentage: newShowPercentage
+        });
 
-        setData(processedData);
-        setStationIdToTotalRidershipByHour(stationIdToTotalRidership);
+        const sortedData = processedData.sort((a, b) => {
+          return b.lat - a.lat;
+        });
+
+        maxRidershipToday.current = Math.max(...sortedData.map(d => d.ridership));
+        initialBarScale.current = maxRidershipToday.current > 0 ? 1 / maxRidershipToday.current : 1;
+        barScale.current = barScaleLocked.current ? newSelectedBarScale :
+                               newShowPercentage  ? PERCENTAGE_BAR_SCALE : 
+                                                    initialBarScale.current;
+
+        data.current = sortedData;
+        if (newShowPercentage) {
+          data.current = data.current.map(d => {
+            const totalRidershipByHour = stationIdToTotalRidershipByHour[d.station_id];
+            const totalRidership = totalRidershipByHour ? totalRidershipByHour[d.hour] ?? 0 : 0;
+            return {
+              ...d,
+              percentage: totalRidership > 0 ? 100 * d.ridership / totalRidership : 0,
+            }
+          })
+        }
+        filteredData.current = data.current.filter(d => d.hour === newSelectedHour);
+
         setIsLoading(false);
-        startAnimation();
 
       } catch (error) {
         if (error.name === 'AbortError') {
@@ -219,13 +221,55 @@ const MTADataMap = ({ mapboxToken }) => {
       } finally {
         if (!abortedDueToAnotherLoad) {
           setIsLoading(false);
-          startAnimation();
         }
       }
-    };
-    loadData();
-    return () => abortController.abort();
-  }, [selectedDay, selectedStation, selectedDirection, JSON.stringify(selectedMonths), showPercentage]);
+
+    } else if (selectedBarScaleChanged) {
+      barScale.current = barScaleLocked.current ? newSelectedBarScale :
+                             newShowPercentage  ? PERCENTAGE_BAR_SCALE : 
+                                                  initialBarScale.current;
+
+    } else if (hourChanged) {
+      filteredData.current = data.current.filter(d => d.hour === newSelectedHour);
+    }
+
+    const newTargetBarHeights = Object.fromEntries(filteredData.current.map(d => [d.station_id, getAbsoluteHeight(d, barScale.current, newShowPercentage)]));
+
+    if (shouldAnimateBarChange) {
+      startBarAnimation({
+        type: 'ANIMATE_BAR_CHANGE',
+        initialBarHeights: Object.fromEntries(stations.map(s => [s.complex_id, previousBarData[s.complex_id].currentHeight])),
+        newBarHeights: newTargetBarHeights,
+      });
+    } else if (selectedBarScaleChanged) {
+      startBarAnimation({
+        type: 'NO_ANIMATE_BAR_CHANGE',
+        newBarHeights: newTargetBarHeights,
+      });
+    }
+
+  }, [
+    selectedDay, 
+    selectedStation, 
+    selectedDirection, 
+    selectedMonths, 
+    selectedHour, 
+    showPercentage, 
+    selectedBarScale, 
+    previousBarData, 
+  ])
+
+  useEffect(() => {
+    handleDataSettingsChange({
+      newSelectedDay: selectedDay,
+      newSelectedStation: selectedStation,
+      newSelectedDirection: selectedDirection,
+      newSelectedMonths: selectedMonths,
+      newSelectedHour: selectedHour,
+      newShowPercentage: showPercentage,
+      initialFetch: true,
+    })
+  }, [])
 
   const getColorRelative = (value, max) => {
     const colorscale = [
@@ -256,13 +300,18 @@ const MTADataMap = ({ mapboxToken }) => {
 
     return colors[colorIndex];
   };
-  
+
   const mapBarLayer = new MapBarLayer({
     id: 'ridership-composite-layer',
-    data: lineData.data.filter(d => d.targetHeight > 0),
+    data: filteredData.current,
     pickable: true,
     getBasePosition: d => [d.lon, d.lat],
-    getHeight: d => d.targetHeight * barScaleForFinalRender,
+    getHeight: d => { 
+      if (!barData[d.station_id]) {
+        console.log('no bar data for', d.station_id, barData)
+      }
+      return barData[d.station_id].currentHeight 
+    },
     getWidth: _d => 50,
     getColor: d => {
       const color = d.color ?? getColorAbsolute(d.ridership);
@@ -286,13 +335,12 @@ const MTADataMap = ({ mapboxToken }) => {
       }
     },
     updateTriggers: {
-      data: [data],
-      getColor: [data],
-      getHeight: [barScale, data],
+      data: [data.current],
+      getColor: [data.current, barData],
+      getHeight: [barScale, data.current, barData],
     }
   });
-  
-  
+    
   const selectedStationData = {
     station_id: selectedStation,
     position: [Number(stationIdToStation[selectedStation].lon), Number(stationIdToStation[selectedStation].lat)]
@@ -334,7 +382,7 @@ const MTADataMap = ({ mapboxToken }) => {
     onHover: (info) => {
       if (info.object) {
         const stationName = getStationName(info.object.station_id);
-        const totalRidership = filteredData.reduce((acc, d) => acc + d.ridership, 0);
+        const totalRidership = filteredData.current.reduce((acc, d) => acc + d.ridership, 0);
         setHoverInfo({
           x: info.x,
           y: info.y,
@@ -366,10 +414,6 @@ const MTADataMap = ({ mapboxToken }) => {
 
   // Add new state for active view
   const [activeView, setActiveView] = useState('visualization');
-  const handleSetActiveView = (view) => {
-    setLoadCount(loadCount => loadCount + 1)
-    setActiveView(view)
-  };
   
   const drawSubwayLines = useCallback((map) => {
     map.addSource('nyc-subway-routes', {
@@ -411,7 +455,7 @@ const MTADataMap = ({ mapboxToken }) => {
 
   return (
     <div className="map-container">
-      <ViewTabs activeView={activeView} setActiveView={handleSetActiveView} limitVisibleLines={limitVisibleLines} />
+      <ViewTabs activeView={activeView} setActiveView={setActiveView} limitVisibleLines={limitVisibleLines} />
       <DeckGL
         viewState={viewport}
         controller={activeView === 'visualization' ? true : { scrollZoom: false }}
@@ -437,20 +481,20 @@ const MTADataMap = ({ mapboxToken }) => {
       {activeView === 'visualization' && 
         <DataControls
           selectedHour={selectedHour}
-          setSelectedHour={handleHourChange}
+          setSelectedHour={(hour) => handleDataSettingsChange({ newSelectedHour: hour })}
           selectedDay={selectedDay}
-          setSelectedDay={handleDayChange}
+          setSelectedDay={(day) => handleDataSettingsChange({ newSelectedDay: day })}
           selectedStation={selectedStation}
-          setSelectedStation={handleStationChange}
+          setSelectedStation={(station) => handleDataSettingsChange({ newSelectedStation: station })}
           selectedDirection={selectedDirection}
-          setSelectedDirection={handleDirectionChange}
-          barScale={barScale}
-          setSelectedBarScale={setSelectedBarScale}
-          initialBarScale={initialBarScale}
+          setSelectedDirection={(direction) => handleDataSettingsChange({ newSelectedDirection: direction })}
+          barScale={barScale.current}
+          setSelectedBarScale={(scale) => handleDataSettingsChange({ newSelectedBarScale: scale })}
+          initialBarScale={initialBarScale.current}
           selectedMonths={selectedMonths}
-          setSelectedMonths={handleMonthsChange}
+          setSelectedMonths={(months) => handleDataSettingsChange({ newSelectedMonths: months })}
           showPercentage={showPercentage}
-          setShowPercentage={handleShowPercentageChange}
+          setShowPercentage={(shouldShowPercentage) => handleDataSettingsChange({ newShowPercentage: shouldShowPercentage })}
         />
       }
       {activeView === 'stories' && <StoriesView 
@@ -462,7 +506,6 @@ const MTADataMap = ({ mapboxToken }) => {
         setSelectedMonths={setSelectedMonths} 
         setSelectedBarScale={setSelectedBarScale}
         limitVisibleLines={limitVisibleLines}
-        markCurrentBarHeights={() => markCurrentBarHeights(barScale, showPercentage)}
         selectedStation={selectedStation}
         selectedDirection={selectedDirection}
         selectedDay={selectedDay}
