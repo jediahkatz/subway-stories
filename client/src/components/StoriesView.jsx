@@ -97,13 +97,8 @@ const FLOATING_INFO_BAR_HEIGHT = 54;
 const FLOATING_INFO_BAR_OFFSET = 20;
 
 const StoriesView = React.memo(({
+  handleDataSettingsChange,
   setViewport, 
-  setSelectedStation, 
-  setSelectedDirection, 
-  setSelectedDay, 
-  setSelectedHour, 
-  setSelectedMonths, 
-  setSelectedBarScale,
   limitVisibleLines,
   selectedStation,
   selectedDirection,
@@ -143,13 +138,15 @@ const StoriesView = React.memo(({
         ...transition,
       };
     });
-    setSelectedStation(stories[index].dataview.station);
-    setSelectedDirection(stories[index].dataview.direction);
-    setSelectedDay(stories[index].dataview.day);
-    setSelectedHour(stories[index].dataview.hour);
+    handleDataSettingsChange({
+      newSelectedStation: stories[index].dataview.station,
+      newSelectedDirection: stories[index].dataview.direction,
+      newSelectedDay: stories[index].dataview.day,
+      newSelectedHour: stories[index].dataview.hour,
+      newSelectedMonths: stories[index].dataview.months,
+    });
     limitVisibleLines(stories[index].dataview.visibleLines);
-    setSelectedMonths(stories[index].dataview.months);
-  }, [setViewport, setSelectedStation, setSelectedDirection, setSelectedDay, setSelectedHour, setSelectedMonths]);
+  }, [setViewport, handleDataSettingsChange]);
 
   useEffect(() => {
     scrollerRef.current
