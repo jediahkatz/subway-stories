@@ -7,7 +7,6 @@ import Tooltip from './Tooltip';
 import DataControls from './DataControls';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import './MTADataMap.css';
-import { useBarsAnimation } from '../hooks/useBarsAnimation';
 import { useDotPulseAnimation } from '../hooks/useDotAnimation';
 import subwayRoutes from '../data/nyc-subway-routes.js';
 import subwayLayerStyles from '../data/subway-layer-styles.js';
@@ -17,7 +16,7 @@ import ViewTabs from './ViewTabs';
 import StoriesView, { ALL_MONTHS } from './StoriesView';
 import { FlyToInterpolator } from 'deck.gl';
 import { useFetchData } from '../hooks/useFetchData';
-import { useBarsAnimation2 } from '../hooks/useBarsAnimation2';
+import { useBarsAnimation } from '../hooks/useBarsAnimation';
 import { getAbsoluteHeight } from '../lib/bar-heights';
 import { usePrevious } from '../hooks/usePrevious';
 
@@ -115,7 +114,7 @@ const MTADataMap = ({ mapboxToken }) => {
                      initialBarScale.current
   );
 
-  const { barData, startAnimation: startBarAnimation, cancelAnimation: cancelBarAnimation } = useBarsAnimation2();
+  const { barData, startAnimation: startBarAnimation, cancelAnimation: cancelBarAnimation } = useBarsAnimation();
   // This may be bad, if it turns out to be a problem we can recompute it in handleDataSettingsChange
   const previousBarHeights = usePrevious(barData.heights) || Object.fromEntries(stations.map(s => [s.complex_id, { currentHeight: 0 }]));
 

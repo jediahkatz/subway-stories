@@ -6,8 +6,6 @@ import { useDebounce } from '../lib/debounce';
 import SearchableStationDropdown from './SearchableDropdown';
 import './DataControls.css';
 
-const ANIMATE_HOUR_PERIOD = 500
-
 const daysOfWeek = [
   'Monday',
   'Tuesday',
@@ -36,36 +34,9 @@ const DataControls = ({
   showPercentage,
   setShowPercentage
 }) => {
-  const [isPlaying, setIsPlaying] = useState(true);
   const [showMoreControls, setShowMoreControls] = useState(false);
 
   const debouncedSetSelectedMonths = useDebounce(setSelectedMonths, 1000);
-
-  const togglePlay = useCallback(() => {
-    setIsPlaying(prev => !prev);
-  }, []);
-
-  // remove this useEffect
-  // React.useEffect(() => {
-  //   let intervalId;
-  //   if (isPlaying) {
-  //     intervalId = setInterval(() => {
-  //       setSelectedHour(prevHour => (prevHour + 1) % 24, selectedHour);
-  //     }, ANIMATE_HOUR_PERIOD);
-  //   }
-  //   return () => clearInterval(intervalId);
-  // }, [isPlaying, setSelectedHour, selectedHour]);
-
-  // horrible ai generated code but works
-  const handleMonthToggle = (monthIndex) => {
-    debouncedSetSelectedMonths(prev => {
-      if (prev.includes(monthIndex)) {
-        return prev.filter(m => m !== monthIndex);
-      } else {
-        return [...prev, monthIndex].sort((a, b) => a - b);
-      }
-    });
-  };
 
   return (
     <div className="map-controls">
@@ -90,13 +61,9 @@ const DataControls = ({
           <CoolSlider
             min={0}
             max={23}
-            disabled={isPlaying}
             value={selectedHour}
             onChange={newValue => setSelectedHour(newValue, selectedHour) }
           />
-          {/* <button onClick={togglePlay} className="play-button">
-            {isPlaying ? '⏸' : '▶'}
-          </button> */}
         </div>
       </div>
       <label htmlFor="ridership-controls">

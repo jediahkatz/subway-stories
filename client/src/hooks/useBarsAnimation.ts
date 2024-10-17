@@ -39,7 +39,7 @@ type AnimationState = {
     getProgress: () => number
 }
 
-export const useBarsAnimation2 = () => {
+export const useBarsAnimation = () => {
     const currentAnimation = useRef<AnimationState | null>(null);
     const animationFrameRef = useRef<number | null>(null);
     const [barData, setBarData] = useState<BarData>({ type: 'LOADING', heights: {} });
