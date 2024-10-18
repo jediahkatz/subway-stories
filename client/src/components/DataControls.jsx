@@ -3,7 +3,7 @@ import { stationIdToStation, stations } from '../lib/stations';
 import { Slider, LogarithmicSlider, CoolSlider } from './Slider';
 import MonthSelector from './MonthSelector';
 import { useDebounce } from '../lib/debounce';
-import SearchableStationDropdown from './SearchableDropdown';
+import { SearchableStringDropdown, SearchableStationDropdown } from './SearchableDropdown';
 import './DataControls.css';
 import { ALL_STATIONS_ID, ALL_STATIONS_OBJECT } from '../lib/all-stations';
 
@@ -46,16 +46,12 @@ const DataControls = ({
     <div className="map-controls">
       <label>
         <p className="map-controls-label">Day</p>
-        <select
-          value={selectedDay}
-          onChange={e => setSelectedDay(e.target.value)}
-        >
-          {daysOfWeek.map(day => (
-            <option key={day} value={day}>
-              {day}
-            </option>
-          ))}
-        </select>
+        <SearchableStringDropdown
+          options={daysOfWeek}
+          id="day-selector"
+          selectedVal={selectedDay}
+          handleChange={(day) => setSelectedDay(day)}
+        />
       </label>
       <div className="hour-control">
         <label>
