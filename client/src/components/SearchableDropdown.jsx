@@ -77,10 +77,10 @@ const SearchableStationDropdown = ({
 
     return (
       <>
-        {name}
         {lines.map((line, index) => (
           <SubwayLineSymbol key={index} line={line} />
         ))}
+        {name}
       </>
     );
   }, [label]);
@@ -163,7 +163,7 @@ const SubwayLineSymbol = ({ line }) => {
           color: getLineTextColor(line),
           textAlign: 'center',
           fontWeight: 'bold',
-          marginLeft: '0.5em',
+          marginRight: '0.5em',
           fontSize: '0.8em',
           lineHeight: '1.5em',
         }}
