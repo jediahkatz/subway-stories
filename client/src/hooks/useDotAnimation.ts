@@ -22,7 +22,16 @@ export function useDotPulseAnimation(direction: string) {
         }
 
         const scale = 1 + adjustedProgress * 5; // Expand from 0 to 2x size
-        const opacity = Math.max(0, 1 - adjustedProgress) * 200; // Fade out
+        
+        // Linear fade from 255 to 100, then quick fade-out
+        let opacity;
+        if (adjustedProgress <= 0.8) {
+          opacity = 255 - (100 * adjustedProgress / 0.8);
+        } else {
+          const quickFadeProgress = (adjustedProgress - 0.8) / 0.2;
+          opacity = 155 * (1 - quickFadeProgress);
+        }
+        
         return { scale, opacity };
       });
     });
