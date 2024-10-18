@@ -4,6 +4,7 @@ import './StoriesView.css';
 import { FlyToInterpolator } from 'deck.gl';
 import { areViewportsNearlyEqual, getViewportForBounds } from '../lib/map-bounds';
 import { stationIdToStation } from '../lib/stations';
+import { MAIN_STATION_COLOR } from './MTADataMap';
 
 export const ALL_MONTHS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
@@ -194,7 +195,7 @@ const formatInfoBarText = (direction, stationId, hour, day, selectedMonths) => {
 
   return (
     <>
-      Who's {directionText} <span className="highlight-station">{stationName}</span> at <span className="highlight-time">{formattedHour} {amPm} on a {day}{monthText}</span>?
+      Who's {directionText} <span className="highlight-station" style={{color: `rgb(${MAIN_STATION_COLOR.join(',')})`}}>{stationName}</span> at <span className="highlight-time">{formattedHour} {amPm} on a {day}{monthText}</span>?
     </>
   );
 };

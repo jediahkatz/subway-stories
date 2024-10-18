@@ -29,6 +29,7 @@ const NYC_BOUNDS = {
   minZoom: 10,
 };
 
+export const MAIN_STATION_COLOR = [50, 115, 246]; //[146, 123, 248];
 const LOADING_COLOR = [204, 204, 255];
 
 const PERCENTAGE_BAR_SCALE = 1 / 25;
@@ -529,12 +530,12 @@ const useMainStationIndicatorLayers = (selectedStation, selectedDirection, filte
     data: pulseData,
     pickable: false,
     opacity: 1,
-    stroked: false,
-    filled: true,
+    stroked: true,
+    filled: false,
     lineWidthMinPixels: 1,
     getPosition: d => d.position,
     getRadius: d => 50 * d.scale,
-    getFillColor: d => [50, 115, 246, d.opacity],
+    getLineColor: d => [...MAIN_STATION_COLOR, d.opacity],
     updateTriggers: {
       getRadius: [pulseData]
     }
@@ -547,10 +548,10 @@ const useMainStationIndicatorLayers = (selectedStation, selectedDirection, filte
     opacity: 1,
     stroked: false,
     filled: true,
-    lineWidthMinPixels: 1,
+    lineWidthMinPixels: 2,
     getPosition: d => d.position,
     getRadius: 50,
-    getFillColor: [50, 115, 246],
+    getFillColor: MAIN_STATION_COLOR,
     updateTriggers: {
       getPosition: [selectedStationData]
     },
