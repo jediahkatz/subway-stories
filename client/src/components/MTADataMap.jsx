@@ -271,7 +271,7 @@ const MTADataMap = ({ mapboxToken }) => {
     if (shouldAnimateBarChange) {
       startBarAnimation({
         type: 'ANIMATE_BAR_CHANGE',
-        initialBarHeights: Object.fromEntries(stations.map(s => [s.complex_id, previousBarHeights[s.complex_id].currentHeight])),
+        // initialBarHeights: Object.fromEntries(stations.map(s => [s.complex_id, previousBarHeights[s.complex_id].currentHeight])),
         newBarHeights: newTargetBarHeights,
       });
     } else if (selectedBarScaleChanged) {
