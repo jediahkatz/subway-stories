@@ -118,12 +118,6 @@ const MTADataMap = ({ mapboxToken }) => {
   // This may be bad, if it turns out to be a problem we can recompute it in handleDataSettingsChange
   const previousBarHeights = usePrevious(barData.heights) || Object.fromEntries(stations.map(s => [s.complex_id, { currentHeight: 0 }]));
 
-  const getStationName = (id) => {
-    // todo fix this linear search
-    const station = stations.find(station => Number(station.complex_id) === Number(id));
-    return station ? station.display_name : 'Unknown Station';
-  };
-
   const { fetchData } = useFetchData();
 
   const handleDataSettingsChange = React.useCallback(async ({ 
@@ -342,15 +336,18 @@ const MTADataMap = ({ mapboxToken }) => {
   };
 
   const filteredDataWithStationsAnimatingToZero = useMemo(() => {
-    const stationIds = new Set(filteredData.current.map(d => d.station_id));
-    const missingStations = stations.filter(s => !stationIds.has(s.complex_id));
-    return [...filteredData.current, ...missingStations.map(s => ({
-      station_id: s.complex_id,
-      ridership: 0,
-      percentage: 0,
-      lat: s.lat,
-      lon: s.lon,
-    }))];
+    const stationIds = new Set(filteredData.current.map(d => Number(d.station_id)));
+    const missingStations = stations.filter(s => !stationIds.has(Number(s.complex_id)));
+    return [
+      ...filteredData.current,
+      ...missingStations.map(s => ({
+        station_id: s.complex_id,
+        ridership: 0,
+        percentage: 0,
+        lat: s.lat,
+        lon: s.lon,
+      }))
+    ];
   }, [filteredData.current]);
 
   const mapBarLayer = new MapBarLayer({
@@ -388,7 +385,7 @@ const MTADataMap = ({ mapboxToken }) => {
     }
   });
 
-  const mainStationIndicatorLayers = useMainStationIndicatorLayers(selectedStation, selectedDirection);
+  const mainStationIndicatorLayers = useMainStationIndicatorLayers(selectedStation, selectedDirection, filteredData, setHoverInfo);
 
   // replace this useEffect with a function that gets called imperatively when the data settings change
   useEffect(() => {
@@ -514,7 +511,7 @@ const MTADataMap = ({ mapboxToken }) => {
   );
 };
 
-const useMainStationIndicatorLayers = (selectedStation, selectedDirection) => {
+const useMainStationIndicatorLayers = (selectedStation, selectedDirection, filteredData, setHoverInfo) => {
   const pulseCircles = useDotPulseAnimation(selectedDirection);
 
   if (selectedStation === ALL_STATIONS_ID) {
@@ -587,5 +584,10 @@ const getInitialBarScale = (data, selectedStation) => {
   const maxRidershipToday = Math.max(...data.map(d => d.ridership));
   return 1 / maxRidershipToday
 }
+
+const getStationName = (id) => {
+  const station = stationIdToStation[id]
+  return station ? station.display_name : 'Unknown Station';
+};
 
 export default MTADataMap;
