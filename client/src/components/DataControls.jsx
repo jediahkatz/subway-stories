@@ -5,6 +5,7 @@ import MonthSelector from './MonthSelector';
 import { useDebounce } from '../lib/debounce';
 import SearchableStationDropdown from './SearchableDropdown';
 import './DataControls.css';
+import { ALL_STATIONS_ID, ALL_STATIONS_OBJECT } from '../lib/all-stations';
 
 const daysOfWeek = [
   'Monday',
@@ -16,7 +17,10 @@ const daysOfWeek = [
   'Sunday'
 ];
 
-const sortedStations = stations.sort((a, b) => a.display_name.localeCompare(b.display_name));
+const sortedStations = [
+  ALL_STATIONS_OBJECT,
+  ...stations.sort((a, b) => a.display_name.localeCompare(b.display_name))
+];
 
 const DataControls = ({ 
   selectedHour, 
@@ -87,7 +91,7 @@ const DataControls = ({
             options={sortedStations}
             label="display_name"
             id="station-selector"
-            selectedVal={stationIdToStation[selectedStation]}
+            selectedVal={selectedStation === ALL_STATIONS_ID ? ALL_STATIONS_OBJECT : stationIdToStation[selectedStation]}
             handleChange={(station) => setSelectedStation(station.complex_id)}
           />
         </div>
