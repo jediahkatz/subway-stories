@@ -19,24 +19,13 @@ type WaveVerticalAnimation = {
 }
 
 type BarChangeAnimation = {
-    type: 'ANIMATE_BAR_CHANGE'
-    // maps station_id to absolute bar height
-    initialBarHeights: {
-        [key: string]: number
-    }
+    type: 'ANIMATE_BAR_CHANGE' | 'NO_ANIMATE_BAR_CHANGE'
     newBarHeights: {
         [key: string]: number
     }
 }
 
-type BarChangeNoAnimation = {
-    type: 'NO_ANIMATE_BAR_CHANGE'
-    newBarHeights: {
-        [key: string]: number
-    }
-}
-
-type Animation = WaveRadialAnimation | WaveVerticalAnimation | BarChangeAnimation | BarChangeNoAnimation
+type Animation = WaveRadialAnimation | WaveVerticalAnimation | BarChangeAnimation
 
 type AnimationState = {
     animation: Animation
@@ -48,6 +37,7 @@ export const useBarsAnimation = () => {
     const currentAnimation = useRef<AnimationState | null>(null);
     const animationFrameRef = useRef<number | null>(null);
     const [barData, setBarData] = useState<BarData>({ type: 'LOADING', heights: {} });
+    const previousBarHeights = useRef<{ [key: string]: { currentHeight: number } }>({});
     // Only used for wave radial animations. Allows us to know when it completed once
     const resolveAnimationRef = useRef<(() => void) | null>(null);
 
@@ -64,6 +54,7 @@ export const useBarsAnimation = () => {
             case 'WAVE_VERTICAL_DOWN': {
                 const newBarData = currentAnimation.current.animationResultFunc(progress % 1);
                 setBarData(newBarData);
+                previousBarHeights.current = newBarData.heights;
 
                 if (progress >= 1) {
                     if (resolveAnimationRef.current) {
@@ -78,7 +69,7 @@ export const useBarsAnimation = () => {
             default: {
                 const newBarData = currentAnimation.current.animationResultFunc(progress);
                 setBarData(newBarData);
-
+                previousBarHeights.current = newBarData.heights;
                 if (progress < 1) {
                     animationFrameRef.current = requestAnimationFrame(animateFrame);
                 } else {
@@ -112,7 +103,7 @@ export const useBarsAnimation = () => {
                 case 'ANIMATE_BAR_CHANGE':
                     currentAnimation.current = {
                         animation: animation,
-                        ...createBarChangeAnimation(animation),
+                        ...createBarChangeAnimation({ ...animation, initialBarHeights: previousBarHeights.current }),
                     };
                     break;
                 case 'NO_ANIMATE_BAR_CHANGE':
@@ -204,7 +195,7 @@ const createWaveRadialAnimation = (animation: WaveRadialAnimation): { animationR
 
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 const ANIMATE_BAR_CHANGE_DURATION = 500;
-const createBarChangeAnimation = (animation: BarChangeAnimation): { animationResultFunc: AnimationResultFunc, getProgress: () => number } => {
+const createBarChangeAnimation = (animation: BarChangeAnimation & { initialBarHeights: { [key: string]: { currentHeight: number } } }): { animationResultFunc: AnimationResultFunc, getProgress: () => number } => {
     const { initialBarHeights, newBarHeights } = animation;
 
     const startTime = Date.now();
@@ -214,7 +205,7 @@ const createBarChangeAnimation = (animation: BarChangeAnimation): { animationRes
 
     const animationResultFunc = (progress: number) => {
         const heights = Object.keys(stationIdToStation).reduce((acc, stationId) => {
-            const initialHeight = initialBarHeights[stationId] ?? 0;
+            const initialHeight = initialBarHeights[stationId]?.currentHeight ?? 0;
             const newBarHeight = newBarHeights[stationId] ?? 0;
             const newHeight = initialHeight + (newBarHeight - initialHeight) * easeOutCubic(progress);
             acc[stationId] = { currentHeight: newHeight };
@@ -230,7 +221,7 @@ const createBarChangeAnimation = (animation: BarChangeAnimation): { animationRes
     return { animationResultFunc, getProgress };
 }
 
-const createBarChangeNoAnimation = (animation: BarChangeNoAnimation): { animationResultFunc: AnimationResultFunc, getProgress: () => number } => {
+const createBarChangeNoAnimation = (animation: BarChangeAnimation): { animationResultFunc: AnimationResultFunc, getProgress: () => number } => {
     const { newBarHeights } = animation;
 
     const getProgress = () => 1;
