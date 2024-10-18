@@ -465,6 +465,14 @@ const MTADataMap = ({ mapboxToken }) => {
             const map = e.target;
             mapRef.current = map;
             drawSubwayLines(map);
+
+            // Turn off/reduce some distracting labels
+            map.setLayoutProperty('road-label-simple', 'visibility', 'none');
+            map.setLayoutProperty('poi-label', 'visibility', 'none');
+            map.setLayoutProperty('settlement-major-label', 'visibility', 'none');
+            map.setLayoutProperty('settlement-minor-label', 'visibility', 'none');
+
+            map.setPaintProperty('airport-label', 'text-color', 'hsl(0, 0%, 54%)');
           }}
         />
       </DeckGL>
