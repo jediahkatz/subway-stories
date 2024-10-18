@@ -386,7 +386,7 @@ const MTADataMap = ({ mapboxToken }) => {
     }
   });
 
-  const mainStationIndicatorLayers = useMainStationIndicatorLayers(selectedStation, selectedDirection, filteredData, setHoverInfo);
+  const mainStationIndicatorLayers = useMainStationIndicatorLayers(selectedStation, selectedDirection, filteredData, viewport, setHoverInfo);
 
   // replace this useEffect with a function that gets called imperatively when the data settings change
   useEffect(() => {
@@ -520,7 +520,7 @@ const MTADataMap = ({ mapboxToken }) => {
   );
 };
 
-const useMainStationIndicatorLayers = (selectedStation, selectedDirection, filteredData, setHoverInfo) => {
+const useMainStationIndicatorLayers = (selectedStation, selectedDirection, filteredData, viewport, setHoverInfo) => {
   const pulseCircles = useDotPulseAnimation(selectedDirection);
 
   if (selectedStation === ALL_STATIONS_ID) {
@@ -533,6 +533,23 @@ const useMainStationIndicatorLayers = (selectedStation, selectedDirection, filte
   }
   const pulseData = pulseCircles.map(pulseCircle => ({ ...selectedStationData, ...pulseCircle }))
 
+  // Function to calculate size based on zoom level
+  const getSizeMultiplier = (zoom) => {
+    // Adjust these values to fine-tune the scaling
+    const minZoom = 4;
+    const maxZoom = 15;
+    const minSize = 0.5;
+    const maxSize = 5;
+
+    if (zoom <= minZoom) return maxSize;
+    if (zoom >= maxZoom) return minSize;
+
+    // Linear interpolation between max and min size
+    return maxSize - (maxSize - minSize) * ((zoom - minZoom) / (maxZoom - minZoom));
+  }
+
+  const sizeMultiplier = getSizeMultiplier(viewport.zoom);
+
   const mainStationPulse = new ScatterplotLayer({
     id: 'main-station-pulse-scatterplot-layer',
     data: pulseData,
@@ -541,8 +558,11 @@ const useMainStationIndicatorLayers = (selectedStation, selectedDirection, filte
     stroked: true,
     filled: false,
     lineWidthMinPixels: 1,
+    getLineWidth: 10 * sizeMultiplier,
+    // Always face the camera
+    billboard: true,
     getPosition: d => d.position,
-    getRadius: d => 50 * d.scale,
+    getRadius: d => 50 * d.scale * sizeMultiplier,
     getLineColor: d => [...MAIN_STATION_COLOR, d.opacity],
     updateTriggers: {
       getRadius: [pulseData]
@@ -558,8 +578,10 @@ const useMainStationIndicatorLayers = (selectedStation, selectedDirection, filte
     filled: true,
     lineWidthMinPixels: 2,
     getPosition: d => d.position,
-    getRadius: 50,
+    getRadius: 50 * sizeMultiplier,
     getFillColor: MAIN_STATION_COLOR,
+    // Always face the camera
+    billboard: true,
     updateTriggers: {
       getPosition: [selectedStationData]
     },
