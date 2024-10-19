@@ -203,7 +203,7 @@ const MTADataMap = ({ mapboxToken }) => {
             loadingAnimationStarted = true;
           }
           resolve();
-        }, 50);
+        }, 150);
       });
 
       try {
