@@ -9,6 +9,8 @@
   padding: 50vh 20px 20px; /* Changed top padding to 50vh */
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(150, 150, 150) transparent;
 }
 
 .stories-box {
@@ -70,4 +72,17 @@
 
 .floating-info-bar .highlight-station {
   font-weight: bold;
+}
+
+.stories-view-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.stories-view-container::-webkit-scrollbar-track {
+  background: none;
+}
+
+.stories-view-container::-webkit-scrollbar-thumb {
+  background-color: rgb(255, 50, 50);
+  border-radius: 10px;
 }
