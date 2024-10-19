@@ -7,9 +7,10 @@ body.pointer-cursor {
 }
  
 .map-container {
-    position: relative; /* Ensures the controls position correctly */
-    width: 100vw;
-    height: 100vh;
+  position: relative; /* Ensures the controls position correctly */
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .map-controls {

@@ -6,7 +6,7 @@
   bottom: 0;
   overflow-y: auto;
   pointer-events: none;
-  padding: 50vh 20px 20px; /* Changed top padding to 50vh */
+  padding: 50vh 20px 20px;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
   scrollbar-width: thin;
@@ -15,18 +15,20 @@
 
 .stories-box {
   position: relative;
-  width: 300px;
+  width: 400px;
   background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 8px;
+  border-radius: 2px;
   padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  margin-left: auto;
-  margin-bottom: 50vh; /* Changed to 50vh to match top padding */
+  /* margin-left: 10px; */
+  margin-right: 60px;
+  margin-bottom: 50vh;
   scroll-snap-align: center;
   scroll-snap-stop: always;
   pointer-events: all;
 }
+
 
 .stories-box:first-child {
   margin-top: calc(50vh - 60px); /* Add top margin to first box */
@@ -83,6 +85,66 @@
 }
 
 .stories-view-container::-webkit-scrollbar-thumb {
-  background-color: rgb(255, 50, 50);
+  background-color: rgb(150, 150, 150);
   border-radius: 10px;
+}
+
+.story-progress {
+  position: fixed;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: all;
+}
+
+.story-line-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.story-line {
+  width: 30px;
+  height: 3px;
+  background-color: #555;
+  margin-bottom: 5px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.story-line.active {
+  background-color: white;
+}
+
+.story-line:hover {
+  background-color: #888;
+}
+
+.part-lines {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.part-line {
+  width: 15px;
+  height: 2px;
+  background-color: #555;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.part-line.active {
+  background-color: white;
+}
+
+.part-line:hover {
+  background-color: #888;
 }
