@@ -81,10 +81,10 @@ const SearchableStationDropdown = ({
 
     return (
       <>
+        {name}
         {lines.map((line, index) => (
           <SubwayLineSymbol key={index} line={line} />
         ))}
-        {name}
       </>
     );
   }, [label]);
@@ -105,6 +105,104 @@ const SearchableStationDropdown = ({
     });
   }, [options, selectedVal, id, renderOptionContent, filter]);
   
+  return (
+    <div className="dropdown" ref={dropdownRef}>
+      <div className="control" onClick={() => setIsOpen(!isOpen)}>
+        <div className="selected-value">
+          <input
+            ref={inputRef}
+            type="text"
+            value={isOpen ? query : getPlaceholder()}
+            placeholder={getPlaceholder()}
+            name="searchTerm"
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setIsOpen(true);
+            }}
+            onClick={() => setIsOpen(true)}
+            className={isOpen && query === "" ? "placeholder" : ""}
+            autoComplete="off"
+          />
+        </div>
+        <div className={`arrow ${isOpen ? "open" : ""}`}></div>
+      </div>
+      <div className={`options ${isOpen ? "open" : ""}`}>
+        {renderedOptions}
+      </div>
+    </div>
+  );
+};
+
+const SearchableStringDropdown = ({
+  options,
+  id,
+  selectedVal,
+  handleChange
+}) => {
+  const [query, setQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+
+  const inputRef = useRef(null);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    document.addEventListener("click", toggle);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("click", toggle);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  const selectOption = (option) => {
+    setQuery("");
+    handleChange(option);
+    setIsOpen(false);
+  };
+
+  function toggle(e) {
+    if (dropdownRef.current && dropdownRef.current.contains(e.target)) {
+      return;
+    }
+    setIsOpen(e && (e.target === inputRef.current || e.target.classList.contains('arrow')));
+    setQuery("");
+  }
+  
+  const getPlaceholder = () => {
+    if (query !== "" || !selectedVal) return "";
+    return selectedVal;
+  };
+
+  const filter = useCallback((options) => {
+    if (!query) return options;
+    return options.filter(
+      (option) => option.toLowerCase().indexOf(query.toLowerCase()) > -1
+    );
+  }, [query]);
+  
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") {
+      setIsOpen(false);
+      setQuery("");
+    }
+  };
+  
+  const renderedOptions = useMemo(() => {
+    return filter(options).map((option, index) => {
+        return (
+        <div
+            onClick={() => selectOption(option)}
+            className={`option ${
+            option === selectedVal ? "selected" : ""
+            }`}
+            key={`${id}-${index}`}
+        >
+            {option}
+        </div>
+        );
+    });
+  }, [options, selectedVal, id, filter]);
+
   return (
     <div className="dropdown" ref={dropdownRef}>
       <div className="control" onClick={() => setIsOpen(!isOpen)}>
@@ -167,7 +265,7 @@ const SubwayLineSymbol = ({ line }) => {
           color: getLineTextColor(line),
           textAlign: 'center',
           fontWeight: 'bold',
-          marginRight: '0.5em',
+          marginLeft: '0.5em',
           fontSize: '0.8em',
           lineHeight: '1.5em',
         }}
@@ -178,4 +276,4 @@ const SubwayLineSymbol = ({ line }) => {
   };
   
 
-export default SearchableStationDropdown;
+export { SearchableStationDropdown, SearchableStringDropdown };
