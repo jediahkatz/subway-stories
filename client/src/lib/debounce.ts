@@ -1,5 +1,7 @@
 import { useRef, useCallback } from 'react';
 
+const funcId = 0;
+
 export function useDebounce(func, wait) {
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 

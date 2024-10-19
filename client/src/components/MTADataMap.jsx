@@ -294,6 +294,7 @@ const MTADataMap = ({ mapboxToken }) => {
   ])
 
   useEffect(() => {
+    // Initial load
     handleDataSettingsChange({
       newSelectedDay: selectedDay,
       newSelectedStation: selectedStation,
@@ -304,6 +305,34 @@ const MTADataMap = ({ mapboxToken }) => {
       initialFetch: true,
     })
   }, [])
+
+  const handleSetSelectedHour = React.useCallback((hour) => {
+    handleDataSettingsChange({ newSelectedHour: hour });
+  }, [handleDataSettingsChange]);
+
+  const handleSetSelectedDay = React.useCallback((day) => {
+    handleDataSettingsChange({ newSelectedDay: day });
+  }, [handleDataSettingsChange]);
+
+  const handleSetSelectedStation = React.useCallback((station) => {
+    handleDataSettingsChange({ newSelectedStation: station });
+  }, [handleDataSettingsChange]);
+
+  const handleSetSelectedDirection = React.useCallback((direction) => {
+    handleDataSettingsChange({ newSelectedDirection: direction });
+  }, [handleDataSettingsChange]);
+
+  const handleSetSelectedMonths = React.useCallback((months) => {
+    handleDataSettingsChange({ newSelectedMonths: months });
+  }, [handleDataSettingsChange]);
+
+  const handleSetShowPercentage = React.useCallback((shouldShowPercentage) => {
+    handleDataSettingsChange({ newShowPercentage: shouldShowPercentage });
+  }, [handleDataSettingsChange]);
+
+  const handleSetSelectedBarScale = React.useCallback((scale) => {
+    handleDataSettingsChange({ newSelectedBarScale: scale });
+  }, [handleDataSettingsChange]);
 
   const getColorRelative = (value, max) => {
     const colorscale = [
@@ -479,20 +508,20 @@ const MTADataMap = ({ mapboxToken }) => {
       {activeView === 'visualization' && 
         <DataControls
           selectedHour={selectedHour}
-          setSelectedHour={(hour) => handleDataSettingsChange({ newSelectedHour: hour })}
+          setSelectedHour={handleSetSelectedHour}
           selectedDay={selectedDay}
-          setSelectedDay={(day) => handleDataSettingsChange({ newSelectedDay: day })}
+          setSelectedDay={handleSetSelectedDay}
           selectedStation={selectedStation}
-          setSelectedStation={(station) => handleDataSettingsChange({ newSelectedStation: station })}
+          setSelectedStation={handleSetSelectedStation}
           selectedDirection={selectedDirection}
-          setSelectedDirection={(direction) => handleDataSettingsChange({ newSelectedDirection: direction })}
+          setSelectedDirection={handleSetSelectedDirection}
           barScale={barScale.current}
-          setSelectedBarScale={(scale) => handleDataSettingsChange({ newSelectedBarScale: scale })}
+          setSelectedBarScale={handleSetSelectedBarScale}
           initialBarScale={initialBarScale.current}
           selectedMonths={selectedMonths}
-          setSelectedMonths={(months) => handleDataSettingsChange({ newSelectedMonths: months })}
+          setSelectedMonths={handleSetSelectedMonths}
           showPercentage={showPercentage}
-          setShowPercentage={(shouldShowPercentage) => handleDataSettingsChange({ newShowPercentage: shouldShowPercentage })}
+          setShowPercentage={handleSetShowPercentage}
         />
       }
       {activeView === 'stories' && <StoriesView 
