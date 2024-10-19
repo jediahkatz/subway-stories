@@ -9,7 +9,7 @@ const MAX_CIRCLES = 20;
  * using a line layer. It still uses small circles at the top and bottom of the bar to make it
  * look rounded. The hope is that this will use less memory since it replaces many points with one line.
  */
-class MapBarLayer extends CompositeLayer {
+class FewerObjectsMapBarLayer extends CompositeLayer {
   renderLayers() {
     const {data, getBasePosition, getHeight, getWidth, getColor, pickable, onHover} = this.props;
 
@@ -27,8 +27,8 @@ class MapBarLayer extends CompositeLayer {
       getFillColor: getColor,
       updateTriggers: {
         getPosition: [getBasePosition, getHeight],
-        getColor: this.props.updateTriggers.getColor,
-        getRadius: [getWidth]
+        getRadius: [getWidth],
+        getFillColor: this.props.updateTriggers.getColor,
       }
     }))
 
@@ -46,13 +46,13 @@ class MapBarLayer extends CompositeLayer {
       },
       pickable,
       onHover,
-      getColor,
+      getFillColor: getColor,
       getWidth,
       widthUnits: 'meters',
       updateTriggers: {
         getSourcePosition: [getBasePosition],
         getTargetPosition: [getBasePosition, getHeight],
-        getColor: this.props.updateTriggers.getColor,
+        getFillColor: [this.props.updateTriggers.getColor],
         getWidth: [getWidth]
       }
     }))
@@ -65,8 +65,8 @@ class MapBarLayer extends CompositeLayer {
       getRadius: d => getWidth(d) * 0.5,
       updateTriggers: {
         getPosition: [getBasePosition, getHeight],
-        getColor: this.props.updateTriggers.getColor,
-        getRadius: [getWidth]
+        getRadius: [getWidth],
+        getFillColor: [this.props.updateTriggers.getColor],
       }
     }))
 
@@ -96,8 +96,8 @@ class MapBarLayer extends CompositeLayer {
   }
 }
 
-MapBarLayer.layerName = 'MapBarLayer';
-MapBarLayer.defaultProps = {
+FewerObjectsMapBarLayer.layerName = 'MapBarLayer';
+FewerObjectsMapBarLayer.defaultProps = {
   getBasePosition: {type: 'accessor', value: d => [d.lon, d.lat]},
   getHeight: {type: 'accessor', value: d => d.height || 100},
   getWidth: {type: 'accessor', value: _d => 30},
@@ -116,14 +116,14 @@ class CirclesOnlyMapBarLayer extends CompositeLayer {
       id: 'circles',
       data: data.flatMap(d => this.generatePoints(d)),
       getPosition: d => d.position,
-      getColor: d => d.color,
+      getFillColor: d => d.color,
       getRadius: d => getWidth(d) * 0.5,
       pickable,
       onHover,
       updateTriggers: {
         getPosition: [getBasePosition, getHeight],
-        getColor: [this.props.updateTriggers.getColor, getHeight],
-        getRadius: [getWidth]
+        getRadius: [getWidth],
+        getFillColor: [this.props.updateTriggers.getColor, getHeight],
       }
     }));
 
@@ -136,8 +136,10 @@ class CirclesOnlyMapBarLayer extends CompositeLayer {
     const color = this.props.getColor(d);
     const points = [];
 
+    const MAX_CIRCLES_WITH_OPACITY = Math.min(height, 200);
+    const MAX_OPACITY = 0.9;
     for (let i = 0; i < height; i++) {
-      const opacity = (i / height) * 0.9; // Opacity increases from 0 to 0.9
+      const opacity = i < MAX_CIRCLES_WITH_OPACITY ? (i / MAX_CIRCLES_WITH_OPACITY) * MAX_OPACITY : MAX_OPACITY;
       const colorWithOpacity = [...color];
       colorWithOpacity[3] = opacity * 255;
       points.push({
@@ -158,5 +160,7 @@ CirclesOnlyMapBarLayer.defaultProps = {
   getWidth: {type: 'accessor', value: _d => 30},
   getColor: {type: 'accessor', value: [255, 0, 0]}
 };
+
+const MapBarLayer = CirclesOnlyMapBarLayer;
 
 export default MapBarLayer;
