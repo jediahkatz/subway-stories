@@ -4,21 +4,23 @@ import './ViewTabs.css';
 const ViewTabs = ({ activeView, setActiveView, limitVisibleLines }) => {
   return (
     <div className="view-tabs">
-      <button
-        className={`tab ${activeView === 'visualization' ? 'active' : ''}`}
-        onClick={() => { 
-          setActiveView('visualization')
-          limitVisibleLines(null)
-        }}
-      >
-        Visualization
-      </button>
-      <button
-        className={`tab ${activeView === 'stories' ? 'active' : ''}`}
-        onClick={() => setActiveView('stories')}
-      >
-        Stories
-      </button>
+      <div className={`tab-selector ${activeView}`}>
+        <button
+          className={`tab-button visualization ${activeView === 'visualization' ? 'active' : ''}`}
+          onClick={() => { 
+            setActiveView('visualization')
+            limitVisibleLines(null)
+          }}
+        >
+          Visualization
+        </button>
+        <button
+          className={`tab-button stories ${activeView === 'stories' ? 'active' : ''}`}
+          onClick={() => setActiveView('stories')}
+        >
+          Stories
+        </button>
+      </div>
     </div>
   );
 };

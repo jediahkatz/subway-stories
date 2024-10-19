@@ -98,7 +98,7 @@
 .dropdown .selected-value input {
     line-height: normal;
     font-size: 16px;
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
     border: none;
     border-radius: 10px;
     box-sizing: border-box;
@@ -114,7 +114,7 @@
 
 .dropdown .options {
     display: none;
-    background-color: rgba(95, 95, 95, 1); 
+    background-color: rgba(80, 80, 80, 1); 
     border: none;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
     box-sizing: border-box;
