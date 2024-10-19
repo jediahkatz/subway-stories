@@ -191,22 +191,21 @@ body.pointer-cursor {
 
 .month-button {
   padding: 5px 10px;
-  font-size: 12px;
-  background-color: rgba(0, 0, 0, 0.2); 
+  font-size: 14px;
+  background-color: rgba(255, 255, 255, 0.1);
   border: none;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
-  color: white;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .month-button.selected {
-  background-color: rgba(255, 255, 255, 0.8);
-  border: 1px solid #ccc;
-  color: black;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
 }
 
-.month-button:hover {
+/* .month-button:hover {
   background-color: rgba(255, 255, 255, 0.2);
   color: white;
 }
@@ -214,5 +213,4 @@ body.pointer-cursor {
 .month-button.selected:hover {
   background-color: rgba(255, 255, 255, 0.6);
   color: black;
-  border: 1px solid #ccc;
-}
+} */

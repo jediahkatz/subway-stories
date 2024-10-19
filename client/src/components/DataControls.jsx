@@ -2,7 +2,6 @@ import React, { useState, useCallback } from 'react';
 import { stationIdToStation, stations } from '../lib/stations';
 import { Slider, LogarithmicSlider, CoolSlider } from './Slider';
 import MonthSelector from './MonthSelector';
-import { useDebounce } from '../lib/debounce';
 import { SearchableStringDropdown, SearchableStationDropdown } from './SearchableDropdown';
 import './DataControls.css';
 import { ALL_STATIONS_ID, ALL_STATIONS_OBJECT } from '../lib/all-stations';
@@ -39,8 +38,6 @@ const DataControls = ({
   setShowPercentage
 }) => {
   const [showMoreControls, setShowMoreControls] = useState(false);
-
-  const debouncedSetSelectedMonths = useDebounce(setSelectedMonths, 1000);
 
   return (
     <div className="map-controls">
@@ -94,7 +91,10 @@ const DataControls = ({
       </label>
       {showMoreControls && (
         <>
-          <MonthSelector initialSelectedMonths={selectedMonths} onMonthsChange={debouncedSetSelectedMonths} />
+          <label htmlFor="month-selector">
+            <p className="map-controls-label">Months</p>
+            <MonthSelector initialSelectedMonths={selectedMonths} onMonthsChange={setSelectedMonths} />
+          </label>
           <div className="bar-scale-control">
             <label>
               <p className="map-controls-label">Bar height (double-click to reset)</p>
