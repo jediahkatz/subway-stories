@@ -41,7 +41,7 @@ const DataControls = ({
 
   return (
     <div className="map-controls">
-      <label>
+      <label htmlFor="day-selector">
         <p className="map-controls-label">Day</p>
         <SearchableStringDropdown
           options={daysOfWeek}

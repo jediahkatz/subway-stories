@@ -24,10 +24,8 @@ const SearchableStationDropdown = ({
   }), [options]);
 
   useEffect(() => {
-    document.addEventListener("click", toggle);
     document.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.removeEventListener("click", toggle);
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
@@ -38,13 +36,10 @@ const SearchableStationDropdown = ({
     setIsOpen(false);
   };
 
-  function toggle(e) {
-    if (dropdownRef.current && dropdownRef.current.contains(e.target)) {
-      return;
-    }
-    setIsOpen(e && (e.target === inputRef.current || e.target.classList.contains('arrow')));
+  const toggleDropdown = () => {
+    setIsOpen((prevIsOpen) => !prevIsOpen);
     setQuery("");
-  }
+  };
   
   const getPlaceholder = () => {
     if (query !== "" || !selectedVal) return "";
@@ -107,7 +102,7 @@ const SearchableStationDropdown = ({
   
   return (
     <div className="dropdown" ref={dropdownRef}>
-      <div className="control" onClick={() => setIsOpen(!isOpen)}>
+      <div className="control">
         <div className="selected-value">
           <input
             ref={inputRef}
@@ -124,7 +119,9 @@ const SearchableStationDropdown = ({
             autoComplete="off"
           />
         </div>
-        <div className={`arrow ${isOpen ? "open" : ""}`}></div>
+        <div className="arrow-wrapper" onClick={toggleDropdown}>
+          <div className={`arrow ${isOpen ? "open" : ""}`}></div>
+        </div>
       </div>
       <div className={`options ${isOpen ? "open" : ""}`}>
         {renderedOptions}
@@ -146,10 +143,8 @@ const SearchableStringDropdown = ({
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-    document.addEventListener("click", toggle);
     document.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.removeEventListener("click", toggle);
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
@@ -160,14 +155,17 @@ const SearchableStringDropdown = ({
     setIsOpen(false);
   };
 
-  function toggle(e) {
-    if (dropdownRef.current && dropdownRef.current.contains(e.target)) {
-      return;
-    }
-    setIsOpen(e && (e.target === inputRef.current || e.target.classList.contains('arrow')));
+  const toggleDropdown = (e) => {
+    e.stopPropagation(); // Stop event from bubbling up
+    setIsOpen((prevIsOpen) => !prevIsOpen);
     setQuery("");
-  }
-  
+  };
+
+  const handleInputClick = (e) => {
+    e.stopPropagation(); // Stop event from bubbling up
+    setIsOpen(true);
+  };
+
   const getPlaceholder = () => {
     if (query !== "" || !selectedVal) return "";
     return selectedVal;
@@ -188,24 +186,20 @@ const SearchableStringDropdown = ({
   };
   
   const renderedOptions = useMemo(() => {
-    return filter(options).map((option, index) => {
-        return (
-        <div
-            onClick={() => selectOption(option)}
-            className={`option ${
-            option === selectedVal ? "selected" : ""
-            }`}
-            key={`${id}-${index}`}
-        >
-            {option}
-        </div>
-        );
-    });
+    return filter(options).map((option, index) => (
+      <div
+        onClick={() => selectOption(option)}
+        className={`option ${option === selectedVal ? "selected" : ""}`}
+        key={`${id}-${index}`}
+      >
+        {option}
+      </div>
+    ));
   }, [options, selectedVal, id, filter]);
 
   return (
     <div className="dropdown" ref={dropdownRef}>
-      <div className="control" onClick={() => setIsOpen(!isOpen)}>
+      <div className="control">
         <div className="selected-value">
           <input
             ref={inputRef}
@@ -217,12 +211,14 @@ const SearchableStringDropdown = ({
               setQuery(e.target.value);
               setIsOpen(true);
             }}
-            onClick={() => setIsOpen(true)}
+            onClick={handleInputClick}
             className={isOpen && query === "" ? "placeholder" : ""}
             autoComplete="off"
           />
         </div>
-        <div className={`arrow ${isOpen ? "open" : ""}`}></div>
+        <div className="arrow-wrapper" onClick={toggleDropdown}>
+          <div className={`arrow ${isOpen ? "open" : ""}`}></div>
+        </div>
       </div>
       <div className={`options ${isOpen ? "open" : ""}`}>
         {renderedOptions}

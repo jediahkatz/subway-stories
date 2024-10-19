@@ -75,6 +75,13 @@
     width: 100%;
 }
 
+.arrow-wrapper {
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .dropdown .arrow {
     border-color: white transparent transparent;
     border-style: solid;
@@ -82,12 +89,11 @@
     content: " ";
     display: block;
     height: 0;
-    margin-top: 0.3rem;
-    position: absolute;
-    right: 10px;
-    top: 14px;
     width: 0;
     transition: all 0.3s ease;
+    margin-left: 10px;
+    margin-right: 5px;
+    flex-shrink: 0;
 }
 
 .dropdown .arrow.open {
@@ -95,16 +101,19 @@
     border-width: 0 5px 5px;
 }
 
+.dropdown .selected-value {
+    flex-grow: 1;
+}
+
 .dropdown .selected-value input {
     line-height: normal;
     font-size: 16px;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: transparent;
     border: none;
-    border-radius: 10px;
     box-sizing: border-box;
     cursor: default;
     outline: none;
-    padding: 10px 30px 10px 10px;
+    padding: 5px 5px 5px 10px;
     transition: all 200ms ease;
     width: 100%;
     color: white;
@@ -129,6 +138,8 @@
     -webkit-overflow-scrolling: touch;
     border-radius: 10px;
     padding: 5px 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(50, 50, 50) transparent;
 }
 
 .dropdown .options.open {
@@ -155,8 +166,12 @@
 }
 
 .dropdown .control {
-    position: relative;
+    display: flex;
+    align-items: center;
     cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 5px;
 }
 
 .dropdown input.placeholder {
@@ -166,4 +181,17 @@
 .dropdown input::placeholder {
   color: #999;
   opacity: 1;
+}
+
+.dropdown .options::-webkit-scrollbar {
+    width: 8px;
+}
+
+.dropdown .options::-webkit-scrollbar-track {
+    background: none;
+}
+
+.dropdown .options::-webkit-scrollbar-thumb {
+    background-color: rgb(50, 50, 50);
+    border-radius: 10px;
 }
