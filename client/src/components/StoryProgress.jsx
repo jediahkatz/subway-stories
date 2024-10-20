@@ -1,7 +1,7 @@
 import React from 'react';
 import './StoriesView.css';
 
-const StoryProgress = ({ stories, currentStoryIndex, currentPartIndex, handleJumpToStory }) => {
+const StoryProgress = ({ stories, currentStoryIndex, currentPartIndex, handleJumpToStory, setPreviewStory }) => {
   return (
     <div className="story-progress">
       {stories.map((story, storyIndex) => (
@@ -9,6 +9,8 @@ const StoryProgress = ({ stories, currentStoryIndex, currentPartIndex, handleJum
           <div 
             className={`story-line ${storyIndex === currentStoryIndex ? 'active' : ''}`}
             onClick={() => handleJumpToStory(storyIndex, 0)}
+            onMouseEnter={() => storyIndex !== currentStoryIndex && setPreviewStory(storyIndex)}
+            onMouseLeave={() => storyIndex !== currentStoryIndex && setPreviewStory(null)}
           />
           {storyIndex === currentStoryIndex && (
             <div className="part-lines">
