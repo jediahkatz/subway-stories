@@ -6,11 +6,20 @@
   bottom: 0;
   overflow-y: auto;
   pointer-events: none;
-  padding: 50vh 20px 20px;
-  scroll-snap-type: y mandatory;
+  /* scroll-snap-type: y proximity; */
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: rgb(150, 150, 150) transparent;
+}
+
+.stories-content {
+  min-height: 100%;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 440px;
+  pointer-events: all;
 }
 
 .stories-box {
@@ -21,26 +30,24 @@
   padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  /* margin-left: 10px; */
   margin-right: 60px;
   margin-bottom: 50vh;
-  scroll-snap-align: center;
-  scroll-snap-stop: always;
-  pointer-events: all;
+  /* scroll-snap-align: center; */
+  /* scroll-snap-stop: always; */
 }
 
-
 .stories-box:first-child {
-  margin-top: calc(50vh - 60px); /* Add top margin to first box */
+  margin-top: 50vh;
 }
 
 .stories-box:last-child {
-  margin-bottom: calc(50vh + 20px); /* Adjust bottom margin of last box */
+  margin-bottom: 50vh;
 }
 
 .stories-box h2 {
   margin-top: 0;
   margin-bottom: 15px;
+  font-style: italic;
   color: #333;
 }
 
@@ -147,4 +154,10 @@
 
 .part-line:hover {
   background-color: #888;
+}
+
+.opening-phrase {
+  font-size: 23px;
+  font-style: italic;
+  font-weight: 500;
 }
