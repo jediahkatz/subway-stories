@@ -142,7 +142,7 @@ const stories = [
             “The players don't take the train, they get private cars from their hotel,” he notes. “Ball boys can take an hourly shuttle, but I think the subway is faster with the traffic.” 
           </p>
           <p>
-            The Open has a morning session that starts at 11, and then an evening session at 7. We can see distinct spikes on the map for each session, with many fans again coming from out of town.
+            The Open has a morning session that starts at 11, and then an evening session at 7. We can see distinct spikes on the map before each session, with many fans again coming from out of town.
           </p>
         </>,
         // Flushing-Main St (7), Bowling Green (4 5) and 137 St-City College (1)
@@ -151,7 +151,8 @@ const stories = [
           station: '448', // Mets-Willets Point
           direction: 'comingFrom',
           day: 'Saturday',
-          hour: 17,
+          // hour: 17,
+          hours: [7, 19],
           months: [7, 8],
           barScale: 0.006,
         },
@@ -275,6 +276,8 @@ const StoriesView = React.memo(({
   const containerRef = useRef(null);
   const scrollerRef = useRef(scrollama());
   const [previewStory, setPreviewStory] = useState(null);
+  const [animatingHours, setAnimatingHours] = useState(null);
+  const [currentAnimatedHour, setCurrentAnimatedHour] = useState(null);
 
   const getPadding = () => {
     return {
@@ -331,6 +334,20 @@ const StoriesView = React.memo(({
       newSelectedBarScale: currentPart.dataview.barScale,
     });
     limitVisibleLines(currentPart.dataview.visibleLines);
+
+    if (currentPart.dataview.hours) {
+      const [hourStart, hourEnd] = currentPart.dataview.hours;
+      const hoursRange = Array.from({ length: hourEnd - hourStart + 1 }, (_, i) => hourStart + i);
+      setAnimatingHours(hoursRange);
+      // setAnimatingHours(currentPart.dataview.hours);
+      setCurrentAnimatedHour(currentPart.dataview.hours[0]);
+    } else {
+      setAnimatingHours(null);
+      setCurrentAnimatedHour(null);
+      handleDataSettingsChange({
+        newSelectedHour: currentPart.dataview.hour,
+      });
+    }
   }, [setViewport, handleDataSettingsChange, limitVisibleLines, setCurrentStoryIndex, setCurrentPartIndex]);
 
   const handleJumpToStory = useCallback((storyIndex, partIndex, smooth = true) => {
@@ -372,6 +389,29 @@ const StoriesView = React.memo(({
       })
       .onStepEnter(handleStepEnter);
   }, [handleStepEnter]);
+
+  useEffect(() => {
+    let intervalId;
+    if (animatingHours && animatingHours.length > 1) {
+      let index = 0;
+      intervalId = setInterval(() => {
+        console.log('animatingHours', animatingHours, index);
+        setCurrentAnimatedHour(animatingHours[index]);
+        index = (index + 1) % animatingHours.length;
+      }, 500);
+    }
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [animatingHours]);
+
+  useEffect(() => {
+    if (currentAnimatedHour !== null) {
+      handleDataSettingsChange({
+        newSelectedHour: currentAnimatedHour,
+      });
+    }
+  }, [currentAnimatedHour, handleDataSettingsChange]);
 
   return (
     <div className="stories-view">
