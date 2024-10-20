@@ -103,17 +103,17 @@ const stories = [
     parts: [
       {
         description: <>
-            Flushing Meadows Park, nestled between Flushing and Corona, Queens, boasts no less than four stadiums with a combined seating of nearly 100,000. It's home to the New York Mets, and hosts the internationally renowned US Open Tennis Championships. But on a cold day in January, hardly anyone has a reason to head over.
+            Flushing Meadows Park, nestled between Flushing and Corona, Queens, boasts no less than four stadiums with a combined seating of nearly 100,000. It's home to the New York Mets, and hosts the internationally renowned US Open Tennis Championships. It's also the fourth largest park in New York City, just edging out Central Park. But on a frigid day in January, hardly anyone has a reason to head over.
         </>,
         viewport: { longitude: -73.98, latitude: 40.75, zoom: 12, bearing: 0, pitch: 0 },
-        pointsToInclude: [stationIdToStation['611'], stationIdToStation['318']], // Times Sq-42 St (1 2 3) and 34 St-Penn Station (1 2 3)
+        // Flushing-Main St (7), Bowling Green (4 5) and 137 St-City College (1)
+        pointsToInclude: [stationIdToStation['447'], stationIdToStation['414'], stationIdToStation['305']],
         dataview: {
-          station: '611', // Times Sq-42 St (1 2 3)
+          station: '448', // Mets-Willets Point
           direction: 'goingTo',
           day: 'Monday',
           hour: 9,
           months: ALL_MONTHS,
-          visibleLines: ['1', '2', '3'],
         },
       },
       {
@@ -315,7 +315,8 @@ const StoriesView = React.memo(({
         stories={stories}
         currentStoryIndex={currentStoryIndex}
         currentPartIndex={currentPartIndex}
-        handleJumpToStory={handleJumpToStory}
+        handleJumpToStory={(storyIndex, partIndex) => handleJumpToStory(storyIndex, partIndex, false)}
+        handleJumpToPart={(storyIndex, partIndex) => handleJumpToStory(storyIndex, partIndex, true)}
         setPreviewStory={setPreviewStory}
       />
 
