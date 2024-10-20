@@ -121,6 +121,16 @@ const MTADataMap = ({ mapboxToken }) => {
 
   const { fetchData } = useFetchData();
 
+  // Add new state for story position
+  const [currentStoryIndex, setCurrentStoryIndex] = useState(() => {
+    const savedState = loadStateFromSessionStorage();
+    return savedState?.currentStoryIndex || 0;
+  });
+  const [currentPartIndex, setCurrentPartIndex] = useState(() => {
+    const savedState = loadStateFromSessionStorage();
+    return savedState?.currentPartIndex || 0;
+  });
+
   const handleDataSettingsChange = React.useCallback(async ({ 
     newSelectedDay, 
     newSelectedStation, 
@@ -427,9 +437,11 @@ const MTADataMap = ({ mapboxToken }) => {
       selectedDirection,
       selectedMonths,
       showPercentage,
+      currentStoryIndex,
+      currentPartIndex,
     };
     saveStateToSessionStorage(stateToSave);
-  }, [viewport, selectedHour, selectedDay, selectedStation, selectedDirection, selectedMonths, showPercentage]);
+  }, [viewport, selectedHour, selectedDay, selectedStation, selectedDirection, selectedMonths, showPercentage, currentStoryIndex, currentPartIndex]);
 
   // Add new state for active view
   const [activeView, setActiveView] = useState('visualization');
@@ -528,11 +540,10 @@ const MTADataMap = ({ mapboxToken }) => {
         setViewport={setViewport}
         handleDataSettingsChange={handleDataSettingsChange}
         limitVisibleLines={limitVisibleLines}
-        selectedStation={selectedStation}
-        selectedDirection={selectedDirection}
-        selectedDay={selectedDay}
-        selectedHour={selectedHour}
-        selectedMonths={selectedMonths}
+        currentStoryIndex={currentStoryIndex}
+        currentPartIndex={currentPartIndex}
+        setCurrentStoryIndex={setCurrentStoryIndex}
+        setCurrentPartIndex={setCurrentPartIndex}
       />}
       {hoverInfo && !isLoading && (
         <Tooltip
