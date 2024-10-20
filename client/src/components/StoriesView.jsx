@@ -6,6 +6,7 @@ import { areViewportsNearlyEqual, getViewportForBounds } from '../lib/map-bounds
 import { stationIdToStation } from '../lib/stations';
 import { MAIN_STATION_COLOR } from './MTADataMap';
 import StoryProgress from './StoryProgress';
+import AttributedPhoto from './AttributedPhoto';
 
 export const ALL_MONTHS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
@@ -15,7 +16,11 @@ const stories = [
     parts: [
       {
         description: <>
-          <img src="../../public/chinatown.jpeg" alt="Busy street in Chinatown with colorful signs" className="story-image" style={{width: '100%'}}/>
+          <AttributedPhoto 
+            src="../../public/chinatown.jpeg" 
+            alt="Busy street in Chinatown with colorful signs" 
+            attribution="Photo by Peeter Viisimaa"
+          />
           <p>
             <span className="opening-phrase">"They go in the morning for Dim Sum,"</span>
             {" "}explains Anna Li, 26(?), when I ask her why hundreds of people flock from her neighborhood, Bensonhurst, to Manhattan's Chinatown at 8 a.m. every Saturday. Bensonhurst and Sunset Park, where Anna grew up, house the two largest Chinese communities in Brooklyn. Although younger generations of Chinese are choosing more and more to settle away from the din of Manhattan, the original Chinatown is still a crucial gathering-place for the community.
