@@ -542,6 +542,11 @@ const MTADataMap = ({ mapboxToken }) => {
         limitVisibleLines={limitVisibleLines}
         currentStoryIndex={currentStoryIndex}
         currentPartIndex={currentPartIndex}
+        selectedDirection={selectedDirection}
+        selectedStation={selectedStation}
+        selectedHour={selectedHour}
+        selectedDay={selectedDay}
+        selectedMonths={selectedMonths}
         setCurrentStoryIndex={setCurrentStoryIndex}
         setCurrentPartIndex={setCurrentPartIndex}
       />}
