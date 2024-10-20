@@ -15,7 +15,11 @@ const stories = [
     parts: [
       {
         description: <>
-          “They go in the morning for Dim Sum,” explains Anna Li, 26(?), when I ask her why hundreds of people flock from her neighborhood, Bensonhurst, to Manhattan's Chinatown at 8 a.m. every Saturday. Bensonhurst and Sunset Park, where Anna grew up, house the two largest Chinese communities in Brooklyn. Although younger generations of Chinese are choosing more and more to settle away from the din of Manhattan, the original Chinatown is still a crucial gathering-place for the community.
+          <img src="../../public/chinatown.jpeg" alt="Busy street in Chinatown with colorful signs" className="story-image" style={{width: '100%'}}/>
+          <p>
+            <span className="opening-phrase">"They go in the morning for Dim Sum,"</span>
+            {" "}explains Anna Li, 26(?), when I ask her why hundreds of people flock from her neighborhood, Bensonhurst, to Manhattan's Chinatown at 8 a.m. every Saturday. Bensonhurst and Sunset Park, where Anna grew up, house the two largest Chinese communities in Brooklyn. Although younger generations of Chinese are choosing more and more to settle away from the din of Manhattan, the original Chinatown is still a crucial gathering-place for the community.
+          </p>
         </>,
         viewport: { longitude: -73.990, latitude: 40.651, zoom: 11.35, bearing: 0, pitch: 0 },
         // Grand St (B D), Coney Island-Stillwell Av (D F N Q), and Bay Ridge-95 St (R)
@@ -241,7 +245,7 @@ const StoriesView = React.memo(({
     limitVisibleLines(currentPart.dataview.visibleLines);
   }, [setViewport, handleDataSettingsChange, limitVisibleLines]);
 
-  const handleJumpToStory = useCallback((storyIndex, partIndex) => {
+  const handleJumpToStory = useCallback((storyIndex, partIndex, smooth = true) => {
     const storyBoxes = containerRef.current.querySelectorAll('.stories-box');
     let targetIndex = 0;
     
@@ -263,10 +267,14 @@ const StoriesView = React.memo(({
 
       containerRef.current.scrollTo({
         top: scrollPosition,
-        behavior: 'smooth'
+        behavior: smooth ? 'smooth' : 'instant'
       });
     }
   }, [stories]);
+
+  useEffect(() => {
+    handleJumpToStory(0, 0, false);
+  }, []);
 
   useEffect(() => {
     scrollerRef.current
@@ -279,22 +287,18 @@ const StoriesView = React.memo(({
 
   return (
     <div className="stories-view-container" ref={containerRef}>
-      {/* {stories[0].parts.map((part, index) => (
-        <div key={index} className="stories-box">
-          {index === 0 && <h2>{stories[0].title}</h2>}
-          <p>{part.description}</p>
-        </div>
-      ))} */}
-      {stories.map((story, storyIndex) => (
-        <React.Fragment key={storyIndex}>
-          {story.parts.map((part, partIndex) => (
-            <div key={`${storyIndex}-${partIndex}`} className="stories-box">
-              {partIndex === 0 && <h2>{story.title}</h2>}
-              <p>{part.description}</p>
-            </div>
-          ))}
-        </React.Fragment>
-      ))}
+      <div className="stories-content">
+        {stories.map((story, storyIndex) => (
+          <React.Fragment key={storyIndex}>
+            {story.parts.map((part, partIndex) => (
+              <div key={`${storyIndex}-${partIndex}`} className="stories-box">
+                {partIndex === 0 && <h2>{story.title}</h2>}
+                <p>{part.description}</p>
+              </div>
+            ))}
+          </React.Fragment>
+        ))}
+      </div>
       <div className="floating-info-bar">
         {formatInfoBarText(selectedDirection, selectedStation, selectedHour, selectedDay, selectedMonths)}
       </div>
