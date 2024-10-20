@@ -135,6 +135,11 @@ const stories = [
     parts: [
       {
         description: <>
+          <AttributedPhoto 
+            src="../../public/grandstand.jpg" 
+            alt="Grandstand at the US Open Tennis Center" 
+            attribution="Photo by NYC Parks"
+          />
           <p>
             Flushing Meadows Park, nestled between Flushing and Corona, Queens, boasts no less than four stadiums with a combined seating of nearly 100,000. 
           </p>
@@ -167,8 +172,8 @@ const stories = [
           hour: 17,
           months: [4, 5, 6, 7],
           barScale: 0.006,
+          visibleLines: ['7'],
         },
-        visibleLines: ['7'],
       },
       {
         description: <>
@@ -192,8 +197,8 @@ const stories = [
           hours: [7, 19],
           months: [7, 8],
           barScale: 0.006,
+          visibleLines: ['7'],
         },
-        visibleLines: ['7'],
       },
       {
         description: <>
@@ -216,8 +221,8 @@ const stories = [
           hour: 17,
           months: [7],
           barScale: 0.006,
+          visibleLines: ['7'],
         },
-        visibleLines: ['7'],
       },
       {
         description: <>
@@ -240,8 +245,8 @@ const stories = [
           hour: 18,
           months: [5, 6, 7],
           barScale: 0.006,
+          visibleLines: ['7'],
         },
-        visibleLines: ['7'],
       },
     ]
   },
