@@ -128,7 +128,7 @@
   background-color: white;
 }
 
-.story-line:hover {
+.story-line:not(.active):hover {
   background-color: #888;
 }
 
@@ -152,7 +152,7 @@
   background-color: white;
 }
 
-.part-line:hover {
+.part-line:not(.active):hover {
   background-color: #888;
 }
 
@@ -160,4 +160,19 @@
   font-size: 23px;
   font-style: italic;
   font-weight: 500;
+}
+
+.stories-box.preview {
+  position: fixed;
+  left: 20px;
+  transform: translateY(-50%);
+  width: 400px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 2px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 1000;
+  opacity: 0.8;
 }

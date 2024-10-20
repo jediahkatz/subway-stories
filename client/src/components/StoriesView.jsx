@@ -174,6 +174,15 @@ const STORY_BOX_LEFT_OFFSET = 20;
 const FLOATING_INFO_BAR_HEIGHT = 54;
 const FLOATING_INFO_BAR_OFFSET = 20;
 
+const StoryBox = ({ story, partIndex = 0, isPreview = false }) => (
+  <div className={`stories-box ${isPreview ? 'preview' : ''}`}>
+    {story.title !== undefined && partIndex === 0 && <h2>{story.title}</h2>}
+    <div className="story-content">
+      {story.parts[partIndex].description}
+    </div>
+  </div>
+);
+
 const StoriesView = React.memo(({
   handleDataSettingsChange,
   setViewport, 
@@ -188,6 +197,7 @@ const StoriesView = React.memo(({
   const scrollerRef = useRef(scrollama());
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
   const [currentPartIndex, setCurrentPartIndex] = useState(0);
+  const [previewStory, setPreviewStory] = useState(null);
 
   const getPadding = () => {
     return {
@@ -286,28 +296,39 @@ const StoriesView = React.memo(({
   }, [handleStepEnter]);
 
   return (
-    <div className="stories-view-container" ref={containerRef}>
-      <div className="stories-content">
-        {stories.map((story, storyIndex) => (
-          <React.Fragment key={storyIndex}>
-            {story.parts.map((part, partIndex) => (
-              <div key={`${storyIndex}-${partIndex}`} className="stories-box">
-                {partIndex === 0 && <h2>{story.title}</h2>}
-                <p>{part.description}</p>
-              </div>
-            ))}
-          </React.Fragment>
-        ))}
+    <div className="stories-view">
+      <div className="stories-view-container" ref={containerRef}>
+        <div className="stories-content" style={{ visibility: previewStory !== null ? 'hidden' : 'visible' }}>
+          {stories.map((story, storyIndex) => (
+            <React.Fragment key={storyIndex}>
+              {story.parts.map((_, partIndex) => (
+                <StoryBox 
+                  key={`${storyIndex}-${partIndex}`}
+                  story={story}
+                  partIndex={partIndex}
+                />
+              ))}
+            </React.Fragment>
+          ))}
+        </div>
       </div>
-      <div className="floating-info-bar">
-        {formatInfoBarText(selectedDirection, selectedStation, selectedHour, selectedDay, selectedMonths)}
-      </div>
+
       <StoryProgress
         stories={stories}
         currentStoryIndex={currentStoryIndex}
         currentPartIndex={currentPartIndex}
         handleJumpToStory={handleJumpToStory}
+        setPreviewStory={setPreviewStory}
       />
+
+      {previewStory !== null && (
+        <div className="story-preview">
+          <StoryBox 
+            story={stories[previewStory]}
+            isPreview={true}
+          />
+        </div>
+      )}
     </div>
   );
 });
