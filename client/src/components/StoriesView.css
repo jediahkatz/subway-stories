@@ -176,3 +176,24 @@
   z-index: 1000;
   opacity: 0.8;
 }
+
+.attributed-photo {
+  position: relative;
+  width: 100%;
+}
+
+.attributed-photo img {
+  width: 100%;
+  display: block;
+}
+
+.photo-attribution {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-size: 12px;
+}
