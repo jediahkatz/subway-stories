@@ -105,29 +105,28 @@ const stories = [
         description: <>
             Flushing Meadows Park, nestled between Flushing and Corona, Queens, boasts no less than four stadiums with a combined seating of nearly 100,000. It's home to the New York Mets, and hosts the internationally renowned US Open Tennis Championships. It's also the fourth largest park in New York City, just edging out Central Park. But on a frigid day in January, hardly anyone has a reason to head over.
         </>,
-        viewport: { longitude: -73.98, latitude: 40.75, zoom: 12, bearing: 0, pitch: 0 },
         // Flushing-Main St (7), Bowling Green (4 5) and 137 St-City College (1)
         pointsToInclude: [stationIdToStation['447'], stationIdToStation['414'], stationIdToStation['305']],
         dataview: {
           station: '448', // Mets-Willets Point
-          direction: 'goingTo',
-          day: 'Monday',
-          hour: 9,
-          months: ALL_MONTHS,
+          direction: 'comingFrom',
+          day: 'Saturday',
+          hour: 17,
+          months: [1],
         },
       },
       {
         description: <>
-          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          It's a different story on game day. Once the baseball season begins in late March, tens of thousands pile into Citi Field. Some fans drive or take the LIRR, but most locals jam onto the 7 train to Mets-Willets Point. They come from all over, especially nearby Queens. Two big spikes at Grand Central and the Port Authority represent the thousands who come into the city from all over the Tri-State area.
         </>,
-        pointsToInclude: [stationIdToStation['611'], stationIdToStation['318']],
+        // Flushing-Main St (7), Bowling Green (4 5) and 137 St-City College (1)
+        pointsToInclude: [stationIdToStation['447'], stationIdToStation['414'], stationIdToStation['305']],
         dataview: {
-          station: '127', // 34 St-Penn Station (1 2 3)
+          station: '448', // Mets-Willets Point
           direction: 'comingFrom',
-          day: 'Friday',
-          hour: 18,
-          months: ALL_MONTHS,
-          visibleLines: ['1', '2', '3'],
+          day: 'Saturday',
+          hour: 15,
+          months: [4, 5, 6, 7],
         },
       },
     ]
@@ -187,7 +186,11 @@ const StoriesView = React.memo(({
   handleDataSettingsChange,
   setViewport, 
   limitVisibleLines,
-
+  selectedDirection,
+  selectedStation,
+  selectedHour,
+  selectedDay,
+  selectedMonths,
   currentStoryIndex,
   currentPartIndex,
   setCurrentStoryIndex,
@@ -308,6 +311,9 @@ const StoriesView = React.memo(({
               ))}
             </React.Fragment>
           ))}
+        </div>
+        <div className="floating-info-bar" style={{visibility: previewStory !== null ? 'hidden' : 'visible'}}>
+          {formatInfoBarText(selectedDirection, selectedStation, selectedHour, selectedDay, selectedMonths)}  
         </div>
       </div>
 
