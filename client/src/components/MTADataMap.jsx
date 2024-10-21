@@ -539,6 +539,7 @@ const MTADataMap = ({ mapboxToken }) => {
           setSelectedStation={handleSetSelectedStation}
           selectedDirection={selectedDirection}
           setSelectedDirection={handleSetSelectedDirection}
+          barScaleLocked={barScaleLocked.current}
           barScale={barScale.current}
           setSelectedBarScale={handleSetSelectedBarScale}
           initialBarScale={initialBarScale.current}
