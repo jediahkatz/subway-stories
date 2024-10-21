@@ -439,8 +439,6 @@ const MTADataMap = ({ mapboxToken }) => {
     }
   });
 
-  console.log({ barData })
-
   const mapBarLayer3d = new ColumnLayer({
     id: 'ridership-column-layer',
     data: filteredDataWithStationsAnimatingToZero.filter(d => barData.heights[d.station_id]?.currentHeight ?? 0 > 0),
@@ -627,6 +625,7 @@ const MTADataMap = ({ mapboxToken }) => {
           percentageLabel={hoverInfo.percentageLabel}
         />
       )}
+      <View3DToggle is3D={viewportIs3d} setViewport={setViewport} />
     </div>
   );
 };
@@ -730,6 +729,45 @@ const getInitialBarScale = (data, selectedStation) => {
 const getStationName = (id) => {
   const station = stationIdToStation[id]
   return station ? station.display_name : 'Unknown Station';
+};
+
+const View3DToggle = ({ is3D, setViewport }) => {
+  const toggleView = () => {
+    if (is3D) {
+      // Switch to 2D view
+      setViewport(prevViewport => ({
+        ...prevViewport,
+        pitch: 0,
+        bearing: 0,
+        transitionDuration: 1000,
+        transitionInterpolator: new FlyToInterpolator(),
+      }));
+    } else {
+      // Switch to 3D view
+      setViewport(prevViewport => ({
+        ...prevViewport,
+        pitch: 45,
+        bearing: 0,
+        transitionDuration: 1000,
+        transitionInterpolator: new FlyToInterpolator(),
+      }));
+    }
+  };
+
+  return (
+    <button
+      className={`view-toggle`}
+      onClick={toggleView}
+      aria-label={`Switch to ${is3D ? '2D' : '3D'} view`}
+    >
+      {
+        is3D ?
+          <div className="view-3d" />
+        :
+          <div className="view-2d" />
+      }
+    </button>
+  );
 };
 
 export default MTADataMap;
