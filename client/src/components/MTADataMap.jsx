@@ -104,6 +104,17 @@ const MTADataMap = ({ mapboxToken }) => {
     const savedState = loadStateFromSessionStorage();
     return savedState?.showPercentage || false;
   });
+  // I know, this is a hack and doesn't really make sense. But it somehow fixes the issue where there's a stale
+  // state value that's not updated in the handleDataSettingsChange function.
+  const dataStateRef = useRef({
+    selectedHour,
+    selectedDay,
+    selectedStation,
+    selectedDirection,
+    selectedMonths,
+    showPercentage,
+    selectedBarScale,
+  });
 
   const mapRef = useRef(null);
 
@@ -141,6 +152,8 @@ const MTADataMap = ({ mapboxToken }) => {
     newSelectedBarScale,
     initialFetch = false,
   }) => {
+    const { selectedDay, selectedStation, selectedDirection, selectedMonths, selectedHour, showPercentage, selectedBarScale } = dataStateRef.current;
+
     const dayChanged = newSelectedDay !== undefined && newSelectedDay !== selectedDay;
     const stationChanged = newSelectedStation !== undefined && newSelectedStation !== selectedStation;
     const directionChanged = newSelectedDirection !== undefined && newSelectedDirection !== selectedDirection;
@@ -169,13 +182,13 @@ const MTADataMap = ({ mapboxToken }) => {
     const shouldAnimateBarChange = shouldFetchData || hourChanged;
     const shouldCompletePulseAnimationOnce = (stationChanged || directionChanged || initialFetch) && newSelectedStation !== ALL_STATIONS_ID;
 
-    if (dayChanged) setSelectedDay(newSelectedDay);
-    if (stationChanged) setSelectedStation(newSelectedStation);
-    if (directionChanged) setSelectedDirection(newSelectedDirection);
-    if (monthsChanged) setSelectedMonths(newSelectedMonths);
-    if (hourChanged) setSelectedHour(newSelectedHour);
-    if (showPercentageChanged) setShowPercentage(newShowPercentage);
-    if (selectedBarScaleChanged) setSelectedBarScale(newSelectedBarScale);
+    if (dayChanged) { setSelectedDay(newSelectedDay); dataStateRef.current.selectedDay = newSelectedDay; }
+    if (stationChanged) { setSelectedStation(newSelectedStation); dataStateRef.current.selectedStation = newSelectedStation; }
+    if (directionChanged) { setSelectedDirection(newSelectedDirection); dataStateRef.current.selectedDirection = newSelectedDirection; }
+    if (monthsChanged) { setSelectedMonths(newSelectedMonths); dataStateRef.current.selectedMonths = newSelectedMonths; }
+    if (hourChanged) { setSelectedHour(newSelectedHour); dataStateRef.current.selectedHour = newSelectedHour; }
+    if (showPercentageChanged) { setShowPercentage(newShowPercentage); dataStateRef.current.showPercentage = newShowPercentage; }
+    if (selectedBarScaleChanged) { setSelectedBarScale(newSelectedBarScale); dataStateRef.current.selectedBarScale = newSelectedBarScale; }
     
     if (shouldFetchData) {
       console.log('fetching data')
@@ -210,7 +223,6 @@ const MTADataMap = ({ mapboxToken }) => {
         setTimeout(() => {
           if (!loadingAnimationStarted) {
             startLoadingAnimation();
-            loadingAnimationStarted = true;
           }
           resolve();
         }, 150);
