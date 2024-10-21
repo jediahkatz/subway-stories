@@ -47,12 +47,14 @@ class FewerObjectsMapBarLayer extends CompositeLayer {
       pickable,
       onHover,
       getFillColor: getColor,
+      getColor: getColor,
       getWidth,
       widthUnits: 'meters',
       updateTriggers: {
         getSourcePosition: [getBasePosition],
         getTargetPosition: [getBasePosition, getHeight],
         getFillColor: [this.props.updateTriggers.getColor],
+        getColor: [this.props.updateTriggers.getColor],
         getWidth: [getWidth]
       }
     }))
@@ -161,6 +163,45 @@ CirclesOnlyMapBarLayer.defaultProps = {
   getColor: {type: 'accessor', value: [255, 0, 0]}
 };
 
-const MapBarLayer = CirclesOnlyMapBarLayer;
+/** Will use CirclesOnlyMapBar layer when possible, but will switch to FewerObjectsMapBarLayer if we would need to render too many circles. */
+class MemoryAdaptiveMapBarLayer extends CompositeLayer {
+  renderLayers() {
+    const {data, getBasePosition, getHeight, getWidth, pickable, getColor, onHover} = this.props;
+    const MAX_TOTAL_CIRCLES = 100000;
+
+    // Calculate total number of circles that would be needed
+    const totalCircles = data.reduce((sum, d) => {
+      const height = getHeight(d);
+      return sum + Math.floor(height / CIRCLE_SPACING);
+    }, 0);
+
+    // Choose the appropriate layer based on the total number of circles
+    const ChosenLayer = totalCircles > MAX_TOTAL_CIRCLES
+      ? FewerObjectsMapBarLayer
+      : CirclesOnlyMapBarLayer;
+
+    const chosenLayer = new ChosenLayer({ 
+      id: 'adaptive-bar-layer',
+      data,
+      getBasePosition,
+      getHeight,
+      getWidth,
+      getColor,
+      pickable,
+      onHover,
+      updateTriggers: this.props.updateTriggers
+    });
+
+    return [chosenLayer];
+  }
+}
+
+MemoryAdaptiveMapBarLayer.layerName = 'MemoryAdaptiveMapBarLayer';
+MemoryAdaptiveMapBarLayer.defaultProps = {
+  ...CirclesOnlyMapBarLayer.defaultProps,
+  // Add any additional default props
+};
+
+const MapBarLayer = MemoryAdaptiveMapBarLayer;
 
 export default MapBarLayer;
