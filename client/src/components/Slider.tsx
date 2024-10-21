@@ -41,38 +41,111 @@ const linearToLogSlider = (value) => {
     return Math.pow(10, (value * 3 / 1000) - 3);
 };
 
-export const LogarithmicSlider = ({ value, onChange, onDoubleClick, disabled = false }) => {
-  const [sliderValue, setSliderValue] = useState(logSliderToLinear(value));
+export const BarScaleSlider = ({ barScale, isLocked, setSelectedBarScale, disabled = false }) => {
+  const HANDLE_WIDTH = 60;
   const [isDragging, setIsDragging] = useState(false);
-  
+  const [localValue, setLocalValue] = useState(logSliderToLinear(barScale));
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const handleRef = useRef<HTMLDivElement>(null);
+  const rectRef = useRef<DOMRect | null>(null);
+
+  const resetBarScale = useCallback(() => {
+    setSelectedBarScale(null);
+  }, [setSelectedBarScale]);
+
   useEffect(() => {
     if (!isDragging) {
-      setSliderValue(logSliderToLinear(value));
+      setLocalValue(logSliderToLinear(barScale));
     }
-  }, [value, isDragging]);
+  }, [barScale, isDragging]);
 
-  const handleSliderChange = (newValue) => {
-    setSliderValue(newValue);
-    onChange(linearToLogSlider(newValue));
-  };
+  const updateSliderPosition = useCallback((clientX: number) => {
+    if (rectRef.current) {
+      const availableWidth = rectRef.current.width - HANDLE_WIDTH;
+      
+      const newValue = Math.max(0, Math.min(1000, Math.round((clientX - rectRef.current.left - (HANDLE_WIDTH / 2)) / availableWidth * 1000)));
+      
+      if (newValue !== localValue) {
+        setLocalValue(newValue);
+        setSelectedBarScale(linearToLogSlider(newValue));
+      }
+    }
+  }, [localValue, setSelectedBarScale]);
+
+  const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!disabled) {
+      setIsDragging(true);
+      if (sliderRef.current) {
+        rectRef.current = sliderRef.current.getBoundingClientRect();
+      }
+      if (handleRef.current) {
+        handleRef.current.setPointerCapture(e.pointerId);
+      }
+      updateSliderPosition(e.clientX);
+    }
+  }, [disabled, updateSliderPosition]);
+
+  const handlePointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    setIsDragging(false);
+    rectRef.current = null;
+    if (handleRef.current) {
+      handleRef.current.releasePointerCapture(e.pointerId);
+    }
+  }, []);
+
+  const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (isDragging) {
+      updateSliderPosition(e.clientX);
+    }
+  }, [isDragging, updateSliderPosition]);
+
+  const getDisplayValue = useCallback(() => {
+    const logValue = linearToLogSlider(localValue);
+    // For friendly display, remap 0.001x - 1x to 0.01x - 10x
+    const friendlyScaleLogValue = logValue * 10;
+    return friendlyScaleLogValue === 10 ? '10.0x' : friendlyScaleLogValue.toFixed(2) + 'x';
+  }, [localValue]);
+
+  const getHandlePosition = useCallback(() => {
+    // Calculate position in pixels
+    const trackWidth = sliderRef.current ? sliderRef.current.getBoundingClientRect().width : 250; // fallback to 250 if not available
+    const availableWidth = trackWidth - HANDLE_WIDTH;
+    const position = (HANDLE_WIDTH / 2) + (localValue / 1000) * availableWidth;
+    return `${position}px`;
+  }, [localValue]);
+
+  const handleLockClick = useCallback(() => {
+    if (isLocked) {
+      resetBarScale();
+    } else {
+      setSelectedBarScale(barScale);
+    }
+  }, [isLocked, resetBarScale, setSelectedBarScale, barScale]);
 
   return (
-      <Slider
-          min={0}
-          max={1000}
-          step={1}
-          value={sliderValue}
-          disabled={disabled}
-          onChange={handleSliderChange}
-          onMouseDown={() => setIsDragging(true)}
-          onMouseUp={() => setIsDragging(false)}
-          onTouchStart={() => setIsDragging(true)}
-          onTouchEnd={() => setIsDragging(false)}
-          onDoubleClick={onDoubleClick}
-      />
+    <div className="logarithmic-slider-container">
+      <div
+        ref={sliderRef}
+        className={`logarithmic-slider ${disabled ? 'disabled' : ''}`}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerMove={handlePointerMove}
+        onDoubleClick={resetBarScale}
+      >
+        <div
+          ref={handleRef}
+          className="slider-handle"
+          style={{ left: getHandlePosition() }}
+        >
+          <div className="handle-value">{getDisplayValue()}</div>
+        </div>
+      </div>
+      <button className={`slider-lock-button ${isLocked ? 'locked' : ''}`} onClick={handleLockClick}>
+        {!isLocked && <span className="auto-text">AUTO</span>}
+      </button>
+    </div>
   );
-}
-
+};
 // Inspired by https://www.facebook.com/share/v/bv5vsJQgVs5aKgUG/
 export const CoolSlider: React.FC<{
   value: number;

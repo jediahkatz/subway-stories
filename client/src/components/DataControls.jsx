@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { stationIdToStation, stations } from '../lib/stations';
-import { Slider, LogarithmicSlider, CoolSlider } from './Slider';
+import { Slider, BarScaleSlider, CoolSlider } from './Slider';
 import MonthSelector from './MonthSelector';
 import { SearchableStringDropdown, SearchableStationDropdown } from './SearchableDropdown';
 import './DataControls.css';
@@ -30,6 +30,7 @@ const DataControls = ({
   setSelectedStation, 
   selectedDirection, 
   setSelectedDirection,
+  barScaleLocked,
   barScale,
   setSelectedBarScale,
   selectedMonths,
@@ -97,15 +98,14 @@ const DataControls = ({
           </label>
           <div className="bar-scale-control">
             <label>
-              <p className="map-controls-label">Bar height (double-click to reset)</p>
+              <p className="map-controls-label">Bar scale</p>
             </label>
             <div className="slider-container">
-              <LogarithmicSlider
-                value={barScale}
-                onChange={setSelectedBarScale}
-                onDoubleClick={() => setSelectedBarScale(null)}
+              <BarScaleSlider
+                isLocked={barScaleLocked}
+                barScale={barScale}
+                setSelectedBarScale={setSelectedBarScale}
               />
-              <span>{barScale.toFixed(3)}x</span>
             </div>
           </div>
           <label className="inline-checkbox">
