@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { stationIdToStation, stations } from '../lib/stations';
 import { Slider, LogarithmicSlider, CoolSlider } from './Slider';
 import MonthSelector from './MonthSelector';
@@ -32,7 +32,7 @@ const DataControls = ({
   setSelectedDirection,
   barScale,
   setSelectedBarScale,
-  selectedMonths, 
+  selectedMonths,
   setSelectedMonths,
   showPercentage,
   setShowPercentage
