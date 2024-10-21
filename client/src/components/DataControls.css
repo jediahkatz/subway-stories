@@ -195,3 +195,9 @@
     background-color: rgb(50, 50, 50);
     border-radius: 10px;
 }
+
+.info-icon {
+  font-size: 0.8em;
+  margin-left: 8px;
+  cursor: help;
+}

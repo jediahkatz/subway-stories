@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { DeckGL, ScatterplotLayer } from 'deck.gl';
 import ReactMapGL from 'react-map-gl';
 import { stationIdToStation, stations } from '../lib/stations';
-import Tooltip from './Tooltip';
+import { RidershipTooltip } from './Tooltip';
 import DataControls from './DataControls';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import './MTADataMap.css';
@@ -564,10 +564,10 @@ const MTADataMap = ({ mapboxToken }) => {
         setCurrentPartIndex={setCurrentPartIndex}
       />}
       {hoverInfo && !isLoading && (
-        <Tooltip
+        <RidershipTooltip
           x={hoverInfo.x}
           y={hoverInfo.y}
-          stationName={`${hoverInfo.stationName} (${hoverInfo.stationId})`}
+          stationName={hoverInfo.stationName}
           ridership={hoverInfo.ridership}
           percentage={hoverInfo.showPercentage ? hoverInfo.percentage : null}
           ridershipLabel={hoverInfo.ridershipLabel}

@@ -98,7 +98,10 @@ const DataControls = ({
           </label>
           <div className="bar-scale-control">
             <label>
-              <p className="map-controls-label">Bar scale</p>
+              <p className="map-controls-label">
+                Bar scale
+                <span className="info-icon" title="Adjust the scale of the bars on the map">ⓘ</span>
+              </p>
             </label>
             <div className="slider-container">
               <BarScaleSlider
