@@ -427,6 +427,7 @@ const MTADataMap = ({ mapboxToken }) => {
           percentage: info.object.percentage,
           percentageLabel: selectedDirection === 'goingTo' ? '% of arrivals here' : '% of departures here',
           showPercentage,
+          positionedLoosely: true,
         });
       } else {
         setHoverInfo(null);
@@ -559,7 +560,6 @@ const MTADataMap = ({ mapboxToken }) => {
     const positionOnMap = [station.lon, station.lat]
     const positionOnScreen = map.project(positionOnMap)
 
-    console.log({ isSelected: stationId == selectedStation })
     if (stationId == selectedStation) {
       const totalRidership = filteredData.current.reduce((acc, d) => acc + d.ridership, 0);
       setHoverInfo({
@@ -570,10 +570,14 @@ const MTADataMap = ({ mapboxToken }) => {
         ridership: totalRidership,
         ridershipLabel: selectedDirection === 'goingTo' ? 'Total departures' : 'Total arrivals',
         showPercentage: false,
+        positionedLoosely: true,
       });
     } else {
       const data = filteredData.current.find(d => d.station_id == stationId)
-      const ridership = data ? data.ridership : null
+      if (!data) {
+        return
+      }
+      const ridership = data.ridership
       const height = getAbsoluteHeight(data, barScale.current, showPercentage)
       // todo: 3d
       const heightInPx = positionOnScreen.y - map.project([station.lon, station.lat + height]).y
@@ -585,9 +589,10 @@ const MTADataMap = ({ mapboxToken }) => {
         ridership,
         ridershipLabel: 'Ridership',
         showPercentage: false,
+        positionedLoosely: false,
       });
     }
-  }, [setHoverInfo, selectedDirection, filteredData, showPercentage])
+  }, [setHoverInfo, selectedDirection, selectedStation, filteredData, showPercentage])
 
   return (
     <div className="map-container">
@@ -668,6 +673,7 @@ const MTADataMap = ({ mapboxToken }) => {
           percentage={hoverInfo.showPercentage ? hoverInfo.percentage : null}
           ridershipLabel={hoverInfo.ridershipLabel}
           percentageLabel={hoverInfo.percentageLabel}
+          positionedLoosely={hoverInfo.positionedLoosely}
         />
       )}
       <View3DToggle is3D={viewportIs3d} setViewport={setViewport} />
@@ -752,6 +758,7 @@ const useMainStationIndicatorLayers = (selectedStation, selectedDirection, filte
           ridership: totalRidership,
           ridershipLabel: selectedDirection === 'goingTo' ? 'Total departures' : 'Total arrivals',
           showPercentage: false,
+          positionedLoosely: true,
         });
       } else {
         setHoverInfo(null);
