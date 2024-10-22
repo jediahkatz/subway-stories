@@ -118,8 +118,10 @@ const DataControls = ({
         className="see-more" 
         onClick={() => setShowMoreControls(!showMoreControls)}
       >
-        See {showMoreControls ? 'less' : 'more'}
-        <span className={`caret ${showMoreControls ? 'up' : ''}`}></span>
+        {showMoreControls ? 'Show less' : 'More controls'}
+        <div className="arrow-wrapper">
+          <div className={`arrow ${showMoreControls ? 'open' : ''}`}></div>
+        </div>
       </div>
     </div>
   );

@@ -201,3 +201,51 @@
   margin-left: 8px;
   cursor: help;
 }
+
+.see-more {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease;
+}
+
+.see-more:hover {
+    color: rgba(255, 255, 255, 1);
+}
+
+.see-more .arrow-wrapper {
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.see-more .arrow {
+    border-color: rgba(255, 255, 255, 0.7) transparent transparent;
+    border-style: solid;
+    border-width: 5px 5px 0;
+    content: " ";
+    display: block;
+    height: 0;
+    width: 0;
+    transition: all 0.3s ease;
+    margin-left: 10px;
+    margin-top: 2px;
+}
+
+.see-more:hover .arrow {
+    border-color: rgba(255, 255, 255, 1) transparent transparent;
+}
+
+.see-more .arrow.open {
+    border-color: transparent transparent rgba(255, 255, 255, 0.7);
+    border-width: 0 5px 5px;
+}
+
+.see-more:hover .arrow.open {
+    border-color: transparent transparent rgba(255, 255, 255, 1);
+}
