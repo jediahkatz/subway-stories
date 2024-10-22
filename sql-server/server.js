@@ -9,8 +9,12 @@ const PORT = process.env.PORT || 3000;
 // Load environment variables
 require('dotenv').config();
 
-// Enable CORS for all routes
-app.use(cors());
+// Enable CORS for the Subway Stories website
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN,
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 
 // Connect to SQLite database
 const db = new sqlite3.Database(process.env.DATABASE_PATH, (err) => {
