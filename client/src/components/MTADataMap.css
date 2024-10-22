@@ -428,3 +428,45 @@ body.pointer-cursor {
 .tooltip-right {
   right: attr(style[right]);
 }
+
+.color-legend {
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3), 
+              inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  pointer-events: none;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.color-box {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.interval-label {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+}
+
+.legend-title {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+  font-weight: normal;
+  margin: 0 0 2px 0;
+  text-align: left;
+}

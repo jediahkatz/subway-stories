@@ -20,6 +20,8 @@ import { useBarsAnimation } from '../hooks/useBarsAnimation';
 import { getAbsoluteHeight } from '../lib/bar-heights';
 import { usePrevious } from '../hooks/usePrevious';
 import { ALL_STATIONS_ID } from '../lib/all-stations';
+import { colorIntervals, colorScale } from './ColorLegend.jsx';
+import ColorLegend from './ColorLegend';
 
 const NYC_BOUNDS = {
   minLng: -74.2591,  // Southwest longitude
@@ -369,24 +371,10 @@ const MTADataMap = ({ mapboxToken }) => {
   };
 
   const getColorAbsolute = (value) => {
-    const intervals = [0, 10, 20, 40, 80, 160, 320, 640, 1280, 5120];
-    const colors = [
-      [255, 255, 240], // Light cream
-      [240, 220, 200], // Very light tan
-      [230, 200, 170], // Light beige
-      [220, 180, 150], // Soft tan
-      [210, 140, 110], // Warm orange-beige
-      [200, 100, 80],  // Muted orange
-      [180, 60, 50],   // Deep orange-red
-      [140, 40, 30],   // Brick red
-      [150, 20, 20],
-      [220, 20, 20],
-    ];
+    let colorIndex = colorIntervals.findIndex(interval => value < interval) - 1;
+    if (colorIndex === -2) colorIndex = colorScale.length - 1; // For values 1280+
 
-    let colorIndex = intervals.findIndex(interval => value < interval) - 1;
-    if (colorIndex === -2) colorIndex = colors.length - 1; // For values 1280+
-
-    return colors[colorIndex];
+    return colorScale[colorIndex];
   };
 
   const filteredDataWithStationsAnimatingToZero = useMemo(() => {
@@ -677,6 +665,7 @@ const MTADataMap = ({ mapboxToken }) => {
         />
       )}
       <View3DToggle is3D={viewportIs3d} setViewport={setViewport} />
+      <ColorLegend />
     </div>
   );
 };
