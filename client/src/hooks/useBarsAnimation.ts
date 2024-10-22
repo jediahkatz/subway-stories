@@ -133,7 +133,7 @@ export const useBarsAnimation = () => {
     return { barData, startAnimation, cancelAnimation };
 }
 
-const MIN_PULSE_HEIGHT = 1;
+const MIN_PULSE_HEIGHT = 0;
 const MAX_PULSE_HEIGHT = 50;
 // We multiply the progress by 1.1 so that the wave has time to complete its cycle.
 const PROGRESS_ALL_WAY_COEFF = 1.1;

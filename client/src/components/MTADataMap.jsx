@@ -1,6 +1,6 @@
 // src/components/MTADataMap.jsx
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { DeckGL, ScatterplotLayer } from 'deck.gl';
+import { ColumnLayer, DeckGL, ScatterplotLayer } from 'deck.gl';
 import ReactMapGL from 'react-map-gl';
 import { stationIdToStation, stations } from '../lib/stations';
 import { RidershipTooltip } from './Tooltip';
@@ -35,20 +35,22 @@ const LOADING_COLOR = [204, 204, 255];
 const PERCENTAGE_BAR_SCALE = 1 / 25;
 
 function constrainViewState({viewState}) {
-  const {longitude, latitude, zoom} = viewState;
+  const {longitude, latitude, zoom, pitch, bearing} = viewState;
 
   // Constrain longitude and latitude to NYC bounds
   const constrainedLongitude = Math.max(Math.min(longitude, NYC_BOUNDS.maxLng), NYC_BOUNDS.minLng);
   const constrainedLatitude = Math.max(Math.min(latitude, NYC_BOUNDS.maxLat), NYC_BOUNDS.minLat);
   const constrainedZoom = Math.max(NYC_BOUNDS.minZoom, zoom);
+  const constrainedPitch = Math.max(0, Math.min(pitch, 60));  // Limit pitch to 0-60 degrees
+  const constrainedBearing = bearing % 360;  // Keep bearing within 0-360 degrees
 
   return {
     ...viewState,
     longitude: constrainedLongitude,
     latitude: constrainedLatitude,
     zoom: constrainedZoom,
-    bearing: 0,
-    pitch: 0
+    bearing: constrainedBearing,
+    pitch: constrainedPitch
   };
 }
 
@@ -402,7 +404,7 @@ const MTADataMap = ({ mapboxToken }) => {
     ];
   }, [filteredData.current]);
 
-  const mapBarLayer = new MapBarLayer({
+  const mapBarLayer2d = new MapBarLayer({
     id: 'ridership-composite-layer',
     data: filteredDataWithStationsAnimatingToZero,
     pickable: true,
@@ -436,6 +438,57 @@ const MTADataMap = ({ mapboxToken }) => {
       getHeight: [barScale, filteredDataWithStationsAnimatingToZero, barData],
     }
   });
+
+  console.log({ barData })
+
+  const mapBarLayer3d = new ColumnLayer({
+    id: 'ridership-column-layer',
+    data: filteredDataWithStationsAnimatingToZero.filter(d => barData.heights[d.station_id]?.currentHeight ?? 0 > 0),
+    pickable: true,
+    extruded: true,
+    getPosition: d => [d.lon, d.lat],
+    getElevation: d => barData.heights[d.station_id]?.currentHeight ?? 0,
+    getFillColor: d => {
+      const color = barData.type === 'LOADING' ? LOADING_COLOR : getColorAbsolute(d.ridership);
+      return [...color, 255];
+    },
+    getLineColor: [0, 0, 0],
+    getLineWidthMinPixels: 1,
+    radius: 25,
+    flatShading: true,
+    material: {
+      ambient: 1,
+      diffuse: 0,
+      shininess: 0,
+      specularColor: [0, 0, 0]
+    },
+    elevationScale: 100000,
+    onHover: (info) => {
+      if (info.object) {
+        const stationName = getStationName(info.object.station_id);
+        setHoverInfo({
+          x: info.x,
+          y: info.y,
+          stationName,
+          stationId: info.object.station_id,
+          ridership: info.object.ridership,
+          percentage: info.object.percentage,
+          percentageLabel: selectedDirection === 'goingTo' ? '% of arrivals here' : '% of departures here',
+          showPercentage,
+        });
+      } else {
+        setHoverInfo(null);
+      }
+    },
+    updateTriggers: {
+      data: [filteredDataWithStationsAnimatingToZero],
+      getColor: [filteredDataWithStationsAnimatingToZero, barData],
+      getElevation: [barScale, filteredDataWithStationsAnimatingToZero, barData],
+    }
+  })
+
+  const viewportIs3d = viewport.pitch > 0 || viewport.bearing > 0;
+  const mapBarLayer = viewportIs3d ? mapBarLayer3d : mapBarLayer2d;
 
   const mainStationIndicatorLayers = useMainStationIndicatorLayers(selectedStation, selectedDirection, filteredData, viewport, setHoverInfo);
 
