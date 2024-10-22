@@ -547,6 +547,45 @@ const MTADataMap = ({ mapboxToken }) => {
     });
   }, [])
 
+  const setHoveredStation = useCallback((stationId) => {
+    if (stationId === null) {
+      setHoverInfo(null);
+      return;
+    }
+    const stationName = getStationName(stationId)
+
+    const map = mapRef.current
+    const station = stationIdToStation[stationId]
+    const positionOnMap = [station.lon, station.lat]
+    const positionOnScreen = map.project(positionOnMap)
+    console.log({ positionOnMap, positionOnScreen })
+
+    if (stationId == selectedStation) {
+      const totalRidership = filteredData.current.reduce((acc, d) => acc + d.ridership, 0);
+      setHoverInfo({
+        x: positionOnScreen.x,
+        y: positionOnScreen.y,
+        stationName,
+        stationId: selectedStation,
+        ridership: totalRidership,
+        ridershipLabel: selectedDirection === 'goingTo' ? 'Total departures' : 'Total arrivals',
+        showPercentage: false,
+      });
+    } else {
+      const data = filteredData.current.find(d => d.station_id == stationId)
+      const ridership = data ? data.ridership : null
+      setHoverInfo({
+        x: positionOnScreen.x,
+        y: positionOnScreen.y,
+        stationName,
+        stationId: stationId,
+        ridership,
+        ridershipLabel: 'Ridership',
+        showPercentage: false,
+      });
+    }
+  }, [setHoverInfo, selectedDirection, filteredData])
+
   return (
     <div className="map-container">
       <ViewTabs activeView={activeView} setActiveView={setActiveView} limitVisibleLines={limitVisibleLines} setSelectedBarScale={handleSetSelectedBarScale} />
@@ -614,6 +653,7 @@ const MTADataMap = ({ mapboxToken }) => {
         selectedMonths={selectedMonths}
         setCurrentStoryIndex={setCurrentStoryIndex}
         setCurrentPartIndex={setCurrentPartIndex}
+        setHoveredStation={setHoveredStation}
         mapRef={mapRef}
       />}
       {hoverInfo && !isLoading && (

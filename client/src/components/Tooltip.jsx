@@ -1,28 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React, { useRef } from 'react';
 import { SubwayLineSymbol } from './SubwayLineSymbol';
 
+const getPosition = (x, y) => {
+  const windowWidth = window.innerWidth;
+  const maxTooltipWidth = 310;
+  const tooltipHeight = 90;
+  const padding = 10;
+  const beakMargin = 20;
+
+  const isRight = x + maxTooltipWidth + padding > windowWidth;
+  
+  let position;
+  if (isRight) {
+    const right = windowWidth - x + beakMargin;
+    position = { right, top: y - (tooltipHeight / 2) };
+  } else {
+    position = { left: x + beakMargin, top: y - (tooltipHeight / 2) };
+  }
+
+  return { position, isRight };
+};
+
 const Tooltip = ({ x, y, children }) => {
-  const [position, setPosition] = useState({ left: x, top: y });
-
-  useEffect(() => {
-    const updatePosition = () => {
-      const windowWidth = window.innerWidth;
-      if (windowWidth - x < 310) {
-        setPosition({ right: windowWidth - x, top: y });
-      } else {
-        setPosition({ left: x, top: y });
-      }
-    };
-
-    updatePosition();
-    window.addEventListener('resize', updatePosition);
-
-    return () => window.removeEventListener('resize', updatePosition);
-  }, [x, y]);
+  const tooltipRef = useRef(null);
+  const { position, isRight } = getPosition(x, y);
 
   return (
-    <div className="tooltip" style={position}>
-      {children}
+    <div ref={tooltipRef} className={`tooltip ${isRight ? 'tooltip-right' : 'tooltip-left'}`} style={position}>
+      <div className="tooltip-content">
+        {children}
+      </div>
+      <div className={`tooltip-beak ${isRight ? 'beak-right' : 'beak-left'}`}></div>
     </div>
   );
 };

@@ -218,3 +218,13 @@
 .story-content:last-child {
   margin-bottom: 2em;
 }
+
+.station-highlight {
+  color: #3273dc;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.station-highlight:hover {
+  color: #2366d1;
+}

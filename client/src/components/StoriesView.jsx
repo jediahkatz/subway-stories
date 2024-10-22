@@ -11,7 +11,7 @@ import { ALL_STATIONS_ID } from '../lib/all-stations';
 
 export const ALL_MONTHS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
-const getStories = () => [
+const getStories = (StationHighlightComponent) => [
   {
     title: 'A Tale of Five Chinatowns',
     parts: [
@@ -47,7 +47,7 @@ const getStories = () => [
       {
         description: <>
           <p>
-            In her high school years, Anna joined the Saturday shuffle, taking the D train into Chinatown to play volleyball in Seward Park. Many of her friends held part-time jobs in the neighborhood. For these high school students without cars, downtown Manhattan served as a central and invigorating meeting point. 
+            In her high school years, Anna joined the Saturday shuffle, taking the D train to <StationHighlightComponent stationId="231">Grand St</StationHighlightComponent> to play volleyball in Seward Park. Many of her friends held part-time jobs in the neighborhood. For these high school students without cars, downtown Manhattan served as a central and invigorating meeting point. 
           </p>
           <p>
             Even the adults, who would normally drive when in Brooklyn, chose to take the subway into Chinatown to attend to business and call on older family members. “The elders who live in Chinatown, we don't make them come to us. We come to them.”
@@ -68,7 +68,7 @@ const getStories = () => [
       {
         description: <>
           <p>
-            The Brooklyn Chinese aren't the only ones heading into Manhattan's Chinatown on the weekend. A smaller but just as determined handful makes the even longer trek from Flushing, Queens, catching the 7 train into Manhattan and transferring downtown. 
+            The Brooklyn Chinese aren't the only ones heading into Manhattan's Chinatown on the weekend. A smaller but just as determined handful makes the even longer trek from <StationHighlightComponent stationId="447">Flushing</StationHighlightComponent>, Queens, catching the 7 train into Manhattan and transferring downtown. 
           </p>
           <p>
             But Flushing, too, draws crowds from near and far. Home to the largest Chinatown outside of Asia, the neighborhood has become a mammoth destination in its own right. 
@@ -93,7 +93,7 @@ const getStories = () => [
             Increasingly crowded and prosperous, Flushing is now the fourth largest business district in New York City. During rush hour, a surge of accountants, teachers, nurses, and retail workers pour in.
           </p>
           <p>
-            Many of them hail from mainland Chinese enclaves in the satellite neighborhoods of Elmhurst and Corona. In Flushing, the chatter one hears is often in Mandarin, unlike the Cantonese more commonly heard in Manhattan's Chinatown and Bensonhurst.
+            Many of them hail from mainland Chinese enclaves in the satellite neighborhoods of <StationHighlightComponent stationId="452">Elmhurst</StationHighlightComponent> and <StationHighlightComponent stationId="450">Corona</StationHighlightComponent>. In Flushing, the chatter one hears is often in Mandarin, unlike the Cantonese more commonly heard in Manhattan's Chinatown and Bensonhurst.
           </p>
         </>,
         // viewport: { longitude: -73.882, latitude: 40.745, zoom: 12, bearing: 0, pitch: 0 },
@@ -115,7 +115,7 @@ const getStories = () => [
             On weekends, straphangers pour back into Flushing for another reason: the food. The neighborhood is a mecca for regional cuisine, featuring staple dishes like Hunan stewed fish, Shanghai braised pork belly, and bing tanghulu (candied hawthorn fruits).
           </p>
           <p>
-            Restaurant workers are first out the door at 7 a.m. Come lunchtime and dinnertime, the Corona crowd is joined by a new lot of younger, affluent Chinese from Manhattan and Long Island City. 
+            Restaurant workers are first out the door at 7 a.m. Come lunchtime and dinnertime, the Corona crowd is joined by a new lot of younger, affluent Chinese from Manhattan and <StationHighlightComponent stationId="461">Long Island City</StationHighlightComponent>. 
           </p>
           <p>
             While LIC isn't considered a Chinatown on its own, its population has soared as young professionals and tech workers seeking newer apartment buildings close to both Flushing and Midtown have set up camp. <span className="story-end-marker"/>
@@ -473,6 +473,7 @@ const StoriesView = React.memo(({
   currentPartIndex,
   setCurrentStoryIndex,
   setCurrentPartIndex,
+  setHoveredStation,
   mapRef,
 }) => {
   const containerRef = useRef(null);
@@ -481,7 +482,12 @@ const StoriesView = React.memo(({
   const [animatingHours, setAnimatingHours] = useState(null);
   const [currentAnimatedHour, setCurrentAnimatedHour] = useState(null);
 
-  const stories = useMemo(() => getStories(), [getStories]);
+  const StationHighlightComponent = useCallback(({ children, stationId }) => (
+    <StationHighlight stationId={stationId} setHoveredStation={setHoveredStation}>
+      {children}
+    </StationHighlight>
+  ), [selectedStation, setHoveredStation]);
+  const stories = useMemo(() => getStories(StationHighlightComponent), [getStories, StationHighlightComponent]);
 
   const getPadding = () => {
     return {
@@ -688,6 +694,26 @@ const formatInfoBarText = (direction, stationId, hour, day, selectedMonths) => {
     <>
       Who's {directionText} <span className="highlight-station" style={{color: `rgb(${MAIN_STATION_COLOR.join(',')})`}}>{stationName}</span> at <span className="highlight-time">{formattedHour} {amPm} on a {day}{monthText}</span>?
     </>
+  );
+};
+
+const StationHighlight = ({ children, stationId, setHoveredStation }) => {
+  const handleMouseEnter = () => {
+    setHoveredStation(stationId);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredStation(null);
+  };
+
+  return (
+    <span
+      className="station-highlight"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {children}
+    </span>
   );
 };
 
