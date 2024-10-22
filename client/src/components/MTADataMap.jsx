@@ -549,13 +549,14 @@ const MTADataMap = ({ mapboxToken }) => {
 
   return (
     <div className="map-container">
-      <ViewTabs activeView={activeView} setActiveView={setActiveView} limitVisibleLines={limitVisibleLines} />
+      <ViewTabs activeView={activeView} setActiveView={setActiveView} limitVisibleLines={limitVisibleLines} setSelectedBarScale={handleSetSelectedBarScale} />
       <DeckGL
         viewState={viewport}
         controller={activeView === 'visualization' ? true : { scrollZoom: false }}
         layers={[...mainStationIndicatorLayers, mapBarLayer]}
         onViewStateChange={({viewState}) => {
           const constrained = constrainViewState({viewState})
+          // console.log('constrained', constrained)
           setViewport(constrained);
           saveStateToSessionStorage({ ...loadStateFromSessionStorage(), viewport: constrained });
           return constrained;
@@ -613,6 +614,7 @@ const MTADataMap = ({ mapboxToken }) => {
         selectedMonths={selectedMonths}
         setCurrentStoryIndex={setCurrentStoryIndex}
         setCurrentPartIndex={setCurrentPartIndex}
+        mapRef={mapRef}
       />}
       {hoverInfo && !isLoading && (
         <RidershipTooltip

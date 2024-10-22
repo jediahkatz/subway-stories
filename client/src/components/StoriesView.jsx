@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react';
+import React, { useEffect, useRef, useCallback, useState, useMemo } from 'react';
 import scrollama from 'scrollama';
 import './StoriesView.css';
 import { FlyToInterpolator } from 'deck.gl';
@@ -7,10 +7,11 @@ import { stationIdToStation } from '../lib/stations';
 import { MAIN_STATION_COLOR } from './MTADataMap';
 import StoryProgress from './StoryProgress';
 import AttributedPhoto from './AttributedPhoto';
+import { ALL_STATIONS_ID } from '../lib/all-stations';
 
 export const ALL_MONTHS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
-const stories = [
+const getStories = () => [
   {
     title: 'A Tale of Five Chinatowns',
     parts: [
@@ -160,6 +161,129 @@ const stories = [
           day: 'Saturday',
           hour: 23,
           months: ALL_MONTHS,
+          barScale: 0.015,
+        },
+      },
+    ]
+  },
+  {
+    title: 'How New York City Works',
+    parts: [
+      {
+        description: <>
+          <AttributedPhoto 
+            src="../../public/grand-central.jpg" 
+            alt="Crowd at Grand Central Station during rush hour" 
+            attribution="Photo: Heather Paul"
+          />
+          <p>
+            If New York was a country, it would have the 10th largest economy in the world. 
+            An astronomical number of people flood into the city at rush hour every weekday to go to work. 
+          </p>
+          <p>
+            Economic activity is concentrated in the city's multiple central business districts. Midtown Manhattan is the densest business hub in the world, and the Financial District is not far behind. Downtown Brooklyn has grown significantly in recent decades, but still comes in a distant third. Let's take a look at each of them.
+          </p>
+        </>,
+        // Smith-9 Sts (F G), Bowling Green (4 5), 96 St (6), Mosholu Pkwy (4)
+        // pointsToInclude: [stationIdToStation['238'], stationIdToStation['414'], stationIdToStation['396'], stationIdToStation['379']],
+        viewport: { longitude: -74.02, latitude: 40.68, zoom: 10.8, bearing: -110, pitch: 55 },
+        dataview: {
+          station: ALL_STATIONS_ID,
+          direction: 'comingFrom',
+          day: 'Wednesday',
+          hours: [5, 8],
+          months: ALL_MONTHS,
+          barScale: 0.0005,
+        },
+      },
+      {
+        description: <>
+          <p>
+            Midtown is massive, and its busiest stations are near commuter hubs like Grand Central that connect the city to the suburbs. But we can look at Lexington Avenue/51 St as a representative example.
+          </p>
+          <p>
+            Workers are coming from all over the city, especially from high-density areas with a direct trip to the station, like Jackson Heights in Queens. The largest local spike, 86 St, likely represents commuters from Yorkville, the most densely populated neighborhood in the city.
+          </p>
+          <p>
+            But it's notable that a large share of riders appear to be traveling from outside New York, with spikes at Penn Station and the Port Authority.
+          </p>
+        </>,
+        // Bowling Green, 168 St-Washington Heights, Kew Gardens-Union Tpke, Prospect Park
+        pointsToInclude: [stationIdToStation['414'], stationIdToStation['605'], stationIdToStation['259'], stationIdToStation['42']],
+        dataview: {
+          station: '612', // Lexington Av/51 St
+          direction: 'comingFrom',
+          day: 'Wednesday',
+          hour: 8,
+          months: ALL_MONTHS,
+          barScale: 0.003,
+        },
+      },
+      {
+        description: <>
+          <p>
+            The Port Authority Bus Terminal is the busiest bus terminal in the world, with 225,000 passengers passing through on a typical weekday. One of our contributors, Marc Zitelli, recounts his experience commuting to New Jersey from the PABT while working on a political campaign.
+          </p>
+          <p>
+            "The foot traffic was insane, like difficult to even move at points. But it was nice that I always got a seat on the bus, since everybody was coming into the city at 8 AM on weekdays, not leaving the city."
+          </p>
+          <p>
+            Most commuters arriving at the Port Authority will remain in Manhattan. They go to Midtown the most, then the Financial District and Downtown Brooklyn, in accordance with the size of those business hubs.
+          </p>
+        </>,
+        // Bowling Green, 168 St-Washington Heights, Kew Gardens-Union Tpke, Prospect Park
+        pointsToInclude: [stationIdToStation['414'], stationIdToStation['605'], stationIdToStation['259'], stationIdToStation['42']],
+        dataview: {
+          station: '611', // 42 St-Times Sq/Port Authority
+          direction: 'goingTo',
+          day: 'Wednesday',
+          hour: 8,
+          months: ALL_MONTHS,
+          barScale: 0.003,
+        },
+      },
+      {
+        description: <>
+          <p>
+            When we look at the ridership to the Financial District, anchored by the Fulton St station, the pattern is strikingly different. By far the largest share of riders are coming from Grand Central, dwarfing those from Penn Station and the Port Authority.
+          </p>
+          <p>
+            One explanation for this unbalance is that Grand Central is the main hub for commuters from wealthy suburbs like Scarsdale in Westchester and New Canaan in Connecticut. That demographic might be more likely to work in high-paying finance jobs than, say, bus riders from New Jersey.
+          </p>
+        </>,
+        // Bowling Green, 168 St-Washington Heights, Kew Gardens-Union Tpke, Flatbush Ave-Brooklyn College
+        pointsToInclude: [stationIdToStation['414'], stationIdToStation['605'], stationIdToStation['259'], stationIdToStation['356']],
+        dataview: {
+          station: '628', // Fulton St
+          direction: 'comingFrom',
+          day: 'Wednesday',
+          hour: 8,
+          months: ALL_MONTHS,
+          barScale: 0.003,
+        },
+      },
+      {
+        description: <>
+          <p>
+            Many of Brooklyn's downtown offices are a short walk from the Jay St-MetroTech stop. The MetroTech Center itself was recently renamed Brooklyn Commons, after it was purchased by the investment firm Brookfield.
+          </p>
+          <p>
+            There's still plenty of out-of-town traffic to Downtown Brooklyn, from the Port Authority, Penn Station, and the PATH train through the Financial District. But this business district draws a higher proportion of local commuters than Manhattan's larger corridors.
+          </p>
+          <p>
+            It serves as a hub for workers across the borough, from Park Slope to Bay Ridge to East New York. A number of people come all the way from Queens. Most of them must transfer through Manhattan, due to the lack of interborough connections.
+            <span className="story-end-marker"/>
+          </p>
+        </>,
+        // 59 St-Columbus Circle, Ditmas Av, Ozone Park-Lefferts Blvd, Bay Ridge-95 St
+        pointsToInclude: [stationIdToStation['614'], stationIdToStation['244'], stationIdToStation['195'], stationIdToStation['39']],
+        dataview: {
+          station: '636', // Jay St-MetroTech
+          direction: 'comingFrom',
+          day: 'Wednesday',
+          hour: 8,
+          months: ALL_MONTHS,
+          barScale: 0.003,
         },
       },
     ]
@@ -349,12 +473,15 @@ const StoriesView = React.memo(({
   currentPartIndex,
   setCurrentStoryIndex,
   setCurrentPartIndex,
+  mapRef,
 }) => {
   const containerRef = useRef(null);
   const scrollerRef = useRef(scrollama());
   const [previewStory, setPreviewStory] = useState(null);
   const [animatingHours, setAnimatingHours] = useState(null);
   const [currentAnimatedHour, setCurrentAnimatedHour] = useState(null);
+
+  const stories = useMemo(() => getStories(), [getStories]);
 
   const getPadding = () => {
     return {
@@ -386,7 +513,7 @@ const StoriesView = React.memo(({
     const currentPart = currentStory.parts[partIndex];
 
     setViewport(viewport => {
-      const newViewport = getViewportForBounds({
+      const newViewport = currentPart.viewport || getViewportForBounds({
         pointsToInclude: currentPart.pointsToInclude,
         viewportWidth: window.innerWidth,
         viewportHeight: window.innerHeight,
@@ -416,7 +543,6 @@ const StoriesView = React.memo(({
       const [hourStart, hourEnd] = currentPart.dataview.hours;
       const hoursRange = Array.from({ length: hourEnd - hourStart + 1 }, (_, i) => hourStart + i);
       setAnimatingHours(hoursRange);
-      // setAnimatingHours(currentPart.dataview.hours);
       setCurrentAnimatedHour(currentPart.dataview.hours[0]);
     } else {
       setAnimatingHours(null);
@@ -472,7 +598,6 @@ const StoriesView = React.memo(({
     if (animatingHours && animatingHours.length > 1) {
       let index = 0;
       intervalId = setInterval(() => {
-        console.log('animatingHours', animatingHours, index);
         setCurrentAnimatedHour(animatingHours[index]);
         index = (index + 1) % animatingHours.length;
       }, 500);
@@ -548,6 +673,15 @@ const formatInfoBarText = (direction, stationId, hour, day, selectedMonths) => {
       const lastMonth = monthNames[selectedMonths[selectedMonths.length - 1]];
       monthText = ` from ${firstMonth} – ${lastMonth}`;
     }
+  }
+
+  if (stationId === ALL_STATIONS_ID) {
+    const allStationsDirectionText = direction === 'comingFrom' ? 'getting off' : 'getting on';
+    return (
+      <>
+        Where are people {allStationsDirectionText} the train at <span className="highlight-time">{formattedHour} {amPm} on a {day}{monthText}</span>?
+      </>
+    )
   }
 
   return (
