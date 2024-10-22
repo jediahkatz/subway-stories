@@ -31,7 +31,6 @@ const getStories = (StationHighlightComponent) => [
             Although younger generations of Chinese are choosing more and more to settle away from the din of Manhattan, the original Chinatown is still a crucial gathering place for the community.
           </p>
         </>,
-        viewport: { longitude: -73.990, latitude: 40.651, zoom: 11.35, bearing: 0, pitch: 0 },
         // Grand St (B D), Coney Island-Stillwell Av (D F N Q), and Bay Ridge-95 St (R)
         pointsToInclude: [stationIdToStation['231'], stationIdToStation['58'], stationIdToStation['39']], 
         dataview: {
@@ -53,7 +52,6 @@ const getStories = (StationHighlightComponent) => [
             Even the adults, who would normally drive when in Brooklyn, chose to take the subway into Chinatown to attend to business and call on older family members. “The elders who live in Chinatown, we don't make them come to us. We come to them.”
           </p>
         </>,
-        // viewport: { longitude: -73.990, latitude: 40.651, zoom: 11.35, bearing: 0, pitch: 0 },
         pointsToInclude: [stationIdToStation['231'], stationIdToStation['58'], stationIdToStation['39']],
         dataview: {
           station: '231', // Grand St (B D)
