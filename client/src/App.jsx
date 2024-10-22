@@ -38,8 +38,13 @@ const App = () => {
           setShouldLoadMapbox(shouldLoad);
           setLastCheckTime(now);
         } catch (error) {
-          console.error('Error checking mapbox load:', error);
-          console.error('Error details:', error.message);
+          const thisURL = window.location.href;
+          if (thisURL.includes('netlify.app')) {
+            alert("This URL is deprecated. Please visit subway-stories.nyc")
+          } else {
+            console.error('Error checking mapbox load:', error);
+            console.error('Error details:', error.message);
+          }
         }
       }
     };
