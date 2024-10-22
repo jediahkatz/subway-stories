@@ -19,7 +19,7 @@ const stories = [
           <AttributedPhoto 
             src="../../public/chinatown.jpeg" 
             alt="Busy street in Chinatown with colorful signs" 
-            attribution="Photo by Peeter Viisimaa"
+            attribution="Photo: Peeter Viisimaa"
           />
           <p>
             <span className="opening-phrase">"They go in the morning for Dim Sum,"</span>
@@ -40,6 +40,7 @@ const stories = [
           hour: 8,
           months: ALL_MONTHS,
           visibleLines: ['B', 'D', 'N', 'F', 'R', 'Q'],
+          barScale: 0.008,
         },
       },
       {
@@ -60,12 +61,13 @@ const stories = [
           hour: 8,
           months: ALL_MONTHS,
           visibleLines: ['D'],
+          barScale: 0.008,
         },
       },
       {
         description: <>
           <p>
-            The Brooklyn Chinese aren't the only ones flooding into Manhattan's Chinatown on the weekend. A smaller but just as determined set makes the even longer trek from Flushing, Queens, catching the 7 line into Manhattan and transferring downtown. 
+            The Brooklyn Chinese aren't the only ones heading into Manhattan's Chinatown on the weekend. A smaller but just as determined handful makes the even longer trek from Flushing, Queens, catching the 7 train into Manhattan and transferring downtown. 
           </p>
           <p>
             But Flushing, too, draws crowds from near and far. Home to the largest Chinatown outside of Asia, the neighborhood has become a mammoth destination in its own right. 
@@ -80,7 +82,8 @@ const stories = [
           day: 'Saturday',
           hour: 8,
           months: ALL_MONTHS,
-          visibleLines: ['7', '6', 'D', 'N']
+          visibleLines: ['7', '6', 'D', 'N'],
+          barScale: 0.008,
         },
       },
       {
@@ -101,7 +104,8 @@ const stories = [
           day: 'Monday',
           hour: 7,
           months: ALL_MONTHS,
-          visibleLines: ['7']
+          visibleLines: ['7'],
+          barScale: 0.004,
         },
       },
       {
@@ -125,9 +129,39 @@ const stories = [
           day: 'Saturday',
           hour: 17,
           months: ALL_MONTHS,
-          visibleLines: ['7']
+          visibleLines: ['7'],
+          barScale: 0.008,
         },
       }
+    ]
+  },
+  {
+    title: 'Nightlife Along the L Train',
+    parts: [
+      {
+        description: <>
+          <AttributedPhoto 
+            src="../../public/jefferson-1.jpg" 
+            alt="Revelers outside of a food truck on Jefferson St at night" 
+            attribution="Photo: /u/donny_hype"
+          />
+          <p>
+            Every Friday and Saturday night, hundreds of young revelers embark on a weekly pilgrimage to Bushwick. A neighborhood featuring bars and clubs like Carousel, Abe's Pagoda, The Johnson's, and House of Yes, Bushwick is inundated with partygoers who liven the streets around the Jefferson St, DeKalb Avenue, and Myrtle-Wyckoff stops along the L train. 
+          </p>
+          <p>
+            Considering, for example, the Jefferson Avenue station at 11 PM on a Saturday evening, we can see the massive influx coming from Williamsburg, the East Village, the Lower East Side, and even as far as 8th Avenue in Manhattan.
+          </p>
+        </>,
+        // Halsey St (L), 8 Av (L), 59 St-Columbus Circle
+        pointsToInclude: [stationIdToStation['129'], stationIdToStation['618'], stationIdToStation['614']],
+        dataview: {
+          station: '126', // Jefferson St (L)
+          direction: 'comingFrom',
+          day: 'Saturday',
+          hour: 23,
+          months: ALL_MONTHS,
+        },
+      },
     ]
   },
   {
@@ -138,7 +172,7 @@ const stories = [
           <AttributedPhoto 
             src="../../public/grandstand.jpg" 
             alt="Grandstand at the US Open Tennis Center" 
-            attribution="Photo by NYC Parks"
+            attribution="Photo: NYC Parks"
           />
           <p>
             Flushing Meadows Park, nestled between Flushing and Corona, Queens, boasts no less than four stadiums with a combined seating of nearly 100,000. 
