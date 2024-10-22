@@ -18,7 +18,7 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <AttributedPhoto 
-            src="../../public/chinatown.jpeg" 
+            src="/chinatown.jpeg" 
             alt="Busy street in Chinatown with colorful signs" 
             attribution="Photo: Peeter Viisimaa"
           />
@@ -142,7 +142,7 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <AttributedPhoto 
-            src="../../public/jefferson-1.jpg" 
+            src="/jefferson-1.jpg" 
             alt="Revelers outside of a food truck on Jefferson St at night" 
             attribution="Photo: /u/donny_hype"
           />
@@ -172,7 +172,7 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <AttributedPhoto 
-            src="../../public/grand-central.jpg" 
+            src="/grand-central.jpg" 
             alt="Crowd at Grand Central Station during rush hour" 
             attribution="Photo: Heather Paul"
           />
@@ -294,7 +294,7 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <AttributedPhoto 
-            src="../../public/grandstand.jpg" 
+            src="/grandstand.jpg" 
             alt="Grandstand at the US Open Tennis Center" 
             attribution="Photo: NYC Parks"
           />
