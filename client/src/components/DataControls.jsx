@@ -111,14 +111,6 @@ const DataControls = ({
               />
             </div>
           </div>
-          <label className="inline-checkbox">
-            <input
-              type="checkbox"
-              checked={showPercentage}
-              onChange={(e) => setShowPercentage(e.target.checked)}
-            />
-            <span>Show percentage of ridership</span>
-          </label>
         </>
       )}
       
