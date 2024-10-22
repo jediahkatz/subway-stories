@@ -558,8 +558,8 @@ const MTADataMap = ({ mapboxToken }) => {
     const station = stationIdToStation[stationId]
     const positionOnMap = [station.lon, station.lat]
     const positionOnScreen = map.project(positionOnMap)
-    console.log({ positionOnMap, positionOnScreen })
 
+    console.log({ isSelected: stationId == selectedStation })
     if (stationId == selectedStation) {
       const totalRidership = filteredData.current.reduce((acc, d) => acc + d.ridership, 0);
       setHoverInfo({
@@ -574,9 +574,12 @@ const MTADataMap = ({ mapboxToken }) => {
     } else {
       const data = filteredData.current.find(d => d.station_id == stationId)
       const ridership = data ? data.ridership : null
+      const height = getAbsoluteHeight(data, barScale.current, showPercentage)
+      // todo: 3d
+      const heightInPx = positionOnScreen.y - map.project([station.lon, station.lat + height]).y
       setHoverInfo({
         x: positionOnScreen.x,
-        y: positionOnScreen.y,
+        y: positionOnScreen.y - (heightInPx / 2),
         stationName,
         stationId: stationId,
         ridership,
@@ -584,7 +587,7 @@ const MTADataMap = ({ mapboxToken }) => {
         showPercentage: false,
       });
     }
-  }, [setHoverInfo, selectedDirection, filteredData])
+  }, [setHoverInfo, selectedDirection, filteredData, showPercentage])
 
   return (
     <div className="map-container">
