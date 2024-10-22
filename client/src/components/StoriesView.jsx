@@ -447,7 +447,7 @@ const STORY_BOX_WIDTH = 400 + 20 + 20;
 const STORY_BOX_LEFT_OFFSET = 20;
 const FLOATING_INFO_BAR_HEIGHT = 54;
 const FLOATING_INFO_BAR_OFFSET = 20;
-const STORY_PROGRESS_WIDTH_AND_OFFSET = 45;
+const COLOR_LEGEND_WIDTH_AND_OFFSET = 105;
 
 const StoryBox = ({ story, partIndex = 0, isPreview = false }) => (
   <div className={`stories-box ${isPreview ? 'preview' : ''}`}>
@@ -492,7 +492,7 @@ const StoriesView = React.memo(({
       top: window.innerHeight * 0.05,
       bottom: window.innerHeight * 0.05 + FLOATING_INFO_BAR_HEIGHT + FLOATING_INFO_BAR_OFFSET,
       left: window.innerWidth * 0.05 + STORY_BOX_WIDTH + STORY_BOX_LEFT_OFFSET,
-      right: window.innerWidth * 0.03 + STORY_PROGRESS_WIDTH_AND_OFFSET,
+      right: window.innerWidth * 0.03 + COLOR_LEGEND_WIDTH_AND_OFFSET,
     };
   }
   
