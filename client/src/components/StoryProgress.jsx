@@ -17,17 +17,17 @@ const StoryProgress = ({ stories, currentStoryIndex, currentPartIndex, handleJum
       {stories.map((story, storyIndex) => (
         <div key={storyIndex} className="story-line-container">
           <div 
-            className={`story-line ${storyIndex === currentStoryIndex ? 'active' : ''}`}
+            className={`story-line ${storyIndex === currentStoryIndex && currentPartIndex === 0 ? 'active' : ''}`}
             onClick={() => handleClickStory(storyIndex)}
             onMouseEnter={() => storyIndex !== currentStoryIndex && setPreviewStory(storyIndex)}
             onMouseLeave={() => storyIndex !== currentStoryIndex && setPreviewStory(null)}
           />
           {storyIndex === currentStoryIndex && (
             <div className="part-lines">
-              {story.parts.map((_, partIndex) => (
+              {story.parts.slice(1).map((_, partIndex) => (
                 <div 
                   key={partIndex}
-                  className={`part-line ${partIndex === currentPartIndex ? 'active' : ''}`}
+                  className={`part-line ${partIndex + 1 === currentPartIndex ? 'active' : ''}`}
                   onClick={() => handleClickPart(storyIndex, partIndex)}
                 />
               ))}

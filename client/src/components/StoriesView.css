@@ -105,7 +105,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px;
   pointer-events: all;
 }
 
@@ -117,12 +117,10 @@
 
 .story-line {
   width: 30px;
-  height: 3px;
+  height: 4px;
   background-color: #555;
-  margin-bottom: 5px;
   border-radius: 7px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
 .story-line.active {
@@ -137,16 +135,16 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 5px;
+  gap: 12px;
+  margin-top: 12px;
 }
 
 .part-line {
-  width: 15px;
-  height: 2px;
+  width: 20px;
+  height: 4px;
   background-color: #555;
   border-radius: 7px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
 .part-line.active {

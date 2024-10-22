@@ -145,6 +145,26 @@ const getStories = (StationHighlightComponent) => [
             attribution="Photo: /u/donny_hype"
           />
           <p>
+            Every Friday and Saturday night, hundreds of young revelers embark on a weekly pilgrimage to Bushwick. A neighborhood featuring bars and clubs like Carousel, Abe's Pagoda, The Johnson's, and House of Yes, Bushwick is inundated with partygoers who liven the streets around the <StationHighlightComponent stationId="126">Jefferson St</StationHighlightComponent>, <StationHighlightComponent stationId="127">DeKalb Avenue</StationHighlightComponent>, and <StationHighlightComponent stationId="630">Myrtle-Wyckoff</StationHighlightComponent> stops along the L train. 
+          </p>
+          <p>
+            Considering, for example, the Jefferson Avenue station at 11 PM on a Saturday evening, we can see the massive influx coming from Williamsburg, the East Village, the Lower East Side, and even as far as 8th Avenue in Manhattan.
+          </p>
+        </>,
+        // Halsey St (L), 8 Av (L), 59 St-Columbus Circle
+        pointsToInclude: [stationIdToStation['129'], stationIdToStation['618'], stationIdToStation['614']],
+        dataview: {
+          station: '126', // Jefferson St (L)
+          direction: 'comingFrom',
+          day: 'Saturday',
+          hour: 23,
+          months: ALL_MONTHS,
+          barScale: 0.015,
+        },
+      },
+      {
+        description: <>
+          <p>
             Every Friday and Saturday night, hundreds of young revelers embark on a weekly pilgrimage to Bushwick. A neighborhood featuring bars and clubs like Carousel, Abe's Pagoda, The Johnson's, and House of Yes, Bushwick is inundated with partygoers who liven the streets around the <StationHighlightComponent stationId="126">Jefferson St</StationHighlightComponent>, <StationHighlightComponent stationId="127">DeKalb Avenue</StationHighlightComponent>, and <StationHighlightComponent stationId="128">Myrtle-Wyckoff</StationHighlightComponent> stops along the L train. 
           </p>
           <p>
