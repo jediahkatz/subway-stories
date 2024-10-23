@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
-import { subwayLines, SubwayLineSymbol } from "./SubwayLineSymbol";
+import { splitNameAndLines, subwayLines, SubwayLineSymbol } from "./SubwayLineSymbol";
 
 const SearchableStationDropdown = ({
   options,
@@ -15,12 +15,7 @@ const SearchableStationDropdown = ({
   const dropdownRef = useRef(null);
 
   const optionsWithLines = useMemo(() => options.map(option => {
-    const containsLines = option[label].includes('(');
-    if (!containsLines) {
-      return { ...option, name: option[label], lines: [] };
-    }
-    const name = option[label].slice(0, option[label].lastIndexOf('(')).trim();
-    const lines = option[label].slice(option[label].lastIndexOf('(') + 1, option[label].lastIndexOf(')')).split(' ') || [];
+    const { name, lines } = splitNameAndLines(option[label]);
     return { ...option, name, lines };
   }), [options]);
 

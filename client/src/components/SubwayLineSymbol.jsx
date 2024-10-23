@@ -12,6 +12,16 @@ const lineColors = {
 }
 
 export const subwayLines = Object.keys(lineColors);
+
+export const splitNameAndLines = (nameAndLines) => {
+    const containsLines = nameAndLines.includes('(');
+    if (!containsLines) {
+      return { name: nameAndLines, lines: [] };
+    }
+    const name = nameAndLines.slice(0, nameAndLines.lastIndexOf('(')).trim();
+    const lines = nameAndLines.slice(nameAndLines.lastIndexOf('(') + 1, nameAndLines.lastIndexOf(')')).split(' ') || [];
+    return { name, lines };
+}
   
 export const SubwayLineSymbol = ({ line }) => {
     const getLineColor = (line) => {

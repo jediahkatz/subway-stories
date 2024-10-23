@@ -253,10 +253,10 @@ const getStories = (StationHighlightComponent) => [
           </p>
         </>,
         viewport: {
-          longitude: -73.93591233632988,
-          latitude: 40.73498492438924,
-          zoom: 12.542553766211114,
-          bearing: 23.944903893357488,
+          longitude: -73.936,
+          latitude: 40.735,
+          zoom: 12.44,
+          bearing: 23.94,
           pitch: 60,
         },
         dataview: {
