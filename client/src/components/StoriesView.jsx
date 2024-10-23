@@ -147,7 +147,7 @@ const getStories = (StationHighlightComponent) => [
             attribution="Photo: /u/donny_hype"
           />
           <p>
-            Every Friday and Saturday night, hundreds of young revelers embark on a weekly pilgrimage to Bushwick. A neighborhood featuring bars and clubs like Carousel, Abe's Pagoda, The Johnson's, and House of Yes, Bushwick is inundated with partygoers who liven the streets around the Jefferson St, DeKalb Avenue, and Myrtle-Wyckoff stops along the L train. 
+            Every Friday and Saturday night, hundreds of young revelers embark on a weekly pilgrimage to Bushwick. A neighborhood featuring bars and clubs like Carousel, Abe's Pagoda, The Johnson's, and House of Yes, Bushwick is inundated with partygoers who liven the streets around the <StationHighlightComponent stationId="126">Jefferson St</StationHighlightComponent>, <StationHighlightComponent stationId="127">DeKalb Avenue</StationHighlightComponent>, and <StationHighlightComponent stationId="128">Myrtle-Wyckoff</StationHighlightComponent> stops along the L train. 
           </p>
           <p>
             Considering, for example, the Jefferson Avenue station at 11 PM on a Saturday evening, we can see the massive influx coming from Williamsburg, the East Village, the Lower East Side, and even as far as 8th Avenue in Manhattan.
@@ -199,13 +199,13 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            Midtown is massive, and its busiest stations are near commuter hubs like Grand Central that connect the city to the suburbs. But we can look at Lexington Avenue/51 St as a representative example.
+            Midtown is massive, and its busiest stations are near commuter hubs like Grand Central that connect the city to the suburbs. But we can look at <StationHighlightComponent stationId="612">Lexington Avenue/51 St</StationHighlightComponent> as a representative example.
           </p>
           <p>
-            Workers are coming from all over the city, especially from high-density areas with a direct trip to the station, like Jackson Heights in Queens. The largest local spike, 86 St, likely represents commuters from Yorkville, the most densely populated neighborhood in the city.
+            Workers are coming from all over the city, especially from high-density areas with a direct trip to the station, like Jackson Heights in Queens. The largest local spike, <StationHighlightComponent stationId="397">86 St</StationHighlightComponent>, likely represents commuters from Yorkville, the most densely populated neighborhood in the city.
           </p>
           <p>
-            But it's notable that a large share of riders appear to be traveling from outside New York, with spikes at Penn Station and the Port Authority.
+            But it's notable that a large share of riders appear to be traveling from outside New York, with spikes at <StationHighlightComponent stationId="164">Penn Station</StationHighlightComponent> and the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>.
           </p>
         </>,
         // Bowling Green, 168 St-Washington Heights, Kew Gardens-Union Tpke, Prospect Park
@@ -222,7 +222,7 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            The Port Authority Bus Terminal is the busiest bus terminal in the world, with 225,000 passengers passing through on a typical weekday. One of our contributors, Marc Zitelli, recounts his experience commuting to New Jersey from the PABT while working on a political campaign.
+            The <StationHighlightComponent stationId="611">Port Authority Bus Terminal</StationHighlightComponent> is the busiest bus terminal in the world, with 225,000 passengers passing through on a typical weekday. One of our contributors, Marc Zitelli, recounts his experience commuting to New Jersey from the PABT while working on a political campaign.
           </p>
           <p>
             "The foot traffic was insane, like difficult to even move at points. But it was nice that I always got a seat on the bus, since everybody was coming into the city at 8 AM on weekdays, not leaving the city."
@@ -245,7 +245,7 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            When we look at the ridership to the Financial District, anchored by the Fulton St station, the pattern is strikingly different. By far the largest share of riders are coming from Grand Central, dwarfing those from Penn Station and the Port Authority.
+            When we look at the ridership to the Financial District, anchored by the <StationHighlightComponent stationId="628">Fulton St</StationHighlightComponent> station, the pattern is strikingly different. By far the largest share of riders are coming from <StationHighlightComponent stationId="610">Grand Central</StationHighlightComponent>, dwarfing those from <StationHighlightComponent stationId="318">Penn Station</StationHighlightComponent> and the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>.
           </p>
           <p>
             One explanation for this unbalance is that Grand Central is the main hub for commuters from wealthy suburbs like Scarsdale in Westchester and New Canaan in Connecticut. That demographic might be more likely to work in high-paying finance jobs than, say, bus riders from New Jersey.
@@ -265,13 +265,13 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            Many of Brooklyn's downtown offices are a short walk from the Jay St-MetroTech stop. The MetroTech Center itself was recently renamed Brooklyn Commons, after it was purchased by the investment firm Brookfield.
+            Many of Brooklyn's downtown offices are a short walk from the <StationHighlightComponent stationId="636">Jay St-MetroTech</StationHighlightComponent> stop. The MetroTech Center itself was recently renamed Brooklyn Commons, after it was purchased by the investment firm Brookfield.
           </p>
           <p>
-            There's still plenty of out-of-town traffic to Downtown Brooklyn, from the Port Authority, Penn Station, and the PATH train through the Financial District. But this business district draws a higher proportion of local commuters than Manhattan's larger corridors.
+            There's still plenty of out-of-town traffic to Downtown Brooklyn, from the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>, <StationHighlightComponent stationId="164">Penn Station</StationHighlightComponent>, and the PATH train through the Financial District. But this business district draws a higher proportion of local commuters than Manhattan's larger corridors.
           </p>
           <p>
-            It serves as a hub for workers across the borough, from Park Slope to Bay Ridge to East New York. A number of people come all the way from Queens. Most of them must transfer through Manhattan, due to the lack of interborough connections.
+            It serves as a hub for workers across the borough, from <StationHighlightComponent stationId="240">Park Slope</StationHighlightComponent> to <StationHighlightComponent stationId="36">Bay Ridge</StationHighlightComponent> to <StationHighlightComponent stationId="188">East New York</StationHighlightComponent>. A number of people come all the way from Queens. Most of them must transfer through Manhattan, due to the lack of interborough connections.
             <span className="story-end-marker"/>
           </p>
         </>,
@@ -318,8 +318,8 @@ const getStories = (StationHighlightComponent) => [
       },
       {
         description: <>
-          <p>It's a different story on game day. Once the baseball season begins in late March, tens of thousands pile into Citi Field. Some fans drive or take the LIRR, but most locals jam onto the 7 train to Mets-Willets Point.</p>
-          <p>They come from all over, especially nearby Queens. Two big spikes at Grand Central and the Port Authority represent the thousands who come into the city from all over the Tri-State area.</p>
+          <p>It's a different story on game day. Once the baseball season begins in late March, tens of thousands pile into Citi Field. Some fans drive or take the LIRR, but most locals jam onto the 7 train to <StationHighlightComponent stationId="448">Mets-Willets Point</StationHighlightComponent>.</p>
+          <p>They come from all over, especially nearby Queens. Two big spikes at <StationHighlightComponent stationId="610">Grand Central</StationHighlightComponent> and the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent> represent the thousands who come into the city from all over the Tri-State area.</p>
         </>,
         // Flushing-Main St (7), Bowling Green (4 5) and 137 St-City College (1)
         pointsToInclude: [stationIdToStation['447'], stationIdToStation['414'], stationIdToStation['305']],
@@ -388,7 +388,7 @@ const getStories = (StationHighlightComponent) => [
             Since 2015, there's one more reason for New Yorkers to head to Flushing Meadows: Queens Night Market.
           </p>
           <p>
-            There, over one hundred vendors serve foods from cuisines all over the world. The market runs Saturdays from April to October on the west side of Flushing Meadows, off the 111 St stop.
+            There, over one hundred vendors serve foods from cuisines all over the world. The market runs Saturdays from April to October on the west side of Flushing Meadows, off the <StationHighlightComponent stationId="449">111 St</StationHighlightComponent> stop.
           </p>
           <p>
             The event is the perfect essence of Queens, the most ethnically diverse place in the world. Where else can you eat Trinidadian doubles, Mongolian yak cheese, and a Sudanese sambuxa in one meal? <span className="story-end-marker"/>
@@ -698,7 +698,8 @@ const formatInfoBarText = (direction, stationId, hour, day, selectedMonths) => {
 };
 
 const StationHighlight = ({ children, stationId, setHoveredStation, containerRef }) => {
-  const handleMouseEnter = (e) => {
+  const handleMouseEnter = () => {
+    console.log('mouse enter', stationId);
     setHoveredStation(stationId);
   };
 

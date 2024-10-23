@@ -220,11 +220,17 @@
 }
 
 .station-highlight {
-  color: #3273dc;
+  color: rgba(0, 0, 0, 0.7);
   cursor: pointer;
   text-decoration: underline;
+  text-decoration-color: rgba(0, 0, 0, 0.3);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  position: relative;
+  transition: color 0.3s ease, text-decoration-color 0.3s ease;
 }
 
 .station-highlight:hover {
-  color: #2366d1;
+  color: #000000;
+  text-decoration-color: #000000;
 }

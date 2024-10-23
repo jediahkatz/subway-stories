@@ -1,12 +1,11 @@
 import React, { useRef } from 'react';
 import { SubwayLineSymbol } from './SubwayLineSymbol';
 
-const getPosition = (x, y) => {
+const getPosition = (x, y, beakMargin = 20) => {
   const windowWidth = window.innerWidth;
   const maxTooltipWidth = 310;
   const tooltipHeight = 90;
   const padding = 10;
-  const beakMargin = 20;
 
   const isRight = x + maxTooltipWidth + padding > windowWidth;
   
@@ -21,9 +20,9 @@ const getPosition = (x, y) => {
   return { position, isRight };
 };
 
-const Tooltip = ({ x, y, children }) => {
+const Tooltip = ({ x, y, children, positionedLoosely = true }) => {
   const tooltipRef = useRef(null);
-  const { position, isRight } = getPosition(x, y);
+  const { position, isRight } = getPosition(x, y, positionedLoosely ? 20 : 12);
 
   return (
     <div ref={tooltipRef} className={`tooltip ${isRight ? 'tooltip-right' : 'tooltip-left'}`} style={position}>
@@ -35,7 +34,7 @@ const Tooltip = ({ x, y, children }) => {
   );
 };
 
-const RidershipTooltip = ({ x, y, stationName, ridership, ridershipLabel, percentage, percentageLabel }) => {
+const RidershipTooltip = ({ x, y, stationName, ridership, ridershipLabel, percentage, percentageLabel, positionedLoosely }) => {
   const getStationNameAndLines = (fullName) => {
     const containsLines = fullName.includes('(');
     if (!containsLines) {
@@ -49,7 +48,7 @@ const RidershipTooltip = ({ x, y, stationName, ridership, ridershipLabel, percen
   const { name, lines } = getStationNameAndLines(stationName);
 
   return (
-    <Tooltip x={x} y={y}>
+    <Tooltip x={x} y={y} positionedLoosely={positionedLoosely}>
       <div className="tooltip-header">{name}</div>
       <div className="station-lines">
         {lines.map((line, index) => (
