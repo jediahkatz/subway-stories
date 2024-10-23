@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { ColumnLayer, DeckGL, ScatterplotLayer } from 'deck.gl';
 import ReactMapGL from 'react-map-gl';
 import { stationIdToStation, stations } from '../lib/stations';
-import { RidershipTooltip } from './Tooltip';
+import { RidershipTooltip, Tooltip } from './Tooltip';
 import DataControls from './DataControls';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import './MTADataMap.css';
@@ -82,6 +82,7 @@ const MTADataMap = ({ mapboxToken }) => {
   })));
 
   const [hoverInfo, setHoverInfo] = useState(null);
+  const [infoTooltipInfo, setInfoTooltipInfo] = useState(null);
   const [selectedHour, setSelectedHour] = useState(() => {
     const savedState = loadStateFromSessionStorage();
     return savedState?.selectedHour || 2;
@@ -634,6 +635,7 @@ const MTADataMap = ({ mapboxToken }) => {
           setSelectedMonths={handleSetSelectedMonths}
           showPercentage={showPercentage}
           setShowPercentage={handleSetShowPercentage}
+          setInfoTooltipInfo={setInfoTooltipInfo}
         />
       }
       {activeView === 'stories' && <StoriesView 
@@ -664,6 +666,13 @@ const MTADataMap = ({ mapboxToken }) => {
           positionedLoosely={hoverInfo.positionedLoosely}
         />
       )}
+      {infoTooltipInfo && <Tooltip x={infoTooltipInfo.x} y={infoTooltipInfo.y} positionedLoosely={true} tooltipHeight={177} beakPosition={'bottom'}>
+        <div className='info-tooltip-content'>
+          <p>Adjust the height of the ridership bars.</p>
+          <p><strong>Auto mode:</strong> Automatically adjust the scale based on today's maximum ridership.</p>
+          <p><strong>Locked mode:</strong> Manually set the scale, keeping it consistent across different views.</p>
+        </div>
+      </Tooltip>}
       <View3DToggle is3D={viewportIs3d} setViewport={setViewport} />
       <ColorLegend />
     </div>

@@ -1,10 +1,9 @@
 import React, { useRef } from 'react';
 import { SubwayLineSymbol } from './SubwayLineSymbol';
 
-const getPosition = (x, y, beakMargin = 20) => {
+const getPosition = (x, y, beakMargin = 20, tooltipHeight = 90) => {
   const windowWidth = window.innerWidth;
   const maxTooltipWidth = 310;
-  const tooltipHeight = 90;
   const padding = 10;
 
   const isRight = x + maxTooltipWidth + padding > windowWidth;
@@ -20,9 +19,9 @@ const getPosition = (x, y, beakMargin = 20) => {
   return { position, isRight };
 };
 
-const Tooltip = ({ x, y, children, positionedLoosely = true }) => {
+const Tooltip = ({ x, y, children, positionedLoosely = true, tooltipHeight = 90 }) => {
   const tooltipRef = useRef(null);
-  const { position, isRight } = getPosition(x, y, positionedLoosely ? 20 : 12);
+  const { position, isRight } = getPosition(x, y, positionedLoosely ? 20 : 12, tooltipHeight);
 
   return (
     <div ref={tooltipRef} className={`tooltip ${isRight ? 'tooltip-right' : 'tooltip-left'}`} style={position}>
