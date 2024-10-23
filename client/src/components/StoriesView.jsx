@@ -790,7 +790,7 @@ const StoriesView = React.memo(({
         </div>
         <div className="floating-info-bar" style={{visibility: previewStory !== null ? 'hidden' : 'visible'}}>
           <p>
-          {formatInfoBarText(selectedDirection, selectedStation, selectedHour, selectedDay, selectedMonths)}  
+          {formatInfoBarText(selectedDirection, selectedStation, selectedHour, selectedDay, selectedMonths, animation?.field)}  
           </p>
         </div>
       </div>
@@ -816,22 +816,34 @@ const StoriesView = React.memo(({
   );
 });
 
-const formatInfoBarText = (direction, stationId, hour, day, selectedMonths) => {
+const formatInfoBarText = (direction, stationId, hour, day, selectedMonths, animatingField) => {
   const stationName = stationIdToStation[stationId]?.display_name.split('(')[0].trim() || 'here';
-  const formattedHour = hour % 12 || 12;
-  const amPm = hour < 12 ? 'a.m.' : 'p.m.';
   const directionText = direction === 'comingFrom' ? 'going to' : 'coming from';
 
+
+  const formattedHour = hour % 12 || 12;
+  const amPm = hour < 12 ? 'a.m.' : 'p.m.';
+  let hourText = animatingField === 'hour' 
+    ? <span className="animating">{formattedHour} {amPm}</span> 
+    : `${formattedHour} ${amPm}`;
+
+  let preposition = '';
   let monthText = '';
   let splitText = false
   if (selectedMonths.length < 12) {
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
     if (selectedMonths.length === 1) {
-      monthText = ` in ${monthNames[selectedMonths[0]]}`;
+      preposition = 'in';
+      monthText = animatingField === 'months' 
+        ? <span className="animating">{monthNames[selectedMonths[0]]}</span> 
+        : `${monthNames[selectedMonths[0]]}`;
     } else {
       const firstMonth = monthNames[selectedMonths[0]];
       const lastMonth = monthNames[selectedMonths[selectedMonths.length - 1]];
-      monthText = ` from ${firstMonth} – ${lastMonth}`;
+      preposition = 'from';
+      monthText = animatingField === 'months' 
+        ? <span className="animating">{`${firstMonth} – ${lastMonth}`}</span> 
+        : `${firstMonth} – ${lastMonth}`;
       splitText = true;
     }
   }
@@ -840,14 +852,14 @@ const formatInfoBarText = (direction, stationId, hour, day, selectedMonths) => {
     const allStationsDirectionText = direction === 'comingFrom' ? 'getting off' : 'getting on';
     return (
       <>
-        Where are people {allStationsDirectionText} the train at <span className="highlight-time">{formattedHour} {amPm} {splitText ? <br /> : ''} on a {day}{monthText}</span>?
+        Where are people {allStationsDirectionText} the train at {hourText} {splitText ? <br /> : ''} on a {day} {preposition} {monthText}?
       </>
     )
   }
 
   return (
     <>
-      Who's {directionText} <span className="highlight-station" style={{color: `rgb(${MAIN_STATION_COLOR.join(',')})`}}>{stationName}</span> at <span className="highlight-time">{formattedHour} {amPm} {splitText ? <br /> : ''} on a {day}{monthText}</span>?
+      Who's {directionText} <span className="highlight-station" style={{color: `rgb(${MAIN_STATION_COLOR.join(',')})`}}>{stationName}</span> at {hourText} {splitText ? <br /> : ''} on a {day} {preposition} {monthText}?
     </>
   );
 };
