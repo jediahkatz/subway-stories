@@ -443,8 +443,7 @@ const getStories = (StationHighlightComponent) => [
 ];
 
 // todo: make this dynamic based on the width of the screen
-const STORY_BOX_WIDTH = 400 + 20 + 20;
-const STORY_BOX_LEFT_OFFSET = 20;
+const STORY_BOX_WIDTH_AND_OFFSET = 440;
 const FLOATING_INFO_BAR_HEIGHT = 54;
 const FLOATING_INFO_BAR_OFFSET = 20;
 const COLOR_LEGEND_WIDTH_AND_OFFSET = 105;
@@ -491,7 +490,7 @@ const StoriesView = React.memo(({
     return {
       top: window.innerHeight * 0.05,
       bottom: window.innerHeight * 0.05 + FLOATING_INFO_BAR_HEIGHT + FLOATING_INFO_BAR_OFFSET,
-      left: window.innerWidth * 0.05 + STORY_BOX_WIDTH + STORY_BOX_LEFT_OFFSET,
+      left: window.innerWidth * 0.05 + STORY_BOX_WIDTH_AND_OFFSET,
       right: window.innerWidth * 0.03 + COLOR_LEGEND_WIDTH_AND_OFFSET,
     };
   }

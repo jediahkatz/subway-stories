@@ -14,7 +14,7 @@
 
 .stories-content {
   min-height: 100%;
-  padding: 0 20px;
+  padding: 0 50px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -24,7 +24,7 @@
 
 .stories-box {
   position: relative;
-  width: 400px;
+  width: 350px;
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 2px;
   padding: 20px;
@@ -99,12 +99,12 @@
 
 .story-progress {
   position: fixed;
-  right: 15px;
+  left: 10px;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 10px;
   pointer-events: all;
 }
@@ -112,7 +112,7 @@
 .story-line-container {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
 }
 
 .story-line {
@@ -136,7 +136,7 @@
 .part-lines {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 5px;
 }
 
@@ -165,9 +165,9 @@
 
 .stories-box.preview {
   position: fixed;
-  left: 20px;
+  left: 50px;
   transform: translateY(-50%);
-  width: 400px;
+  width: 350px;
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 2px;
   padding: 20px;
