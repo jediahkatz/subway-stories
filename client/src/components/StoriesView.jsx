@@ -207,7 +207,10 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            As expected, the season plays a role in how many people are willing to make the trek to Bushwick, with the winter months of January, February, and March having fewer people out than the summer months of June, July, and August. Despite this, we can see that there is still a core group of partygoers undeterred by the wind and cold. 
+            As expected, the season plays a role in how many people are willing to make the trek to Bushwick. In the wintry months of January, February, and March, fewer people are going out than during the rest of the year. Despite this, even on the coldest nights, there is still a core group of partygoers undeterred by the wind and cold. 
+          </p>
+          <p>
+            
           </p>
         </>,
         // Halsey St (L), 8 Av (L), 59 St-Columbus Circle
@@ -217,8 +220,25 @@ const getStories = (StationHighlightComponent) => [
           direction: 'comingFrom',
           day: 'Saturday',
           hour: 23,
-          months: ALL_MONTHS,
+          months: [0],
           barScale: 0.015,
+          animate: {
+            field: 'months',
+            frames: [
+              { value: [0], duration: 2500 },
+              { value: [1], duration: 750 },
+              { value: [2], duration: 750 },
+              { value: [3], duration: 2500 },
+              { value: [4], duration: 750 },
+              { value: [5], duration: 750 },
+              { value: [6], duration: 2500 },
+              { value: [7], duration: 750 },
+              { value: [8], duration: 750 },
+              { value: [9], duration: 2500 },
+              { value: [10], duration: 750 },
+              { value: [11], duration: 750 },
+            ]
+          },
         },
       },
       {
@@ -582,6 +602,7 @@ const StoriesView = React.memo(({
   const [previewStory, setPreviewStory] = useState(null);
   const [animation, setAnimation] = useState(null);
   const [currentAnimatedHour, setCurrentAnimatedHour] = useState(null);
+  const [currentAnimatedMonths, setCurrentAnimatedMonths] = useState(null);
 
   const StationHighlightComponent = useCallback(({ children, stationId }) => (
     <StationHighlight stationId={stationId} setHoveredStation={setHoveredStation} containerRef={containerRef}>
@@ -648,12 +669,20 @@ const StoriesView = React.memo(({
 
     if (currentPart.dataview.animate) {
       setAnimation(currentPart.dataview.animate);
-      setCurrentAnimatedHour(currentPart.dataview.animate.frames[0].value);
+      if (currentPart.dataview.animate.field === 'hour') {
+        setCurrentAnimatedHour(currentPart.dataview.animate.frames[0].value);
+        setCurrentAnimatedMonths(null);
+      } else if (currentPart.dataview.animate.field === 'months') {
+        setCurrentAnimatedMonths(currentPart.dataview.animate.frames[0].value);
+        setCurrentAnimatedHour(null);
+      }
     } else {
       setAnimation(null);
       setCurrentAnimatedHour(null);
+      setCurrentAnimatedMonths(null);
       handleDataSettingsChange({
         newSelectedHour: currentPart.dataview.hour,
+        newSelectedMonths: currentPart.dataview.months,
       });
     }
   }, [setViewport, handleDataSettingsChange, limitVisibleLines, setCurrentStoryIndex, setCurrentPartIndex]);
@@ -705,7 +734,11 @@ const StoriesView = React.memo(({
       const animateFrame = () => {
         if (frameIndex < animation.frames.length) {
           const frame = animation.frames[frameIndex];
-          setCurrentAnimatedHour(frame.value);
+          if (animation.field === 'hour') {
+            setCurrentAnimatedHour(frame.value);
+          } else if (animation.field === 'months') {
+            setCurrentAnimatedMonths(frame.value);
+          }
           timeoutId = setTimeout(() => {
             frameIndex++;
             animateFrame();
@@ -730,6 +763,14 @@ const StoriesView = React.memo(({
       });
     }
   }, [currentAnimatedHour, handleDataSettingsChange]);
+
+  useEffect(() => {
+    if (currentAnimatedMonths !== null) {
+      handleDataSettingsChange({
+        newSelectedMonths: currentAnimatedMonths,
+      });
+    }
+  }, [currentAnimatedMonths, handleDataSettingsChange]);
 
   return (
     <div className="stories-view">
