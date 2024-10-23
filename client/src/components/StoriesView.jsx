@@ -839,9 +839,7 @@ const StoriesView = React.memo(({
 
   return (
     <div className={`stories-view ${isStackView ? 'stack-view' : ''}`}>
-      <div className="story-stack">
-        <StoryStack stories={stories} onStoryClick={handleStoryClick} />
-      </div>
+      <StoryStack stories={stories} onStoryClick={handleStoryClick} />
       <div 
         className={`stories-view-container ${isStackView ? 'hidden' : ''}`} 
         ref={containerRef}
