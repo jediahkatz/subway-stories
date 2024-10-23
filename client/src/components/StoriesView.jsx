@@ -618,8 +618,6 @@ const StoriesView = React.memo(({
   const scrollerRef = useRef(scrollama());
   const [previewStory, setPreviewStory] = useState(null);
   const [animation, setAnimation] = useState(null);
-  const [currentAnimatedHour, setCurrentAnimatedHour] = useState(null);
-  const [currentAnimatedMonths, setCurrentAnimatedMonths] = useState(null);
   const [isStackView, setIsStackView] = useState(true);
   const [isScrolling, setIsScrolling] = useState(false);
 
@@ -687,29 +685,29 @@ const StoriesView = React.memo(({
         ...transition,
       };
     });
+
+    const hour = currentPart.dataview.animate?.field === 'hour' 
+      ? currentPart.dataview.animate.frames[0].value 
+      : currentPart.dataview.hour;
+
+    const months = currentPart.dataview.animate?.field === 'months' 
+      ? currentPart.dataview.animate.frames[0].value 
+      : currentPart.dataview.months;
+
     handleDataSettingsChange({
       newSelectedStation: currentPart.dataview.station,
       newSelectedDirection: currentPart.dataview.direction,
       newSelectedDay: currentPart.dataview.day,
-      newSelectedHour: currentPart.dataview.hour,
-      newSelectedMonths: currentPart.dataview.months,
+      newSelectedHour: hour,
+      newSelectedMonths: months,
       newSelectedBarScale: currentPart.dataview.barScale,
     });
     limitVisibleLines(currentPart.dataview.visibleLines);
 
     if (currentPart.dataview.animate) {
       setAnimation(currentPart.dataview.animate);
-      if (currentPart.dataview.animate.field === 'hour') {
-        setCurrentAnimatedHour(currentPart.dataview.animate.frames[0].value);
-        setCurrentAnimatedMonths(null);
-      } else if (currentPart.dataview.animate.field === 'months') {
-        setCurrentAnimatedMonths(currentPart.dataview.animate.frames[0].value);
-        setCurrentAnimatedHour(null);
-      }
     } else {
       setAnimation(null);
-      setCurrentAnimatedHour(null);
-      setCurrentAnimatedMonths(null);
       handleDataSettingsChange({
         newSelectedHour: currentPart.dataview.hour,
         newSelectedMonths: currentPart.dataview.months,
@@ -779,9 +777,13 @@ const StoriesView = React.memo(({
         if (frameIndex < animation.frames.length) {
           const frame = animation.frames[frameIndex];
           if (animation.field === 'hour') {
-            setCurrentAnimatedHour(frame.value);
+            handleDataSettingsChange({
+              newSelectedHour: frame.value,
+            });
           } else if (animation.field === 'months') {
-            setCurrentAnimatedMonths(frame.value);
+            handleDataSettingsChange({
+              newSelectedMonths: frame.value,
+            });
           }
           timeoutId = setTimeout(() => {
             frameIndex++;
@@ -799,22 +801,6 @@ const StoriesView = React.memo(({
       if (timeoutId) clearTimeout(timeoutId);
     };
   }, [animation]);
-
-  useEffect(() => {
-    if (currentAnimatedHour !== null) {
-      handleDataSettingsChange({
-        newSelectedHour: currentAnimatedHour,
-      });
-    }
-  }, [currentAnimatedHour, handleDataSettingsChange]);
-
-  useEffect(() => {
-    if (currentAnimatedMonths !== null) {
-      handleDataSettingsChange({
-        newSelectedMonths: currentAnimatedMonths,
-      });
-    }
-  }, [currentAnimatedMonths, handleDataSettingsChange]);
 
   useEffect(() => {
     if (!isStackView) {
