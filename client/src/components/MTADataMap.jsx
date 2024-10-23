@@ -22,6 +22,7 @@ import { usePrevious } from '../hooks/usePrevious';
 import { ALL_STATIONS_ID } from '../lib/all-stations';
 import { colorIntervals, colorScale } from './ColorLegend.jsx';
 import ColorLegend from './ColorLegend';
+import { splitNameAndLines } from './SubwayLineSymbol.jsx';
 
 const NYC_BOUNDS = {
   minLng: -74.2591,  // Southwest longitude
@@ -378,6 +379,38 @@ const MTADataMap = ({ mapboxToken }) => {
     return colorScale[colorIndex];
   };
 
+  const convertToGrayscale = (rgba) => {
+    const [r, g, b, a] = rgba;
+    const grayscale = r * 0.299 + g * 0.587 + b * 0.114;
+    return [grayscale, grayscale, grayscale, a];
+  };
+
+  const [visibleLines, setVisibleLines] = useState(null);
+  const limitVisibleLines = useCallback((visibleLines) => {
+    if (!visibleLines) {
+      setVisibleLines(null);
+    } else {
+      setVisibleLines(new Set(visibleLines));
+    }
+
+    const map = mapRef.current
+    subwayLayerStyles.forEach((style) => {
+      const layerId = `subway-line-${style.id}`;
+
+      if (!visibleLines) {
+        map.setFilter(layerId, style.filter)
+      } else {
+        map.setFilter(layerId, [
+          'all',
+          [...style.filter],
+          ['any',
+            ...visibleLines.map(line => ['in', line, ['get', 'symbols']]),
+          ]
+        ]);
+      }
+    });
+  }, [])
+
   const filteredDataWithStationsAnimatingToZero = useMemo(() => {
     const stationIds = new Set(filteredData.current.map(d => Number(d.station_id)));
     const missingStations = stations.filter(s => !stationIds.has(Number(s.complex_id)));
@@ -401,8 +434,17 @@ const MTADataMap = ({ mapboxToken }) => {
     getHeight: d => barData.heights[d.station_id]?.currentHeight ?? 0,
     getWidth: _d => 50,
     getColor: d => {
-      const color = barData.type === 'LOADING' ? LOADING_COLOR : getColorAbsolute(d.ridership);
-      return [...color, 255];
+      if (barData.type === 'LOADING') {
+        return LOADING_COLOR;
+      }
+
+      const color = [...getColorAbsolute(d.ridership), 255];
+
+      const name = getStationName(d.station_id);
+      const { lines } = splitNameAndLines(name);
+      const isOnVisibleLine = !visibleLines || visibleLines.intersection(new Set(lines)).size > 0;
+      
+      return isOnVisibleLine ? color : convertToGrayscale(color);
     },
     onHover: (info) => {
       if (info.object) {
@@ -424,7 +466,7 @@ const MTADataMap = ({ mapboxToken }) => {
     },
     updateTriggers: {
       data: [filteredDataWithStationsAnimatingToZero],
-      getColor: [filteredDataWithStationsAnimatingToZero, barData],
+      getColor: [filteredDataWithStationsAnimatingToZero, barData, ],
       getHeight: [barScale, filteredDataWithStationsAnimatingToZero, barData],
     }
   });
@@ -437,8 +479,17 @@ const MTADataMap = ({ mapboxToken }) => {
     getPosition: d => [d.lon, d.lat],
     getElevation: d => barData.heights[d.station_id]?.currentHeight ?? 0,
     getFillColor: d => {
-      const color = barData.type === 'LOADING' ? LOADING_COLOR : getColorAbsolute(d.ridership);
-      return [...color, 255];
+      if (barData.type === 'LOADING') {
+        return LOADING_COLOR;
+      }
+
+      const color = [...getColorAbsolute(d.ridership), 255];
+
+      const name = getStationName(d.station_id);
+      const { lines } = splitNameAndLines(name);
+      const isOnVisibleLine = !visibleLines || visibleLines.intersection(new Set(lines)).size > 0;
+      
+      return isOnVisibleLine ? color : convertToGrayscale(color);
     },
     getLineColor: [0, 0, 0],
     getLineWidthMinPixels: 1,
@@ -470,7 +521,7 @@ const MTADataMap = ({ mapboxToken }) => {
     },
     updateTriggers: {
       data: [filteredDataWithStationsAnimatingToZero],
-      getColor: [filteredDataWithStationsAnimatingToZero, barData],
+      getColor: [filteredDataWithStationsAnimatingToZero, barData, visibleLines],
       getElevation: [barScale, filteredDataWithStationsAnimatingToZero, barData],
     }
   })
@@ -516,26 +567,6 @@ const MTADataMap = ({ mapboxToken }) => {
       map.addLayer(newStyle);
     });
   }, []);
-
-  const limitVisibleLines = useCallback((visibleLines) => {
-
-    const map = mapRef.current
-    subwayLayerStyles.forEach((style) => {
-      const layerId = `subway-line-${style.id}`;
-
-      if (!visibleLines) {
-        map.setFilter(layerId, style.filter)
-      } else {
-        map.setFilter(layerId, [
-          'all',
-          [...style.filter],
-          ['any',
-            ...visibleLines.map(line => ['in', line, ['get', 'symbols']]),
-          ]
-        ]);
-      }
-    });
-  }, [])
 
   const setHoveredStation = useCallback((stationId) => {
     if (stationId === null) {
