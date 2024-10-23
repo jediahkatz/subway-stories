@@ -803,48 +803,45 @@ const StoriesView = React.memo(({
   }, [currentAnimatedMonths, handleDataSettingsChange]);
 
   return (
-    <div className="stories-view">
-      {isStackView ? (
+    <div className={`stories-view ${isStackView ? 'stack-view' : ''}`}>
+      <div className="story-stack">
         <StoryStack stories={stories} onStoryClick={handleStoryClick} />
-      ) : (
-        <>
-          <div className="stories-view-container" ref={containerRef}>
-            <div className="stories-content" style={{ visibility: previewStory !== null ? 'hidden' : 'visible' }}>
-              {stories.map((story, storyIndex) => (
-                <React.Fragment key={storyIndex}>
-                  {story.parts.map((_, partIndex) => (
-                    <StoryBox 
-                      key={`${storyIndex}-${partIndex}`}
-                      story={story}
-                      partIndex={partIndex}
-                    />
-                  ))}
-                </React.Fragment>
+      </div>
+      <div className={`stories-view-container ${isStackView ? 'hidden' : ''}`} ref={containerRef}>
+        <div className="stories-content" style={{ visibility: previewStory !== null ? 'hidden' : 'visible' }}>
+          {stories.map((story, storyIndex) => (
+            <React.Fragment key={storyIndex}>
+              {story.parts.map((_, partIndex) => (
+                <StoryBox 
+                  key={`${storyIndex}-${partIndex}`}
+                  story={story}
+                  partIndex={partIndex}
+                />
               ))}
-            </div>
-            <div className="floating-info-bar" style={{visibility: previewStory !== null ? 'hidden' : 'visible'}}>
-              <p>
-              {formatInfoBarText(selectedDirection, selectedStation, selectedHour, selectedDay, selectedMonths, animation?.field)}  
-              </p>
-            </div>
-          </div>
-          <StoryProgress
-            stories={stories}
-            currentStoryIndex={currentStoryIndex}
-            currentPartIndex={currentPartIndex}
-            handleJumpToStory={(storyIndex, partIndex) => handleJumpToStory(storyIndex, partIndex, false)}
-            handleJumpToPart={(storyIndex, partIndex) => handleJumpToStory(storyIndex, partIndex, true)}
-            setPreviewStory={setPreviewStory}
+            </React.Fragment>
+          ))}
+        </div>
+        <div className="floating-info-bar" style={{visibility: previewStory !== null ? 'hidden' : 'visible'}}>
+          <p>
+          {formatInfoBarText(selectedDirection, selectedStation, selectedHour, selectedDay, selectedMonths, animation?.field)}  
+          </p>
+        </div>
+      </div>
+      {!isStackView && <StoryProgress
+        stories={stories}
+        currentStoryIndex={currentStoryIndex}
+        currentPartIndex={currentPartIndex}
+        handleJumpToStory={(storyIndex, partIndex) => handleJumpToStory(storyIndex, partIndex, false)}
+        handleJumpToPart={(storyIndex, partIndex) => handleJumpToStory(storyIndex, partIndex, true)}
+        setPreviewStory={setPreviewStory}
+      />}
+      {previewStory !== null && (
+        <div className="story-preview">
+          <StoryBox 
+            story={stories[previewStory]}
+            isPreview={true}
           />
-          {previewStory !== null && (
-            <div className="story-preview">
-              <StoryBox 
-                story={stories[previewStory]}
-                isPreview={true}
-              />
-            </div>
-          )}
-        </>
+        </div>
       )}
     </div>
   );
