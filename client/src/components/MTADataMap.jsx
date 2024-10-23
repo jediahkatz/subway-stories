@@ -773,9 +773,12 @@ const getStationName = (id) => {
 };
 
 const View3DToggle = ({ is3D, setViewport }) => {
+  const [showExpandedMessage, setShowExpandedMessage] = useState(false);
+
   const toggleView = () => {
     if (is3D) {
       // Switch to 2D view
+      setShowExpandedMessage(false);
       setViewport(prevViewport => ({
         ...prevViewport,
         pitch: 0,
@@ -792,21 +795,21 @@ const View3DToggle = ({ is3D, setViewport }) => {
         transitionDuration: 1000,
         transitionInterpolator: new FlyToInterpolator(),
       }));
+      // Show expanded message
+      setShowExpandedMessage(true);
+      // Hide message after 5 seconds
+      setTimeout(() => setShowExpandedMessage(false), 5000);
     }
   };
 
   return (
     <button
-      className={`view-toggle`}
+      className={`view-toggle ${showExpandedMessage ? 'expanded' : ''}`}
       onClick={toggleView}
       aria-label={`Switch to ${is3D ? '2D' : '3D'} view`}
     >
-      {
-        is3D ?
-          <div className="view-3d" />
-        :
-          <div className="view-2d" />
-      }
+      <div className={is3D ? "view-3d" : "view-2d"} />
+      <span className="expanded-message">Shift + Drag to rotate in 3D</span>
     </button>
   );
 };
