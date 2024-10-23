@@ -28,7 +28,7 @@ const StoryProgress = ({ stories, currentStoryIndex, currentPartIndex, handleJum
                 <div 
                   key={partIndex}
                   className={`part-line ${partIndex + 1 === currentPartIndex ? 'active' : ''}`}
-                  onClick={() => handleClickPart(storyIndex, partIndex)}
+                  onClick={() => handleClickPart(storyIndex, partIndex + 1)}
                 />
               ))}
             </div>

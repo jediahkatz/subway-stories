@@ -144,10 +144,10 @@ const getStories = (StationHighlightComponent) => [
             attribution="Photo: /u/donny_hype"
           />
           <p>
-            Every Friday and Saturday night, hundreds of young revelers embark on a weekly pilgrimage to Bushwick. A neighborhood featuring bars and clubs like Carousel, Abe's Pagoda, The Johnson's, and House of Yes, Bushwick is inundated with partygoers who liven the streets around the <StationHighlightComponent stationId="126">Jefferson St</StationHighlightComponent>, <StationHighlightComponent stationId="127">DeKalb Avenue</StationHighlightComponent>, and <StationHighlightComponent stationId="630">Myrtle-Wyckoff</StationHighlightComponent> stops along the L train. 
+            For young people in New York, life unfolds most vividly after dark. In recent years, nightlife along the L train has exploded, with enticing options from 8th Avenue to Bushwick. One of the most popular neighborhoods along the line is the East Village.
           </p>
           <p>
-            Considering, for example, the Jefferson Avenue station at 11 PM on a Saturday evening, we can see the massive influx coming from Williamsburg, the East Village, the Lower East Side, and even as far as 8th Avenue in Manhattan.
+            Considering the arrivals to 1st Avenue at 11PM on a Saturday night, we can see that the East Village and Alphabet City is a hotbed of nightlife, with bars like Niagara, Heaven Can Wait, and The Penny Farthing drawing crowds from Midtown Manhattan to Bushwick. 
           </p>
         </>,
         // Halsey St (L), 8 Av (L), 59 St-Columbus Circle
@@ -164,10 +164,70 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            Every Friday and Saturday night, hundreds of young revelers embark on a weekly pilgrimage to Bushwick. A neighborhood featuring bars and clubs like Carousel, Abe's Pagoda, The Johnson's, and House of Yes, Bushwick is inundated with partygoers who liven the streets around the <StationHighlightComponent stationId="126">Jefferson St</StationHighlightComponent>, <StationHighlightComponent stationId="127">DeKalb Avenue</StationHighlightComponent>, and <StationHighlightComponent stationId="128">Myrtle-Wyckoff</StationHighlightComponent> stops along the L train. 
+            Despite this plethora of options, some residents of the East Village prefer to go out in other locales, sometimes even intentionally avoiding their own neighborhood. Becca Foley, a young resident, explains:
           </p>
           <p>
-            Considering, for example, the Jefferson Avenue station at 11 PM on a Saturday evening, we can see the massive influx coming from Williamsburg, the East Village, the Lower East Side, and even as far as 8th Avenue in Manhattan.
+            “I'm 26 and the crowd in the East Village feels a lot younger. A lot of kids are visiting and some are interns, so I think it's more fun to go out with a more local crowd in Williamsburg and Bushwick. It's mostly about the age, but I also have better conversations with people [in Bushwick] since they're more mature and there's a lot more diversity in terms of sexuality, gender, and background.”
+          </p>
+          <p>
+            This is a common sentiment, especially among those in their mid to late 20s, with neighborhoods like Bushwick established as popular nighttime destinations.
+          </p>
+        </>,
+        // Halsey St (L), 8 Av (L), 59 St-Columbus Circle
+        pointsToInclude: [stationIdToStation['129'], stationIdToStation['618'], stationIdToStation['614']],
+        dataview: {
+          station: '126', // Jefferson St (L)
+          direction: 'comingFrom',
+          day: 'Saturday',
+          hour: 23,
+          months: ALL_MONTHS,
+          barScale: 0.015,
+        },
+      },
+      {
+        description: <>
+          <p>
+            A smaller but equally dedicated crowd, hundreds of young revelers embark on a weekly pilgrimage to Bushwick. A neighborhood featuring bars and clubs like Carousel, Abe's Pagoda, The Johnson's, and House of Yes, Bushwick is inundated with partygoers who liven the streets around the <StationHighlightComponent stationId="126">Jefferson St</StationHighlightComponent>, <StationHighlightComponent stationId="127">DeKalb Avenue</StationHighlightComponent>, and <StationHighlightComponent stationId="128">Myrtle-Wyckoff</StationHighlightComponent> stops along the L train. 
+          </p>
+          <p>
+            Considering, for example, the Jefferson St station at 11 PM on a Saturday evening, we can see the influx coming from Williamsburg, the East Village, the Lower East Side, and even as far as Times Square in Manhattan.
+          </p>
+        </>,
+        // Halsey St (L), 8 Av (L), 59 St-Columbus Circle
+        pointsToInclude: [stationIdToStation['129'], stationIdToStation['618'], stationIdToStation['614']],
+        dataview: {
+          station: '126', // Jefferson St (L)
+          direction: 'comingFrom',
+          day: 'Saturday',
+          hour: 23,
+          months: ALL_MONTHS,
+          barScale: 0.015,
+        },
+      },
+      {
+        description: <>
+          <p>
+            As expected, the season plays a role in how many people are willing to make the trek to Bushwick, with the winter months of January, February, and March having fewer people out than the summer months of June, July, and August. Despite this, we can see that there is still a core group of partygoers undeterred by the wind and cold. 
+          </p>
+        </>,
+        // Halsey St (L), 8 Av (L), 59 St-Columbus Circle
+        pointsToInclude: [stationIdToStation['129'], stationIdToStation['618'], stationIdToStation['614']],
+        dataview: {
+          station: '126', // Jefferson St (L)
+          direction: 'comingFrom',
+          day: 'Saturday',
+          hour: 23,
+          months: ALL_MONTHS,
+          barScale: 0.015,
+        },
+      },
+      {
+        description: <>
+          <p>
+            Known for its high concentration of “open until the sun comes up bars”, (include pic of House of Yes) Bushwick features a crowd eager to stay out later than most. Looking at late-night departures from stations along the L, we can see that the party rages later in Bushwick than in its tamer Williamsburg counterpart. 
+          </p>
+          <p>
+            Considering, for example, the Jefferson St station at 11 PM on a Saturday evening, we can see the influx coming from Williamsburg, the East Village, the Lower East Side, and even as far as Times Square in Manhattan.
           </p>
         </>,
         // Halsey St (L), 8 Av (L), 59 St-Columbus Circle
@@ -426,7 +486,7 @@ const getStories = (StationHighlightComponent) => [
     ]
   },
   {
-    title: 'Lorem Ipsum Adventure 2 E.B.',
+    title: 'Working on the Weekend',
     parts: [
       {
         description: <>
