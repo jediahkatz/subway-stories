@@ -9,8 +9,14 @@ const SERVER_BASE_URL = getEnvVar('VITE_SQL_SERVER_URL');
 const SHOULD_LOAD_CHECK_INTERVAL = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
 
 const App = () => {
-  const [shouldLoad, setShouldLoad] = useState(false);
+  const [shouldLoadMapbox, setShouldLoadMapbox] = useState(false);
   const [lastCheckTime, setLastCheckTime] = useState(0);
+
+  const checkMobileOrScreenTooSmall = () => {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const screenTooSmall = window.innerWidth < 1000;
+    return isMobile || screenTooSmall;
+  };
 
   useEffect(() => {
     const checkShouldLoad = async () => {
@@ -29,7 +35,7 @@ const App = () => {
           }
           const data = await response.json();
           const shouldLoad = data.shouldLoad;
-          setShouldLoad(shouldLoad);
+          setShouldLoadMapbox(shouldLoad);
           setLastCheckTime(now);
         } catch (error) {
           console.error('Error checking mapbox load:', error);
@@ -41,11 +47,21 @@ const App = () => {
     checkShouldLoad();
   }, [lastCheckTime]);
 
+  const isMobileOrScreenTooSmall = React.useMemo(() => checkMobileOrScreenTooSmall(), []);
+
+  if (isMobileOrScreenTooSmall) {
+    return (
+      <div className="mobile-not-supported">
+        <div className="metrocard-background"></div>
+        <h2>Please carry MetroCard at all times</h2>
+        <h3>Support for mobile devices is coming soon</h3>
+      </div>
+    );
+  }
+
   return (
     <div className="App">
-      <PasswordPage onCorrectPassword={() => {}}>
-        <MTADataMap mapboxToken={MAPBOX_TOKEN} controller={true} />
-      </PasswordPage>
+      {shouldLoadMapbox && <MTADataMap mapboxToken={MAPBOX_TOKEN} controller={true} />}
     </div>
   );
 };
