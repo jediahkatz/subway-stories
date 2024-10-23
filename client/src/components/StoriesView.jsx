@@ -737,6 +737,10 @@ const StoriesView = React.memo(({
       // Calculate the scroll position to center the target element
       const scrollPosition = targetTop - (containerHeight / 2) + (targetHeight / 2);
 
+      if (smooth) {
+        // This will make sure we don't trigger onStepEnter until we've finished scrolling.
+        scrollAnimatingToPart.current = { storyIndex, partIndex };
+      }
       containerRef.current.scrollTo({
         top: scrollPosition,
         behavior: smooth ? 'smooth' : 'instant'
@@ -746,7 +750,6 @@ const StoriesView = React.memo(({
 
   const handleStoryClick = (storyIndex) => {
     setIsStackView(false);
-    scrollAnimatingToPart.current = { storyIndex, partIndex: 0 };
     // We don't want to scroll through all stories because it's jarring.
     // We do want to scroll a little bit to indicate that it's scrollable.
     // So let's only animate scrolling from the last part of the previous story.
