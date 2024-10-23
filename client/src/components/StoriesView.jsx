@@ -622,7 +622,7 @@ const StoriesView = React.memo(({
   const [currentAnimatedMonths, setCurrentAnimatedMonths] = useState(null);
   const [isStackView, setIsStackView] = useState(true);
 
-  console.log({ isStackView });
+  const scrollAnimatingToPart = useRef(null);
 
   const StationHighlightComponent = useCallback(({ children, stationId }) => (
     <StationHighlight stationId={stationId} setHoveredStation={setHoveredStation} containerRef={containerRef}>
@@ -652,6 +652,15 @@ const StoriesView = React.memo(({
         break;
       }
       partIndex -= stories[i].parts.length;
+    }
+
+    if (scrollAnimatingToPart.current) {
+      const { storyIndex: targetStoryIndex, partIndex: targetPartIndex } = scrollAnimatingToPart.current;
+      if (storyIndex !== targetStoryIndex || partIndex !== targetPartIndex) {
+        return;
+      } else {
+        scrollAnimatingToPart.current = null;
+      }
     }
 
     setCurrentStoryIndex(storyIndex);
@@ -742,6 +751,7 @@ const StoriesView = React.memo(({
 
   useEffect(() => {
     if (!isStackView) {
+      scrollAnimatingToPart.current = { storyIndex: currentStoryIndex, partIndex: currentPartIndex };
       handleJumpToStory(currentStoryIndex, currentPartIndex, true);
     }
   }, [isStackView]);
