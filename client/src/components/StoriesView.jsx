@@ -483,7 +483,7 @@ const StoriesView = React.memo(({
   const [currentAnimatedHour, setCurrentAnimatedHour] = useState(null);
 
   const StationHighlightComponent = useCallback(({ children, stationId }) => (
-    <StationHighlight stationId={stationId} setHoveredStation={setHoveredStation}>
+    <StationHighlight stationId={stationId} setHoveredStation={setHoveredStation} containerRef={containerRef}>
       {children}
     </StationHighlight>
   ), [selectedStation, setHoveredStation]);
@@ -697,14 +697,29 @@ const formatInfoBarText = (direction, stationId, hour, day, selectedMonths) => {
   );
 };
 
-const StationHighlight = ({ children, stationId, setHoveredStation }) => {
-  const handleMouseEnter = () => {
+const StationHighlight = ({ children, stationId, setHoveredStation, containerRef }) => {
+  const handleMouseEnter = (e) => {
     setHoveredStation(stationId);
   };
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = (e) => {
     setHoveredStation(null);
   };
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      setHoveredStation(null);
+    };
+
+    container.addEventListener('scroll', handleScroll);
+
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+    };
+  }, [setHoveredStation]);
 
   return (
     <span
