@@ -192,6 +192,13 @@
   gap: 12px;
   margin-top: 12px;
   position: relative;
+  transition: height 0.5s ease;
+}
+
+.part-lines.hidden {
+  height: 0;
+  margin-top: 0;
+  overflow: hidden;
 }
 
 .part-line {
@@ -221,6 +228,18 @@
 .part-line-wrapper:hover .part-line:not(.active) {
   background-color: #888;
 }
+
+.part-line-wrapper {
+  transition: transform 0.5s ease;
+  transform: translateY(0);
+}
+
+.part-line-wrapper.hidden:nth-child(1) { transform: translateY(-16px); }
+.part-line-wrapper.hidden:nth-child(2) { transform: translateY(-32px); }
+.part-line-wrapper.hidden:nth-child(3) { transform: translateY(-48px); }
+.part-line-wrapper.hidden:nth-child(4) { transform: translateY(-64px); }
+.part-line-wrapper.hidden:nth-child(5) { transform: translateY(-80px); }
+.part-line-wrapper.hidden:nth-child(6) { transform: translateY(-96px); }
 
 .opening-phrase {
   font-size: 18px;
@@ -311,7 +330,7 @@
   top: calc((100vh - var(--story-height) - (4*var(--story-vertical-offset)) - (2*var(--story-padding))) / 2);
   z-index: 1000;
   pointer-events: all;
-  transition: left 0.5s ease, top 0.5s ease, transform 0.5s ease;
+  transition: left 0.5s ease, top 0.5s ease, transform 0.5s ease, opacity 0.5s ease;
 }
 
 .stories-view:not(.stack-view) .story-stack {
@@ -390,11 +409,13 @@
 .collapsing .story-stack {
   top: 50%;
   transform: translateY(-50%);
+  opacity: 0.5;
 }
 
 .collapsing.moving .story-stack {
   /* 350px width - 45px visible */
-  left: -305px; 
+  left: -305px;
+  opacity: 1;
 }
 
 .collapsing .story-card h2,

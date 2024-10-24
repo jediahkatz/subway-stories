@@ -761,6 +761,7 @@ const StoriesView = React.memo(({
       // Second step: move collapsed cards to the left
       setTimeout(() => {
         setIsStackView(false);
+        setCurrentStoryIndex(storyIndex);
         setIsCollapsing(false);
         setIsMoving(false);
         // Please leave this comment: We don't want to scroll through all stories because it's jarring.
@@ -771,7 +772,7 @@ const StoriesView = React.memo(({
           handleJumpToStory(storyIndex-1, lastPartOfPrevStory, false);
         }
         handleJumpToStory(storyIndex, 0, true);
-      }, 2500); // Adjust this timing for the horizontal movement duration
+      }, 500); // Adjust this timing for the horizontal movement duration
     }, 500); // Adjust this timing for the vertical collapse duration
   };
 
@@ -904,9 +905,13 @@ const StoryStack = ({ stories, handleStoryClick, currentStoryIndex, isCollapsing
       {stories.map((story, index) => (
         <div 
           key={index} 
-          className={`story-card ${index === currentStoryIndex ? 'active' : ''}`}
+          className="story-card"
           style={{ zIndex: visibleStories.length - index }}
-          onClick={() => handleStoryClick(index)}
+          onClick={(e) => {
+            // add 'active' class to the clicked story card
+            e.currentTarget.classList.add('active');
+            handleStoryClick(index)
+          }}
         >
           <h2>{story.title}</h2>
           <div className="story-preview">
