@@ -139,14 +139,8 @@ const MTADataMap = ({ mapboxToken }) => {
   const { fetchData } = useFetchData();
 
   // Add new state for story position
-  const [currentStoryIndex, setCurrentStoryIndex] = useState(() => {
-    const savedState = loadStateFromSessionStorage();
-    return savedState?.currentStoryIndex || null;
-  });
-  const [currentPartIndex, setCurrentPartIndex] = useState(() => {
-    const savedState = loadStateFromSessionStorage();
-    return savedState?.currentPartIndex || 0;
-  });
+  const [currentStoryIndex, setCurrentStoryIndex] = useState(null);
+  const [currentPartIndex, setCurrentPartIndex] = useState(0);
 
   const [showAboutView, setShowAboutView] = useState(false);
 
@@ -547,11 +541,9 @@ const MTADataMap = ({ mapboxToken }) => {
       selectedDirection,
       selectedMonths,
       showPercentage,
-      currentStoryIndex,
-      currentPartIndex,
     };
     saveStateToSessionStorage(stateToSave);
-  }, [viewport, selectedHour, selectedDay, selectedStation, selectedDirection, selectedMonths, showPercentage, currentStoryIndex, currentPartIndex]);
+  }, [viewport, selectedHour, selectedDay, selectedStation, selectedDirection, selectedMonths, showPercentage]);
 
   // Add new state for active view
   const [activeView, setActiveView] = useState('visualization');
