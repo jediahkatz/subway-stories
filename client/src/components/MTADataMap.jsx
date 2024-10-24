@@ -141,7 +141,7 @@ const MTADataMap = ({ mapboxToken }) => {
   // Add new state for story position
   const [currentStoryIndex, setCurrentStoryIndex] = useState(() => {
     const savedState = loadStateFromSessionStorage();
-    return savedState?.currentStoryIndex || 0;
+    return savedState?.currentStoryIndex || null;
   });
   const [currentPartIndex, setCurrentPartIndex] = useState(() => {
     const savedState = loadStateFromSessionStorage();

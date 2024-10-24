@@ -621,7 +621,7 @@ const StoriesView = React.memo(({
   const scrollerRef = useRef(scrollama());
   const [previewStory, setPreviewStory] = useState(null);
   const [animation, setAnimation] = useState(null);
-  const [isStackView, setIsStackView] = useState(true);
+  const [isStackView, setIsStackView] = useState(currentStoryIndex === null);
   const [isScrolling, setIsScrolling] = useState(false);
 
   const scrollAnimatingToPart = useRef(null);
@@ -760,6 +760,13 @@ const StoriesView = React.memo(({
     }
     handleJumpToStory(storyIndex, 0, true);
   };
+
+  useEffect(() => {
+    // Resume from where we left off
+    if (!isStackView) {
+      handleJumpToStory(currentStoryIndex, currentPartIndex, false);
+    }
+  }, []);
 
   useEffect(() => {
     if (!isStackView) {
