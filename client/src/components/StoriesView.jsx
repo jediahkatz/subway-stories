@@ -134,6 +134,137 @@ const getStories = (StationHighlightComponent) => [
     ]
   },
   {
+    title: 'How New York City Works',
+    parts: [
+      {
+        description: <>
+          <AttributedPhoto 
+            src="/grand-central.jpg" 
+            alt="Crowd at Grand Central Station during rush hour" 
+            attribution="Photo: Heather Paul"
+          />
+          <p>
+            If New York was a country, it would have the 10th largest economy in the world. 
+            An astronomical number of people flood into the city at rush hour every weekday to go to work. 
+          </p>
+          <p>
+            Economic activity is concentrated in the city's multiple central business districts. Midtown Manhattan is the densest business hub in the world, and the Financial District is not far behind. Downtown Brooklyn has grown significantly in recent decades, but still comes in a distant third. Let's take a look at each of them.
+          </p>
+        </>,
+        // Smith-9 Sts (F G), Bowling Green (4 5), 96 St (6), Mosholu Pkwy (4)
+        // pointsToInclude: [stationIdToStation['238'], stationIdToStation['414'], stationIdToStation['396'], stationIdToStation['379']],
+        viewport: { longitude: -74.02, latitude: 40.68, zoom: 10.8, bearing: -110, pitch: 55 },
+        dataview: {
+          station: ALL_STATIONS_ID,
+          direction: 'comingFrom',
+          day: 'Wednesday',
+          hour: 5,
+          months: ALL_MONTHS,
+          barScale: 0.0005,
+          animate: {
+            field: 'hour',
+            frames: [
+              { value: 5, duration: 1000 },
+              { value: 6, duration: 1000 },
+              { value: 7, duration: 1000 },
+              { value: 8, duration: 4000 },
+            ]
+          },
+        },
+      },
+      {
+        description: <>
+          <p>
+            Midtown is massive, and its busiest stations are near commuter hubs like Grand Central that connect the city to the suburbs. But we can look at <StationHighlightComponent stationId="612">Lexington Avenue/51 St</StationHighlightComponent> as a representative example.
+          </p>
+          <p>
+            Workers are coming from all over the city, especially from high-density areas with a direct trip to the station, like Jackson Heights in Queens. The largest local spike, <StationHighlightComponent stationId="397">86 St</StationHighlightComponent>, likely represents commuters from Yorkville, the most densely populated neighborhood in the city.
+          </p>
+          <p>
+            But it's notable that a large share of riders appear to be traveling from outside New York, with spikes at <StationHighlightComponent stationId="164">Penn Station</StationHighlightComponent> and the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>.
+          </p>
+        </>,
+        // Bowling Green, 168 St-Washington Heights, Kew Gardens-Union Tpke, Prospect Park
+        pointsToInclude: [stationIdToStation['414'], stationIdToStation['605'], stationIdToStation['259'], stationIdToStation['42']],
+        dataview: {
+          station: '612', // Lexington Av/51 St
+          direction: 'comingFrom',
+          day: 'Wednesday',
+          hour: 8,
+          months: ALL_MONTHS,
+          barScale: 0.003,
+        },
+      },
+      {
+        description: <>
+          <p>
+            The <StationHighlightComponent stationId="611">Port Authority Bus Terminal</StationHighlightComponent> is the busiest bus terminal in the world, with 225,000 passengers passing through on a typical weekday. One of our contributors, Marc Zitelli, recounts his experience commuting to New Jersey from the PABT while working on a political campaign.
+          </p>
+          <p>
+            "The foot traffic was insane, like difficult to even move at points. But it was nice that I always got a seat on the bus, since everybody was coming into the city at 8 AM on weekdays, not leaving the city."
+          </p>
+          <p>
+            Most commuters arriving at the Port Authority will remain in Manhattan. They go to Midtown the most, then the Financial District and Downtown Brooklyn, in accordance with the size of those business hubs.
+          </p>
+        </>,
+        // Bowling Green, 168 St-Washington Heights, Kew Gardens-Union Tpke, Prospect Park
+        pointsToInclude: [stationIdToStation['414'], stationIdToStation['605'], stationIdToStation['259'], stationIdToStation['42']],
+        dataview: {
+          station: '611', // 42 St-Times Sq/Port Authority
+          direction: 'goingTo',
+          day: 'Wednesday',
+          hour: 8,
+          months: ALL_MONTHS,
+          barScale: 0.003,
+        },
+      },
+      {
+        description: <>
+          <p>
+            When we look at the ridership to the Financial District, anchored by the <StationHighlightComponent stationId="628">Fulton St</StationHighlightComponent> station, the pattern is strikingly different. By far the largest share of riders are coming from <StationHighlightComponent stationId="610">Grand Central</StationHighlightComponent>, dwarfing those from <StationHighlightComponent stationId="318">Penn Station</StationHighlightComponent> and the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>.
+          </p>
+          <p>
+            One explanation for this unbalance is that Grand Central is the main hub for commuters from wealthy suburbs like Scarsdale in Westchester and New Canaan in Connecticut. That demographic might be more likely to work in high-paying finance jobs than, say, bus riders from New Jersey.
+          </p>
+        </>,
+        // Bowling Green, 168 St-Washington Heights, Kew Gardens-Union Tpke, Flatbush Ave-Brooklyn College
+        pointsToInclude: [stationIdToStation['414'], stationIdToStation['605'], stationIdToStation['259'], stationIdToStation['356']],
+        dataview: {
+          station: '628', // Fulton St
+          direction: 'comingFrom',
+          day: 'Wednesday',
+          hour: 8,
+          months: ALL_MONTHS,
+          barScale: 0.003,
+        },
+      },
+      {
+        description: <>
+          <p>
+            Many of Brooklyn's downtown offices are a short walk from the <StationHighlightComponent stationId="636">Jay St-MetroTech</StationHighlightComponent> stop. The MetroTech Center itself was recently renamed Brooklyn Commons, after it was purchased by the investment firm Brookfield.
+          </p>
+          <p>
+            There's still plenty of out-of-town traffic to Downtown Brooklyn, from the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>, <StationHighlightComponent stationId="164">Penn Station</StationHighlightComponent>, and the PATH train through the Financial District. But this business district draws a higher proportion of local commuters than Manhattan's larger corridors.
+          </p>
+          <p>
+            It serves as a hub for workers across the borough, from <StationHighlightComponent stationId="240">Park Slope</StationHighlightComponent> to <StationHighlightComponent stationId="36">Bay Ridge</StationHighlightComponent> to <StationHighlightComponent stationId="188">East New York</StationHighlightComponent>. A number of people come all the way from Queens. Most of them must transfer through Manhattan, due to the lack of interborough connections.
+            <span className="story-end-marker"/>
+          </p>
+        </>,
+        // 59 St-Columbus Circle, Ditmas Av, Ozone Park-Lefferts Blvd, Bay Ridge-95 St
+        pointsToInclude: [stationIdToStation['614'], stationIdToStation['244'], stationIdToStation['195'], stationIdToStation['39']],
+        dataview: {
+          station: '636', // Jay St-MetroTech
+          direction: 'comingFrom',
+          day: 'Wednesday',
+          hour: 8,
+          months: ALL_MONTHS,
+          barScale: 0.003,
+        },
+      },
+    ]
+  },
+  {
     title: 'Nightlife Along the L Train',
     parts: [
       {
@@ -279,137 +410,6 @@ const getStories = (StationHighlightComponent) => [
               { value: 4, duration: 1000 },
             ]
           },
-        },
-      },
-    ]
-  },
-  {
-    title: 'How New York City Works',
-    parts: [
-      {
-        description: <>
-          <AttributedPhoto 
-            src="/grand-central.jpg" 
-            alt="Crowd at Grand Central Station during rush hour" 
-            attribution="Photo: Heather Paul"
-          />
-          <p>
-            If New York was a country, it would have the 10th largest economy in the world. 
-            An astronomical number of people flood into the city at rush hour every weekday to go to work. 
-          </p>
-          <p>
-            Economic activity is concentrated in the city's multiple central business districts. Midtown Manhattan is the densest business hub in the world, and the Financial District is not far behind. Downtown Brooklyn has grown significantly in recent decades, but still comes in a distant third. Let's take a look at each of them.
-          </p>
-        </>,
-        // Smith-9 Sts (F G), Bowling Green (4 5), 96 St (6), Mosholu Pkwy (4)
-        // pointsToInclude: [stationIdToStation['238'], stationIdToStation['414'], stationIdToStation['396'], stationIdToStation['379']],
-        viewport: { longitude: -74.02, latitude: 40.68, zoom: 10.8, bearing: -110, pitch: 55 },
-        dataview: {
-          station: ALL_STATIONS_ID,
-          direction: 'comingFrom',
-          day: 'Wednesday',
-          hour: 5,
-          months: ALL_MONTHS,
-          barScale: 0.0005,
-          animate: {
-            field: 'hour',
-            frames: [
-              { value: 5, duration: 1000 },
-              { value: 6, duration: 1000 },
-              { value: 7, duration: 1000 },
-              { value: 8, duration: 4000 },
-            ]
-          },
-        },
-      },
-      {
-        description: <>
-          <p>
-            Midtown is massive, and its busiest stations are near commuter hubs like Grand Central that connect the city to the suburbs. But we can look at <StationHighlightComponent stationId="612">Lexington Avenue/51 St</StationHighlightComponent> as a representative example.
-          </p>
-          <p>
-            Workers are coming from all over the city, especially from high-density areas with a direct trip to the station, like Jackson Heights in Queens. The largest local spike, <StationHighlightComponent stationId="397">86 St</StationHighlightComponent>, likely represents commuters from Yorkville, the most densely populated neighborhood in the city.
-          </p>
-          <p>
-            But it's notable that a large share of riders appear to be traveling from outside New York, with spikes at <StationHighlightComponent stationId="164">Penn Station</StationHighlightComponent> and the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>.
-          </p>
-        </>,
-        // Bowling Green, 168 St-Washington Heights, Kew Gardens-Union Tpke, Prospect Park
-        pointsToInclude: [stationIdToStation['414'], stationIdToStation['605'], stationIdToStation['259'], stationIdToStation['42']],
-        dataview: {
-          station: '612', // Lexington Av/51 St
-          direction: 'comingFrom',
-          day: 'Wednesday',
-          hour: 8,
-          months: ALL_MONTHS,
-          barScale: 0.003,
-        },
-      },
-      {
-        description: <>
-          <p>
-            The <StationHighlightComponent stationId="611">Port Authority Bus Terminal</StationHighlightComponent> is the busiest bus terminal in the world, with 225,000 passengers passing through on a typical weekday. One of our contributors, Marc Zitelli, recounts his experience commuting to New Jersey from the PABT while working on a political campaign.
-          </p>
-          <p>
-            "The foot traffic was insane, like difficult to even move at points. But it was nice that I always got a seat on the bus, since everybody was coming into the city at 8 AM on weekdays, not leaving the city."
-          </p>
-          <p>
-            Most commuters arriving at the Port Authority will remain in Manhattan. They go to Midtown the most, then the Financial District and Downtown Brooklyn, in accordance with the size of those business hubs.
-          </p>
-        </>,
-        // Bowling Green, 168 St-Washington Heights, Kew Gardens-Union Tpke, Prospect Park
-        pointsToInclude: [stationIdToStation['414'], stationIdToStation['605'], stationIdToStation['259'], stationIdToStation['42']],
-        dataview: {
-          station: '611', // 42 St-Times Sq/Port Authority
-          direction: 'goingTo',
-          day: 'Wednesday',
-          hour: 8,
-          months: ALL_MONTHS,
-          barScale: 0.003,
-        },
-      },
-      {
-        description: <>
-          <p>
-            When we look at the ridership to the Financial District, anchored by the <StationHighlightComponent stationId="628">Fulton St</StationHighlightComponent> station, the pattern is strikingly different. By far the largest share of riders are coming from <StationHighlightComponent stationId="610">Grand Central</StationHighlightComponent>, dwarfing those from <StationHighlightComponent stationId="318">Penn Station</StationHighlightComponent> and the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>.
-          </p>
-          <p>
-            One explanation for this unbalance is that Grand Central is the main hub for commuters from wealthy suburbs like Scarsdale in Westchester and New Canaan in Connecticut. That demographic might be more likely to work in high-paying finance jobs than, say, bus riders from New Jersey.
-          </p>
-        </>,
-        // Bowling Green, 168 St-Washington Heights, Kew Gardens-Union Tpke, Flatbush Ave-Brooklyn College
-        pointsToInclude: [stationIdToStation['414'], stationIdToStation['605'], stationIdToStation['259'], stationIdToStation['356']],
-        dataview: {
-          station: '628', // Fulton St
-          direction: 'comingFrom',
-          day: 'Wednesday',
-          hour: 8,
-          months: ALL_MONTHS,
-          barScale: 0.003,
-        },
-      },
-      {
-        description: <>
-          <p>
-            Many of Brooklyn's downtown offices are a short walk from the <StationHighlightComponent stationId="636">Jay St-MetroTech</StationHighlightComponent> stop. The MetroTech Center itself was recently renamed Brooklyn Commons, after it was purchased by the investment firm Brookfield.
-          </p>
-          <p>
-            There's still plenty of out-of-town traffic to Downtown Brooklyn, from the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>, <StationHighlightComponent stationId="164">Penn Station</StationHighlightComponent>, and the PATH train through the Financial District. But this business district draws a higher proportion of local commuters than Manhattan's larger corridors.
-          </p>
-          <p>
-            It serves as a hub for workers across the borough, from <StationHighlightComponent stationId="240">Park Slope</StationHighlightComponent> to <StationHighlightComponent stationId="36">Bay Ridge</StationHighlightComponent> to <StationHighlightComponent stationId="188">East New York</StationHighlightComponent>. A number of people come all the way from Queens. Most of them must transfer through Manhattan, due to the lack of interborough connections.
-            <span className="story-end-marker"/>
-          </p>
-        </>,
-        // 59 St-Columbus Circle, Ditmas Av, Ozone Park-Lefferts Blvd, Bay Ridge-95 St
-        pointsToInclude: [stationIdToStation['614'], stationIdToStation['244'], stationIdToStation['195'], stationIdToStation['39']],
-        dataview: {
-          station: '636', // Jay St-MetroTech
-          direction: 'comingFrom',
-          day: 'Wednesday',
-          hour: 8,
-          months: ALL_MONTHS,
-          barScale: 0.003,
         },
       },
     ]
