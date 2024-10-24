@@ -10,7 +10,7 @@ const ViewTabs = ({ activeView, setActiveView, limitVisibleLines, setSelectedBar
           onClick={() => { 
             setActiveView('visualization')
             limitVisibleLines(null)
-            // setSelectedBarScale(null)
+            setSelectedBarScale(null)
           }}
         >
           Visualization
