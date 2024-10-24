@@ -76,6 +76,7 @@
   line-height: 1.4;
   color: #333;
   text-align: justify;
+  hyphens: auto;
 }
 
 .floating-info-bar {
@@ -244,7 +245,7 @@
 .part-line-wrapper.hidden:nth-child(6) { transform: translateY(-96px); }
 
 .opening-phrase {
-  font-size: 18px;
+  font-size: 19px;
   font-style: italic;
   font-weight: 500;
 }
@@ -463,4 +464,6 @@
   font-size: 16px;
   color: #333;
   overflow: hidden;
+  text-align: justify;
+  hyphens: auto;
 }
