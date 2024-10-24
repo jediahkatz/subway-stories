@@ -301,12 +301,17 @@
   --story-horizontal-offset: 10px;
   --story-padding: 20px;
   --story-height: min(calc(90vh - (4 * var(--story-vertical-offset)) - 10vh), 500px);
+  --collapsed-line-height: 4px;
+  --collapsed-line-gap: 12px;
+  --collapsed-vertical-offset: calc(var(--collapsed-line-height) + var(--collapsed-line-gap));
+  --total-collapsed-height: calc(5 * var(--collapsed-line-height) + 4 * var(--collapsed-line-gap));
   position: absolute;
   left: 30px;
   width: 350px;
   top: calc((100vh - var(--story-height) - (4*var(--story-vertical-offset)) - (2*var(--story-padding))) / 2);
   z-index: 1000;
   pointer-events: all;
+  transition: left 0.5s ease, top 0.5s ease, transform 0.5s ease;
 }
 
 .stories-view:not(.stack-view) .story-stack {
@@ -319,13 +324,13 @@
   padding: var(--story-padding);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.5s ease, height 0.5s ease, opacity 0.5s ease, border-radius 0.5s ease, background-color 0.5s ease, width 0.5s ease, left 0.5s ease, top 0.5s ease;
   position: absolute;
   width: 100%;
   max-height: 500px;
   height: var(--story-height);
-  left: 0;
   overflow: hidden;
+  transform-origin: top center;
 }
 
 .story-card:nth-child(1) { 
@@ -349,14 +354,74 @@
   left: 0;
 }
 
-/* 
-  story-height + (4 * vertical-offset) + 25vh < 75vh
-  story-height < 50vh - (4 * vertical-offset)
+.collapsing .story-card {
+  height: var(--collapsed-line-height);
+  width: 30px;
+  /* transform: translateY(calc((var(--story-height) - var(--collapsed-line-height)) / 2)); */
+  background-color: #555;
+  opacity: 1;
+  border-radius: 7px;
+  padding: 0;
+  box-shadow: none;
+  left: calc(100% - 30px); /* Align all cards to the right edge of the stack */
+}
 
-  total height will be story-height + (4 * vertical-offset)
+.collapsing .story-card:nth-child(1) {
+  top: calc(-1 * (var(--total-collapsed-height) / 2) + (0 * var(--collapsed-vertical-offset))); 
+  transition-delay: 0s;
+}
+.collapsing .story-card:nth-child(2) { 
+  top: calc(-1 * (var(--total-collapsed-height) / 2) + (1 * var(--collapsed-vertical-offset))); 
+  transition-delay: 0.1s;
+}
+.collapsing .story-card:nth-child(3) { 
+  top: calc(-1 * (var(--total-collapsed-height) / 2) + (2 * var(--collapsed-vertical-offset))); 
+  transition-delay: 0.2s;
+}
+.collapsing .story-card:nth-child(4) { 
+  top: calc(-1 * (var(--total-collapsed-height) / 2) + (3 * var(--collapsed-vertical-offset))); 
+  transition-delay: 0.3s;
+}
+.collapsing .story-card:nth-child(5) { 
+  top: calc(-1 * (var(--total-collapsed-height) / 2) + (4 * var(--collapsed-vertical-offset))); 
+  transition-delay: 0.4s;
+}
 
+.collapsing .story-stack {
+  top: 50%;
+  transform: translateY(-50%);
+}
 
-*/
+.collapsing.moving .story-stack {
+  /* 350px width - 45px visible */
+  left: -305px; 
+}
+
+.collapsing .story-card h2,
+.collapsing .story-card .story-preview,
+.collapsing .story-card .scroll-shadow {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+/* Ensure the active story line is white */
+.collapsing .story-card.active {
+  background-color: white;
+}
+
+.scroll-shadow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 0)
+  );
+}
 
 .story-card:hover {
   transform: translateY(-20px);
@@ -377,16 +442,3 @@
   overflow: hidden;
 }
 
-.scroll-shadow {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100px;
-  pointer-events: none;
-  background: linear-gradient(
-    to top,
-    rgba(255, 255, 255, 0.8),
-    rgba(255, 255, 255, 0)
-  );
-}
