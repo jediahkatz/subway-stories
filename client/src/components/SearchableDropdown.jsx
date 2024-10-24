@@ -21,8 +21,10 @@ const SearchableStationDropdown = ({
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("click", handleOutsideClick);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("click", handleOutsideClick);
     };
   }, []);
 
@@ -65,6 +67,12 @@ const SearchableStationDropdown = ({
       setQuery("");
     }
   };
+
+  const handleOutsideClick = useCallback((e) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      setIsOpen(false);
+    }
+  }, []);
 
   const renderOptionContent = useCallback((option) => {
     const name = option.name;
@@ -140,8 +148,10 @@ const SearchableStringDropdown = ({
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("click", handleOutsideClick);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("click", handleOutsideClick);
     };
   }, []);
 
@@ -181,6 +191,12 @@ const SearchableStringDropdown = ({
     }
   };
   
+  const handleOutsideClick = useCallback((e) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      setIsOpen(false);
+    }
+  }, []);
+
   const renderedOptions = useMemo(() => {
     return filter(options).map((option, index) => (
       <div
