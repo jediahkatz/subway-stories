@@ -621,6 +621,7 @@ const StoriesView = React.memo(({
   const [currentAnimatedHour, setCurrentAnimatedHour] = useState(null);
   const [currentAnimatedMonths, setCurrentAnimatedMonths] = useState(null);
   const [isStackView, setIsStackView] = useState(true);
+  const [isScrolling, setIsScrolling] = useState(false);
 
   const scrollAnimatingToPart = useRef(null);
 
@@ -812,12 +813,40 @@ const StoriesView = React.memo(({
     }
   }, [currentAnimatedMonths, handleDataSettingsChange]);
 
+  useEffect(() => {
+    if (!isStackView) {
+
+      // While scrolling on the map, we want the stories view to capture the events.
+      // Once we're done scrolling we want to disable pointer events again so 
+      // the user can interact with the map.
+      let scrollTimeout;
+      const handleWheel = () => {
+        setIsScrolling(true);
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          setIsScrolling(false);
+        }, 50);
+      };
+
+      window.addEventListener('wheel', handleWheel);
+
+      return () => {
+        window.removeEventListener('wheel', handleWheel);
+        setIsScrolling(false);
+      };
+    }
+  }, [isStackView]);
+
   return (
     <div className={`stories-view ${isStackView ? 'stack-view' : ''}`}>
       <div className="story-stack">
         <StoryStack stories={stories} onStoryClick={handleStoryClick} />
       </div>
-      <div className={`stories-view-container ${isStackView ? 'hidden' : ''}`} ref={containerRef}>
+      <div 
+        className={`stories-view-container ${isStackView ? 'hidden' : ''}`} 
+        ref={containerRef}
+        style={{ pointerEvents: !isStackView && isScrolling ? 'all' : 'none' }}
+      >
         <div className="stories-content" style={{ visibility: previewStory !== null ? 'hidden' : 'visible' }}>
           {stories.map((story, storyIndex) => (
             <React.Fragment key={storyIndex}>
@@ -871,7 +900,7 @@ const StoryStack = ({ stories, onStoryClick }) => {
         >
           <h2>{story.title}</h2>
           <div className="story-preview">
-            <p>{story.parts[0].description}</p>
+            {story.parts[0].description}
           </div>
           <div className="scroll-shadow"/>
         </div>
