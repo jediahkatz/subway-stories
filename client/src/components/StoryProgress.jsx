@@ -54,7 +54,7 @@ const StoryProgress = ({ stories, currentStoryIndex, currentPartIndex, handleJum
             {stories.map((story, storyIndex) => (
                 <div key={storyIndex} className="story-line-container">
                     <div className="story-line-wrapper">
-                        <div 
+                        <div onClick={() => handleClickStory(storyIndex)}
                             className={`story-line ${storyIndex === currentStoryIndex && currentPartIndex === 0 ? 'active' : ''}`}
                         />
                         <div 
