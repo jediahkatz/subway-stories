@@ -268,9 +268,18 @@ const getStories = (StationHighlightComponent) => [
           station: ALL_STATIONS_ID,
           direction: 'comingFrom',
           day: 'Wednesday',
-          hours: [5, 8],
+          hour: 5,
           months: ALL_MONTHS,
           barScale: 0.0005,
+          animate: {
+            field: 'hour',
+            frames: [
+              { value: 5, duration: 1000 },
+              { value: 6, duration: 1000 },
+              { value: 7, duration: 1000 },
+              { value: 8, duration: 4000 },
+            ]
+          },
         },
       },
       {
@@ -428,11 +437,27 @@ const getStories = (StationHighlightComponent) => [
           station: '448', // Mets-Willets Point
           direction: 'comingFrom',
           day: 'Saturday',
-          // hour: 17,
-          hours: [7, 19],
+          hours: 7,
           months: [7, 8],
           barScale: 0.006,
           visibleLines: ['7'],
+          animate: {
+            field: 'hour',
+            frames: [
+              { value: 7, duration: 500 },
+              { value: 8, duration: 500 },
+              { value: 9, duration: 500 },
+              { value: 10, duration: 3000 },
+              { value: 11, duration: 500 },
+              { value: 12, duration: 500 },
+              { value: 13, duration: 500 },
+              { value: 14, duration: 500 },
+              { value: 15, duration: 500 },
+              { value: 16, duration: 500 },
+              { value: 17, duration: 500 },
+              { value: 18, duration: 3000 },
+            ]
+          }
         },
       },
       {
@@ -555,7 +580,7 @@ const StoriesView = React.memo(({
   const containerRef = useRef(null);
   const scrollerRef = useRef(scrollama());
   const [previewStory, setPreviewStory] = useState(null);
-  const [animatingHours, setAnimatingHours] = useState(null);
+  const [animation, setAnimation] = useState(null);
   const [currentAnimatedHour, setCurrentAnimatedHour] = useState(null);
 
   const StationHighlightComponent = useCallback(({ children, stationId }) => (
@@ -621,13 +646,11 @@ const StoriesView = React.memo(({
     });
     limitVisibleLines(currentPart.dataview.visibleLines);
 
-    if (currentPart.dataview.hours) {
-      const [hourStart, hourEnd] = currentPart.dataview.hours;
-      const hoursRange = Array.from({ length: hourEnd - hourStart + 1 }, (_, i) => hourStart + i);
-      setAnimatingHours(hoursRange);
-      setCurrentAnimatedHour(currentPart.dataview.hours[0]);
+    if (currentPart.dataview.animate) {
+      setAnimation(currentPart.dataview.animate);
+      setCurrentAnimatedHour(currentPart.dataview.animate.frames[0].value);
     } else {
-      setAnimatingHours(null);
+      setAnimation(null);
       setCurrentAnimatedHour(null);
       handleDataSettingsChange({
         newSelectedHour: currentPart.dataview.hour,
@@ -676,18 +699,29 @@ const StoriesView = React.memo(({
   }, [handleStepEnter]);
 
   useEffect(() => {
-    let intervalId;
-    if (animatingHours && animatingHours.length > 1) {
-      let index = 0;
-      intervalId = setInterval(() => {
-        setCurrentAnimatedHour(animatingHours[index]);
-        index = (index + 1) % animatingHours.length;
-      }, 500);
+    let timeoutId;
+    if (animation) {
+      let frameIndex = 0;
+      const animateFrame = () => {
+        if (frameIndex < animation.frames.length) {
+          const frame = animation.frames[frameIndex];
+          setCurrentAnimatedHour(frame.value);
+          timeoutId = setTimeout(() => {
+            frameIndex++;
+            animateFrame();
+          }, frame.duration);
+        } else {
+          // Animation complete, restart
+          frameIndex = 0;
+          animateFrame();
+        }
+      };
+      animateFrame();
     }
     return () => {
-      if (intervalId) clearInterval(intervalId);
+      if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [animatingHours]);
+  }, [animation]);
 
   useEffect(() => {
     if (currentAnimatedHour !== null) {
@@ -748,6 +782,7 @@ const formatInfoBarText = (direction, stationId, hour, day, selectedMonths) => {
   const directionText = direction === 'comingFrom' ? 'going to' : 'coming from';
 
   let monthText = '';
+  let splitText = false
   if (selectedMonths.length < 12) {
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
     if (selectedMonths.length === 1) {
@@ -756,6 +791,7 @@ const formatInfoBarText = (direction, stationId, hour, day, selectedMonths) => {
       const firstMonth = monthNames[selectedMonths[0]];
       const lastMonth = monthNames[selectedMonths[selectedMonths.length - 1]];
       monthText = ` from ${firstMonth} – ${lastMonth}`;
+      splitText = true;
     }
   }
 
@@ -763,14 +799,14 @@ const formatInfoBarText = (direction, stationId, hour, day, selectedMonths) => {
     const allStationsDirectionText = direction === 'comingFrom' ? 'getting off' : 'getting on';
     return (
       <>
-        Where are people {allStationsDirectionText} the train at <span className="highlight-time">{formattedHour} {amPm} on a {day}{monthText}</span>?
+        Where are people {allStationsDirectionText} the train at <span className="highlight-time">{formattedHour} {amPm} {splitText ? <br /> : ''} on a {day}{monthText}</span>?
       </>
     )
   }
 
   return (
     <>
-      Who's {directionText} <span className="highlight-station" style={{color: `rgb(${MAIN_STATION_COLOR.join(',')})`}}>{stationName}</span> at <span className="highlight-time">{formattedHour} {amPm} on a {day}{monthText}</span>?
+      Who's {directionText} <span className="highlight-station" style={{color: `rgb(${MAIN_STATION_COLOR.join(',')})`}}>{stationName}</span> at <span className="highlight-time">{formattedHour} {amPm} {splitText ? <br /> : ''} on a {day}{monthText}</span>?
     </>
   );
 };
