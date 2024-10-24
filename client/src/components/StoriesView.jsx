@@ -153,35 +153,35 @@ const getStories = (StationHighlightComponent) => [
         // Halsey St (L), 8 Av (L), 59 St-Columbus Circle
         pointsToInclude: [stationIdToStation['129'], stationIdToStation['618'], stationIdToStation['614']],
         dataview: {
-          station: '126', // Jefferson St (L)
+          station: '119', // 1 Av (L)
           direction: 'comingFrom',
           day: 'Saturday',
           hour: 23,
           months: ALL_MONTHS,
           barScale: 0.015,
+          // All lines that you can take to get to the East Village
+          visibleLines: ['L', 'F', 'M', '6', 'Q'],
         },
       },
       {
         description: <>
           <p>
-            Despite this plethora of options, some residents of the East Village prefer to go out in other locales, sometimes even intentionally avoiding their own neighborhood. Becca Foley, a young resident, explains:
+            Even with this plethora of options, some residents of the East Village prefer to go out in other locales, sometimes even intentionally avoiding their own neighborhood. Becca Foley, a young resident, explains:
           </p>
           <p>
-            “I'm 26 and the crowd in the East Village feels a lot younger. A lot of kids are visiting and some are interns, so I think it's more fun to go out with a more local crowd in Williamsburg and Bushwick. It's mostly about the age, but I also have better conversations with people [in Bushwick] since they're more mature and there's a lot more diversity in terms of sexuality, gender, and background.”
-          </p>
-          <p>
-            This is a common sentiment, especially among those in their mid to late 20s, with neighborhoods like Bushwick established as popular nighttime destinations.
+            “I'm 26 and the crowd in the East Village feels a lot younger. A lot of kids are visiting and some are interns, so I think it's more fun to go out with a more local scene in Williamsburg and Bushwick. It's mostly about the age, but I also have better conversations with people [in Bushwick] since they're more mature and there's a lot more diversity in terms of sexuality, gender, and background.”
           </p>
         </>,
         // Halsey St (L), 8 Av (L), 59 St-Columbus Circle
         pointsToInclude: [stationIdToStation['129'], stationIdToStation['618'], stationIdToStation['614']],
         dataview: {
-          station: '126', // Jefferson St (L)
-          direction: 'comingFrom',
+          station: '119', // 1 Av (L)
+          direction: 'goingTo',
           day: 'Saturday',
           hour: 23,
           months: ALL_MONTHS,
           barScale: 0.015,
+          visibleLines: ['L'],
         },
       },
       {
@@ -202,15 +202,19 @@ const getStories = (StationHighlightComponent) => [
           hour: 23,
           months: ALL_MONTHS,
           barScale: 0.015,
+          visibleLines: ['L'],
         },
       },
       {
         description: <>
           <p>
-            As expected, the season plays a role in how many people are willing to make the trek to Bushwick. In the wintry months of January, February, and March, fewer people are going out than during the rest of the year. Despite this, even on the coldest nights, there is still a core group of partygoers undeterred by the wind and cold. 
+            As expected, the season plays a role in how many people are willing to make the trek to Bushwick.
           </p>
           <p>
-            
+             In the wintry months of January, February, and March, fewer people are going out than during the rest of the year. But even on the coldest nights, there is still a core group of partygoers undeterred by the wind and cold. 
+          </p>
+          <p>
+            The biggest month of 2023 was October. It's the perfect storm: college students are back in town and the month is bookended by Halloween. Thanks to the changing climate, the weather is often still mild.
           </p>
         </>,
         // Halsey St (L), 8 Av (L), 59 St-Columbus Circle
@@ -222,6 +226,7 @@ const getStories = (StationHighlightComponent) => [
           hour: 23,
           months: [0],
           barScale: 0.015,
+          visibleLines: ['L'],
           animate: {
             field: 'months',
             frames: [
@@ -246,19 +251,31 @@ const getStories = (StationHighlightComponent) => [
           <p>
             Known for its high concentration of “open until the sun comes up bars”, (include pic of House of Yes) Bushwick features a crowd eager to stay out later than most. Looking at late-night departures from stations along the L, we can see that the party rages later in Bushwick than in its tamer Williamsburg counterpart. 
           </p>
-          <p>
-            Considering, for example, the Jefferson St station at 11 PM on a Saturday evening, we can see the influx coming from Williamsburg, the East Village, the Lower East Side, and even as far as Times Square in Manhattan.
-          </p>
         </>,
-        // Halsey St (L), 8 Av (L), 59 St-Columbus Circle
-        pointsToInclude: [stationIdToStation['129'], stationIdToStation['618'], stationIdToStation['614']],
+        viewport: {
+          longitude: -73.93591233632988,
+          latitude: 40.73498492438924,
+          zoom: 12.542553766211114,
+          bearing: 23.944903893357488,
+          pitch: 60,
+        },
         dataview: {
-          station: '126', // Jefferson St (L)
-          direction: 'comingFrom',
-          day: 'Saturday',
-          hour: 23,
+          station: ALL_STATIONS_ID,
+          direction: 'goingTo',
+          day: 'Sunday',
+          hour: 1,
           months: ALL_MONTHS,
-          barScale: 0.015,
+          barScale: 0.005,
+          visibleLines: ['L'],
+          animate: {
+            field: 'hour',
+            frames: [
+              { value: 1, duration: 1000 },
+              { value: 2, duration: 1000 },
+              { value: 3, duration: 1000 },
+              { value: 4, duration: 1000 },
+            ]
+          },
         },
       },
     ]
@@ -848,25 +865,28 @@ const formatInfoBarText = (direction, stationId, hour, day, selectedMonths, anim
     }
   }
 
+  const fullMonthText = monthText ? <>
+    {' '}{preposition} {monthText}
+  </> : '';
+
   if (stationId === ALL_STATIONS_ID) {
     const allStationsDirectionText = direction === 'comingFrom' ? 'getting off' : 'getting on';
     return (
       <>
-        Where are people {allStationsDirectionText} the train at {hourText} {splitText ? <br /> : ''} on a {day} {preposition} {monthText}?
+        Where are people {allStationsDirectionText} the train at {hourText} {splitText ? <br /> : ''} on a {day}{fullMonthText}?
       </>
     )
   }
 
   return (
     <>
-      Who's {directionText} <span className="highlight-station" style={{color: `rgb(${MAIN_STATION_COLOR.join(',')})`}}>{stationName}</span> at {hourText} {splitText ? <br /> : ''} on a {day} {preposition} {monthText}?
+      Who's {directionText} <span className="highlight-station" style={{color: `rgb(${MAIN_STATION_COLOR.join(',')})`}}>{stationName}</span> at {hourText} {splitText ? <br /> : ''} on a {day}{fullMonthText}?
     </>
   );
 };
 
 const StationHighlight = ({ children, stationId, setHoveredStation, containerRef }) => {
   const handleMouseEnter = () => {
-    console.log('mouse enter', stationId);
     setHoveredStation(stationId);
   };
 
