@@ -187,7 +187,7 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            A smaller but equally dedicated crowd, hundreds of young revelers embark on a weekly pilgrimage to Bushwick. A neighborhood featuring bars and clubs like Carousel, Abe's Pagoda, The Johnson's, and House of Yes, Bushwick is inundated with partygoers who liven the streets around the <StationHighlightComponent stationId="126">Jefferson St</StationHighlightComponent>, <StationHighlightComponent stationId="127">DeKalb Avenue</StationHighlightComponent>, and <StationHighlightComponent stationId="128">Myrtle-Wyckoff</StationHighlightComponent> stops along the L train. 
+            A smaller but equally dedicated crowd, hundreds of young revelers embark on a weekly pilgrimage to Bushwick. A neighborhood featuring bars and clubs like Carousel, Abe's Pagoda, The Johnson's, and House of Yes, Bushwick is inundated with partygoers who liven the streets around the <StationHighlightComponent stationId="126">Jefferson St</StationHighlightComponent>, <StationHighlightComponent stationId="127">DeKalb Avenue</StationHighlightComponent>, and <StationHighlightComponent stationId="630">Myrtle-Wyckoff</StationHighlightComponent> stops along the L train. 
           </p>
           <p>
             Considering, for example, the Jefferson St station at 11 PM on a Saturday evening, we can see the influx coming from Williamsburg, the East Village, the Lower East Side, and even as far as Times Square in Manhattan.
@@ -249,7 +249,10 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            Known for its high concentration of “open until the sun comes up bars”, (include pic of House of Yes) Bushwick features a crowd eager to stay out later than most. Looking at late-night departures from stations along the L, we can see that the party rages later in Bushwick than in its tamer Williamsburg counterpart. 
+            Known for its high concentration of “open until the sun comes up" bars, Bushwick features a crowd eager to stay out later than most. 
+          </p>
+          <p>
+            Looking at late-night departures from stations along the L, we can see that the party rages later in Bushwick than in its tamer counterpart of Williamsburg. Though more revelers are initially leaving <StationHighlightComponent stationId="120">Bedford Av</StationHighlightComponent> and <StationHighlightComponent stationId="629">Metropolitan Av</StationHighlightComponent> at midnight, by 3 a.m. <StationHighlightComponent stationId="126">Jefferson St</StationHighlightComponent> has overtaken them both.
           </p>
         </>,
         viewport: {
