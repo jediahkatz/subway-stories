@@ -35,7 +35,7 @@
 
 .stories-content {
   min-height: 100%;
-  padding: 0 60px;
+  padding: 0 0 0 60px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -93,7 +93,7 @@
   z-index: 1001;
   pointer-events: none;
   /* avoid overlapping with the story */
-  max-width: calc(100vw - 950px);
+  max-width: calc(100vw - 965px);
   width: fit-content;
   display: flex;
   justify-content: center;
