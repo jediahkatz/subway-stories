@@ -34,11 +34,11 @@ export const Slider = ({ min, max, value, disabled, onChange, step, onMouseDown,
 };
 
 export const logSliderToLinear = (value) => {
-    return Math.round((Math.log10(value) + 3) * 1000 / 3);
-  };
+  return Math.round((Math.log10(value * 2) + 3) * 1000 / 3);
+};
   
 const linearToLogSlider = (value) => {
-    return Math.pow(10, (value * 3 / 1000) - 3);
+  return Math.pow(10, (value * 3 / 1000) - 3) / 2;
 };
 
 export const BarScaleSlider = ({ barScale, isLocked, setSelectedBarScale, disabled = false }) => {
@@ -101,8 +101,8 @@ export const BarScaleSlider = ({ barScale, isLocked, setSelectedBarScale, disabl
 
   const getDisplayValue = useCallback(() => {
     const logValue = linearToLogSlider(localValue);
-    // For friendly display, remap 0.001x - 1x to 0.01x - 10x
-    const friendlyScaleLogValue = logValue * 10;
+    // For friendly display, remap 0.0005x - 0.5x to 0.01x - 10x
+    const friendlyScaleLogValue = Math.min(logValue * 10 * 2, 10);
     return friendlyScaleLogValue === 10 ? '10.0x' : friendlyScaleLogValue.toFixed(2) + 'x';
   }, [localValue]);
 

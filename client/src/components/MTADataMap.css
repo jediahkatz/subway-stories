@@ -425,6 +425,12 @@ body.pointer-cursor {
   -webkit-backdrop-filter: blur(5px);
 }
 
+.info-tooltip-content p {
+  font-size: 12px;
+  margin: 4px;
+  line-height: 1.2;
+}
+
 .tooltip-left {
   left: attr(style[left]);
 }

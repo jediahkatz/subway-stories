@@ -5,6 +5,7 @@ import MonthSelector from './MonthSelector';
 import { SearchableStringDropdown, SearchableStationDropdown } from './SearchableDropdown';
 import './DataControls.css';
 import { ALL_STATIONS_ID, ALL_STATIONS_OBJECT } from '../lib/all-stations';
+import { Tooltip } from './Tooltip';
 
 const daysOfWeek = [
   'Monday',
@@ -26,7 +27,7 @@ const DataControls = ({
   setSelectedHour, 
   selectedDay, 
   setSelectedDay, 
-  selectedStation, 
+  selectedStation,  
   setSelectedStation, 
   selectedDirection, 
   setSelectedDirection,
@@ -36,9 +37,20 @@ const DataControls = ({
   selectedMonths,
   setSelectedMonths,
   showPercentage,
-  setShowPercentage
+  setShowPercentage,
+  setInfoTooltipInfo
 }) => {
   const [showMoreControls, setShowMoreControls] = useState(false);
+
+  const handleInfoIconMouseEnter = (event) => {
+    const INFO_TOOLTOP_HEIGHT = 104
+    const rect = event.target.getBoundingClientRect();
+    setInfoTooltipInfo({ x: rect.left + 16, y: rect.top + INFO_TOOLTOP_HEIGHT / 2 - 6 });
+  };
+
+  const handleInfoIconMouseLeave = () => {
+    setInfoTooltipInfo(null);
+  };
 
   return (
     <div className="map-controls">
@@ -100,7 +112,11 @@ const DataControls = ({
             <label>
               <p className="map-controls-label">
                 Bar scale
-                <span className="info-icon" title="Adjust the scale of the bars on the map">ⓘ</span>
+                <span 
+                  className="info-icon" 
+                  onMouseEnter={handleInfoIconMouseEnter}
+                  onMouseLeave={handleInfoIconMouseLeave}
+                />
               </p>
             </label>
             <div className="slider-container">
