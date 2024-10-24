@@ -1,3 +1,17 @@
+.stories-view {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.stories-view.stack-view .stories-view-container {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .stories-view-container {
   position: absolute;
   top: 0;
@@ -5,11 +19,26 @@
   right: 0;
   bottom: 0;
   overflow-y: auto;
-  pointer-events: none;
-  /* scroll-snap-type: y proximity; */
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: rgb(150, 150, 150) transparent;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+  pointer-events: all;
+}
+
+.story-stack {
+  position: absolute;
+  top: 50%;
+  left: 50px;
+  transform: translateY(-50%);
+  width: 350px;
+  height: 75vh;
+  z-index: 1000;
+}
+
+.stories-view:not(.stack-view) .story-stack {
+  display: none;
 }
 
 .stories-content {
@@ -242,4 +271,77 @@
 .station-highlight:hover {
   color: #000000;
   text-decoration-color: #000000;
+}
+
+.story-card {
+  background-color: #ffffff;
+  border-radius: 2px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: absolute;
+  width: 100%;
+  height: 500px;
+  left: 0;
+  overflow: hidden;
+}
+
+.story-card {
+  --vertical-offset: 60px;
+  --horizontal-offset: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.story-card:nth-child(1) { 
+  top: calc(var(--vertical-offset) * 4); 
+  left: calc(var(--horizontal-offset) * 4);
+}
+.story-card:nth-child(2) { 
+  top: calc(var(--vertical-offset) * 3); 
+  left: calc(var(--horizontal-offset) * 3);
+}
+.story-card:nth-child(3) { 
+  top: calc(var(--vertical-offset) * 2); 
+  left: calc(var(--horizontal-offset) * 2);
+}
+.story-card:nth-child(4) { 
+  top: calc(var(--vertical-offset) * 1); 
+  left: calc(var(--horizontal-offset) * 1);
+}
+.story-card:nth-child(5) { 
+  top: 0; 
+  left: 0;
+}
+
+.story-card:hover {
+  transform: translateY(-20px);
+  z-index: 10;
+}
+
+.story-card h2 {
+  margin: 0;
+  font-style: italic;
+  font-size: 24px;
+  color: #333;
+}
+
+.story-card .story-preview {
+  font-size: 16px;
+  color: #666;
+  overflow: hidden;
+}
+
+.scroll-shadow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 0)
+  );
 }

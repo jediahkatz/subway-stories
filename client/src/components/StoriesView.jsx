@@ -620,6 +620,9 @@ const StoriesView = React.memo(({
   const [animation, setAnimation] = useState(null);
   const [currentAnimatedHour, setCurrentAnimatedHour] = useState(null);
   const [currentAnimatedMonths, setCurrentAnimatedMonths] = useState(null);
+  const [isStackView, setIsStackView] = useState(true);
+
+  console.log({ isStackView });
 
   const StationHighlightComponent = useCallback(({ children, stationId }) => (
     <StationHighlight stationId={stationId} setHoveredStation={setHoveredStation} containerRef={containerRef}>
@@ -731,18 +734,28 @@ const StoriesView = React.memo(({
     }
   }, [stories]);
 
-  useEffect(() => {
-    handleJumpToStory(currentStoryIndex, currentPartIndex, false);
-  }, []);
+  const handleStoryClick = (index) => {
+    setIsStackView(false);
+    setCurrentStoryIndex(index);
+    setCurrentPartIndex(0);
+  };
 
   useEffect(() => {
-    scrollerRef.current
-      .setup({
-        step: '.stories-box',
-        offset: 0.5,
-      })
-      .onStepEnter(handleStepEnter);
-  }, [handleStepEnter]);
+    if (!isStackView) {
+      handleJumpToStory(currentStoryIndex, currentPartIndex, true);
+    }
+  }, [isStackView]);
+
+  useEffect(() => {
+    if (!isStackView) {
+      scrollerRef.current
+        .setup({
+          step: '.stories-box',
+          offset: 0.5,
+        })
+        .onStepEnter(handleStepEnter);
+    }
+  }, [handleStepEnter, isStackView]);
 
   useEffect(() => {
     let timeoutId;
@@ -791,47 +804,74 @@ const StoriesView = React.memo(({
 
   return (
     <div className="stories-view">
-      <div className="stories-view-container" ref={containerRef}>
-        <div className="stories-content" style={{ visibility: previewStory !== null ? 'hidden' : 'visible' }}>
-          {stories.map((story, storyIndex) => (
-            <React.Fragment key={storyIndex}>
-              {story.parts.map((_, partIndex) => (
-                <StoryBox 
-                  key={`${storyIndex}-${partIndex}`}
-                  story={story}
-                  partIndex={partIndex}
-                />
+      {isStackView ? (
+        <StoryStack stories={stories} onStoryClick={handleStoryClick} />
+      ) : (
+        <>
+          <div className="stories-view-container" ref={containerRef}>
+            <div className="stories-content" style={{ visibility: previewStory !== null ? 'hidden' : 'visible' }}>
+              {stories.map((story, storyIndex) => (
+                <React.Fragment key={storyIndex}>
+                  {story.parts.map((_, partIndex) => (
+                    <StoryBox 
+                      key={`${storyIndex}-${partIndex}`}
+                      story={story}
+                      partIndex={partIndex}
+                    />
+                  ))}
+                </React.Fragment>
               ))}
-            </React.Fragment>
-          ))}
-        </div>
-        <div className="floating-info-bar" style={{visibility: previewStory !== null ? 'hidden' : 'visible'}}>
-          <p>
-          {formatInfoBarText(selectedDirection, selectedStation, selectedHour, selectedDay, selectedMonths, animation?.field)}  
-          </p>
-        </div>
-      </div>
-
-      <StoryProgress
-        stories={stories}
-        currentStoryIndex={currentStoryIndex}
-        currentPartIndex={currentPartIndex}
-        handleJumpToStory={(storyIndex, partIndex) => handleJumpToStory(storyIndex, partIndex, false)}
-        handleJumpToPart={(storyIndex, partIndex) => handleJumpToStory(storyIndex, partIndex, true)}
-        setPreviewStory={setPreviewStory}
-      />
-
-      {previewStory !== null && (
-        <div className="story-preview">
-          <StoryBox 
-            story={stories[previewStory]}
-            isPreview={true}
+            </div>
+            <div className="floating-info-bar" style={{visibility: previewStory !== null ? 'hidden' : 'visible'}}>
+              <p>
+              {formatInfoBarText(selectedDirection, selectedStation, selectedHour, selectedDay, selectedMonths, animation?.field)}  
+              </p>
+            </div>
+          </div>
+          <StoryProgress
+            stories={stories}
+            currentStoryIndex={currentStoryIndex}
+            currentPartIndex={currentPartIndex}
+            handleJumpToStory={(storyIndex, partIndex) => handleJumpToStory(storyIndex, partIndex, false)}
+            handleJumpToPart={(storyIndex, partIndex) => handleJumpToStory(storyIndex, partIndex, true)}
+            setPreviewStory={setPreviewStory}
           />
-        </div>
+          {previewStory !== null && (
+            <div className="story-preview">
+              <StoryBox 
+                story={stories[previewStory]}
+                isPreview={true}
+              />
+            </div>
+          )}
+        </>
       )}
     </div>
   );
 });
+
+const StoryStack = ({ stories, onStoryClick }) => {
+  const visibleStories = stories.slice(0, 5); // Limit to 5 visible stories
+
+  return (
+    <div className="story-stack">
+      {visibleStories.map((story, index) => (
+        <div 
+          key={index} 
+          className="story-card" 
+          style={{ zIndex: visibleStories.length - index }}
+          onClick={() => onStoryClick(index)}
+        >
+          <h2>{story.title}</h2>
+          <div className="story-preview">
+            <p>{story.parts[0].description}</p>
+          </div>
+          <div className="scroll-shadow"/>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const formatInfoBarText = (direction, stationId, hour, day, selectedMonths, animatingField) => {
   const stationName = stationIdToStation[stationId]?.display_name.split('(')[0].trim() || 'here';
