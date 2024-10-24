@@ -851,6 +851,22 @@ const StoriesView = React.memo(({
     }
   }, [isStackView]);
 
+  const handleEscapeKey = useCallback((event) => {
+    if (event.key === 'Escape' && !isStackView) {
+      setIsStackView(true);
+      setCurrentStoryIndex(null);
+      setCurrentPartIndex(0);
+      // Reset any other necessary state here
+    }
+  }, [isStackView, setCurrentStoryIndex, setCurrentPartIndex]);
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleEscapeKey);
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [handleEscapeKey]);
+
   return (
     <div className={`stories-view ${isStackView ? 'stack-view' : ''} ${isCollapsing ? 'collapsing' : ''} ${isMoving ? 'moving' : ''}`}>
       <StoryStack stories={stories} handleStoryClick={handleStoryClick} currentStoryIndex={currentStoryIndex} isCollapsing={isCollapsing} isMoving={isMoving} />

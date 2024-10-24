@@ -11,6 +11,7 @@
 .stories-view.stack-view .stories-view-container {
   opacity: 0;
   pointer-events: none;
+  transition: none;
 }
 
 .stories-view-container {
@@ -97,6 +98,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: opacity 0.5s ease;
 }
 
 .floating-info-bar p {
@@ -462,4 +464,3 @@
   color: #333;
   overflow: hidden;
 }
-
