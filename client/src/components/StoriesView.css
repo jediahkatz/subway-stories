@@ -32,21 +32,6 @@
   opacity: 0;
 }
 
-.story-stack {
-  position: absolute;
-  top: 50%;
-  left: 30px;
-  transform: translateY(-50%);
-  width: 350px;
-  height: 75vh;
-  z-index: 1000;
-  pointer-events: all;
-}
-
-.stories-view:not(.stack-view) .story-stack {
-  display: none;
-}
-
 .stories-content {
   min-height: 100%;
   padding: 0 50px;
@@ -279,46 +264,67 @@
   text-decoration-color: #000000;
 }
 
+.story-stack {
+  --story-vertical-offset: 60px;
+  --story-horizontal-offset: 10px;
+  --story-padding: 20px;
+  --story-height: min(calc(90vh - (4 * var(--story-vertical-offset)) - 10vh), 500px);
+  position: absolute;
+  left: 30px;
+  width: 350px;
+  top: calc((100vh - var(--story-height) - (4*var(--story-vertical-offset)) - (2*var(--story-padding))) / 2);
+  z-index: 1000;
+  pointer-events: all;
+}
+
+.stories-view:not(.stack-view) .story-stack {
+  display: none;
+}
+
 .story-card {
   background-color: rgb(235, 235, 235);
   border-radius: 2px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: var(--story-padding);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: absolute;
   width: 100%;
-  height: 500px;
+  max-height: 500px;
+  height: var(--story-height);
   left: 0;
   overflow: hidden;
 }
 
-.story-card {
-  --vertical-offset: 60px;
-  --horizontal-offset: 10px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
 .story-card:nth-child(1) { 
-  top: calc(var(--vertical-offset) * 4); 
-  left: calc(var(--horizontal-offset) * 4);
+  top: calc(var(--story-vertical-offset) * 4); 
+  left: calc(var(--story-horizontal-offset) * 4);
 }
 .story-card:nth-child(2) { 
-  top: calc(var(--vertical-offset) * 3); 
-  left: calc(var(--horizontal-offset) * 3);
+  top: calc(var(--story-vertical-offset) * 3); 
+  left: calc(var(--story-horizontal-offset) * 3);
 }
 .story-card:nth-child(3) { 
-  top: calc(var(--vertical-offset) * 2); 
-  left: calc(var(--horizontal-offset) * 2);
+  top: calc(var(--story-vertical-offset) * 2); 
+  left: calc(var(--story-horizontal-offset) * 2);
 }
 .story-card:nth-child(4) { 
-  top: calc(var(--vertical-offset) * 1); 
-  left: calc(var(--horizontal-offset) * 1);
+  top: calc(var(--story-vertical-offset) * 1); 
+  left: calc(var(--story-horizontal-offset) * 1);
 }
 .story-card:nth-child(5) { 
   top: 0; 
   left: 0;
 }
+
+/* 
+  story-height + (4 * vertical-offset) + 25vh < 75vh
+  story-height < 50vh - (4 * vertical-offset)
+
+  total height will be story-height + (4 * vertical-offset)
+
+
+*/
 
 .story-card:hover {
   transform: translateY(-20px);
