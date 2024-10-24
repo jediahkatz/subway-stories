@@ -31,7 +31,7 @@ const NYC_BOUNDS = {
   minZoom: 10,
 };
 
-export const MAIN_STATION_COLOR = [50, 115, 246]; //[146, 123, 248];
+export const MAIN_STATION_COLOR = [107, 159, 255];//[65, 146, 246]; //[50, 115, 246];
 const LOADING_COLOR = [204, 204, 255];
 
 const PERCENTAGE_BAR_SCALE = 1 / 25;

@@ -93,6 +93,12 @@
   color: rgba(255, 255, 255, 1);
 }
 
+.floating-info-bar .animating {
+  color: #ff6b6b;
+  /* color: rgb(246, 65, 65); */
+  font-weight: bold;
+}
+
 .stories-view-container::-webkit-scrollbar {
   width: 8px;
 }
