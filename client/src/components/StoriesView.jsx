@@ -24,10 +24,10 @@ const getStories = (StationHighlightComponent) => [
           />
           <p>
             <span className="opening-phrase">"They go in the morning for Dim Sum,"</span>
-            {" "}explains Anna Li, 28, when I ask why hundreds of people flock from her neighborhood, Bensonhurst, to Manhattan's Chinatown every Saturday at 8 a.m. 
+            {" "}explains Anna Li, 28, when I ask why hundreds of people flock from her neighborhood in deep Brooklyn to Manhattan's Chinatown every Saturday at 8 a.m. 
           </p>
           <p>
-            Bensonhurst, where Anna moved after college, and Sunset Park, where she grew up, house the two largest Chinese communities in Brooklyn. 
+            Bensonhurst, where Anna has lived since college, and Sunset Park, where she grew up, house the two largest Chinese communities in Brooklyn. 
             Although younger generations of Chinese are choosing more and more to settle away from the din of Manhattan, the original Chinatown is still a crucial gathering place for the community.
           </p>
         </>,
@@ -224,7 +224,7 @@ const getStories = (StationHighlightComponent) => [
             When we look at the ridership to the Financial District, anchored by the <StationHighlightComponent stationId="628">Fulton St</StationHighlightComponent> station, the pattern is strikingly different. By far the largest share of riders are coming from <StationHighlightComponent stationId="610">Grand Central</StationHighlightComponent>, dwarfing those from <StationHighlightComponent stationId="318">Penn Station</StationHighlightComponent> and the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>.
           </p>
           <p>
-            One explanation for this unbalance is that Grand Central is the main hub for commuters from wealthy suburbs like Scarsdale in Westchester and New Canaan in Connecticut. That demographic might be more likely to work in high-paying finance jobs than bus riders from New Jersey. And the completion of the Grand Central LIRR connection in January 2023 has drawn Long Islanders from Penn Station as well. 
+            One explanation for this unbalance is that Grand Central is the main hub for commuters from wealthy suburbs like Scarsdale in Westchester and New Canaan in Connecticut. That demographic might be more likely to work in high-paying finance jobs than bus riders from New Jersey. And the completion of the Grand Central LIRR connection in January 2023 has drawn Long Islanders away from Penn Station as well. 
           </p>
         </>,
         // Bowling Green, 168 St-Washington Heights, Kew Gardens-Union Tpke, Flatbush Ave-Brooklyn College
@@ -278,7 +278,7 @@ const getStories = (StationHighlightComponent) => [
             For young people in New York, life unfolds most vividly after dark. In recent years, nightlife along the L train has exploded, with enticing options from 8th Avenue to Bushwick. One of the most popular neighborhoods along the line is the East Village.
           </p>
           <p>
-            Considering the arrivals to 1st Avenue at 11PM on a Saturday night, we can see that the East Village and Alphabet City is a hotbed of nightlife, with bars like Niagara, Heaven Can Wait, and The Penny Farthing drawing crowds from Midtown Manhattan to Bushwick. 
+            Considering the arrivals to 1st Avenue at 11PM on a Saturday night, we can see that the East Village and Alphabet City are a hotbed of nightlife, with bars like Niagara, Heaven Can Wait, and The Penny Farthing drawing crowds from Midtown to Bushwick. 
           </p>
         </>,
         // Halsey St (L), 8 Av (L), 59 St-Columbus Circle
@@ -297,7 +297,7 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            Even with this plethora of options, some residents of the East Village prefer to go out in other locales, sometimes even intentionally avoiding their own neighborhood. Becca Foley, a young resident, explains:
+            Even with this plethora of options, some residents of the East Village prefer to go out in other locales, sometimes even intentionally avoiding their neighborhood. Becca Foley, a young resident, explains:
           </p>
           <p>
             “I'm 26 and the crowd in the East Village feels a lot younger. A lot of kids are visiting and some are interns, so I think it's more fun to go out with a more local scene in Williamsburg and Bushwick. It's mostly about the age, but I also have better conversations with people [in Bushwick] since they're more mature and there's a lot more diversity in terms of sexuality, gender, and background.”
@@ -318,7 +318,7 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            A smaller but equally dedicated crowd, hundreds of young revelers embark on a weekly pilgrimage to Bushwick. A neighborhood featuring bars and clubs like Carousel, Abe's Pagoda, The Johnson's, and House of Yes, Bushwick is inundated with partygoers who liven the streets around the <StationHighlightComponent stationId="126">Jefferson St</StationHighlightComponent>, <StationHighlightComponent stationId="127">DeKalb Avenue</StationHighlightComponent>, and <StationHighlightComponent stationId="630">Myrtle-Wyckoff</StationHighlightComponent> stops along the L train. 
+            A smaller but equally dedicated crowd, hundreds of young revelers embark on a weekly pilgrimage to Bushwick. Featuring megaclubs like House Of Yes and a range of bars like Carousel, Abe's Pagoda, and The Johnson's, the neighborhood is inundated with partygoers who liven the streets around the <StationHighlightComponent stationId="126">Jefferson St</StationHighlightComponent>, <StationHighlightComponent stationId="127">DeKalb Avenue</StationHighlightComponent>, and <StationHighlightComponent stationId="630">Myrtle-Wyckoff</StationHighlightComponent> stops along the L train. 
           </p>
           <p>
             Considering, for example, the Jefferson St station at 11 PM on a Saturday evening, we can see the influx coming from Williamsburg, the East Village, the Lower East Side, and even as far as Times Square in Manhattan.
@@ -339,13 +339,13 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            As expected, the season plays a role in how many people are willing to make the trek to Bushwick.
+            As expected, the shifting seasons play a role in how many people are willing to make the trek to Bushwick.
           </p>
           <p>
              In the wintry months of January, February, and March, fewer people are going out than during the rest of the year. But even on the coldest nights, there is still a core group of partygoers undeterred by the wind and cold. 
           </p>
           <p>
-            The biggest month of 2023 was October. It's the perfect storm: college students are back in town and the month is bookended by Halloween. Thanks to the changing climate, the weather is often still mild.
+            The biggest month of 2023 was October. It's the perfect storm: college students are back in town and the month caps off with Halloween. Thanks to the changing climate, the weather is often still mild.
           </p>
         </>,
         // Halsey St (L), 8 Av (L), 59 St-Columbus Circle
@@ -462,7 +462,7 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            In late summer, things get even more packed as the US Open kicks off. Eitan Darwish, a former ball boy, used to take the 7 to the Billie Jean King Tennis Center at 8 a.m. every morning. 
+            In late summer, things get even more packed as the US Open kicks off. Eitan Darwish, a former ball boy, used to take the 7 to the Billie Jean King Tennis Center every morning. 
           </p>
           <p>
             “The players don't take the train, they get private cars from their hotel,” he notes. “Ball boys can take an hourly shuttle, but I think the subway is faster with the traffic.” 
@@ -527,10 +527,10 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            Since 2015, there's one more reason for New Yorkers to head to Flushing Meadows: Queens Night Market.
+            Since 2015, there's one more reason for New Yorkers to head to Flushing Meadows: the Queens Night Market.
           </p>
           <p>
-            There, over one hundred vendors serve foods from cuisines all over the world. The market runs Saturdays from April to October on the west side of Flushing Meadows, off the <StationHighlightComponent stationId="449">111 St</StationHighlightComponent> stop.
+            There, over one hundred vendors serve foods from cuisines all over the world. The market runs Saturdays from April to October on the west side of Flushing Meadows, off the <StationHighlightComponent stationId="449">111 St</StationHighlightComponent> stop across the highway from Citi Field.
           </p>
           <p>
             The event is the perfect essence of Queens, the most ethnically diverse place in the world. Where else can you eat Trinidadian doubles, Mongolian yak cheese, and a Sudanese sambuxa in one meal? <span className="story-end-marker"/>
@@ -555,11 +555,16 @@ const getStories = (StationHighlightComponent) => [
     parts: [
       {
         description: <>
+          <AttributedPhoto 
+            src="/foodtrucks.jpg" 
+            alt="A man sitting outside his food truck near Penn Station" 
+            attribution="Photo: David Kidd/Governing"
+          />
           <p>
             Rush hour traffic peaks on Wednesday. But by Friday, some workers have more flexibility.
           </p>
           <p>
-            Such is the case at <StationHighlightComponent stationId="629">Metropolitan Av</StationHighlightComponent>, a trendy area in Williamsburg, Brooklyn. Once an up-and-coming neighborhood, a new wave of gentrification over the past decades has converted many of its old buildings into luxury apartments.
+            Such is the case at <StationHighlightComponent stationId="629">Metropolitan Av</StationHighlightComponent>, a trendy area in Williamsburg, Brooklyn. Once an up-and-coming neighborhood, a wave of gentrification has cemented its status as a home for wealthy young creatives and tech workers.
           </p>
           <p>
             From Wednesday to Friday, the number of people heading catching the train at 8 a.m. drops to about 55% of its peak. This may reflect the effects of work-from-home arrangements in a post-pandemic world. By Saturday, that number is down to 15% as residents enjoy their weekend.
@@ -588,10 +593,10 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <> 
           <p>
-            The Upper East Side is one of the more affluent districts in NYC, offering upscale shopping, dining, and residential buildings. With the Metropolitan Museum and the Guggenheim nearby, it attracts many tourists seeking a dose of New York's art scene. 
+            The <StationHighlightComponent stationId="397">Upper East Side</StationHighlightComponent> is one of the more affluent districts in NYC, known for upscale shopping and impressive residences. With the Met and the Guggenheim nearby, it attracts many tourists seeking a dose of the city's art scene. Its east side, Yorkville, has seen a wave of new development since the arrival of the Second Avenue Subway in 2017.
           </p>
           <p>
-            Curiously, the rush hour traffic going into the weekend follows exactly the same pattern as Williamsburg. On Friday morning, only 55% of Wednesday's traffic remains. By Saturday, that ridership is again down to just 15%.
+            Curiously, the rush hour traffic going into the weekend follows exactly the same pattern we saw in Williamsburg. On Friday morning, only 55% of peak traffic remains. By Saturday, that ridership is again down to just 15%.
           </p>
         </>,
         // 161st-Yankee Stadium, Times Sq-42 St, Bowling Green (4 5)
@@ -645,11 +650,6 @@ const getStories = (StationHighlightComponent) => [
       },
       {
         description: <>
-          <AttributedPhoto 
-            src="/jackson-heights.jpg" 
-            alt="Busy street in Jackson Heights" 
-            attribution="Photo: NYC & Company"
-          />
           <p>
             <StationHighlightComponent stationId="616">Jackson Heights</StationHighlightComponent> is one of the most culturally diverse areas in Queens, dubbed "the whole world in one neighborhood." It's home to a large South Asian and Latin population. 
           </p>
