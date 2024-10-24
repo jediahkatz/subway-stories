@@ -744,18 +744,18 @@ const StoriesView = React.memo(({
     }
   }, [stories]);
 
-  const handleStoryClick = (index) => {
+  const handleStoryClick = (storyIndex) => {
     setIsStackView(false);
-    setCurrentStoryIndex(index);
-    setCurrentPartIndex(0);
-  };
-
-  useEffect(() => {
-    if (!isStackView) {
-      scrollAnimatingToPart.current = { storyIndex: currentStoryIndex, partIndex: currentPartIndex };
-      handleJumpToStory(currentStoryIndex, currentPartIndex, true);
+    scrollAnimatingToPart.current = { storyIndex, partIndex: 0 };
+    // We don't want to scroll through all stories because it's jarring.
+    // We do want to scroll a little bit to indicate that it's scrollable.
+    // So let's only animate scrolling from the last part of the previous story.
+    if (storyIndex !== 0) {
+      const lastPartOfPrevStory = stories[storyIndex-1].parts.length - 1;
+      handleJumpToStory(storyIndex-1, lastPartOfPrevStory, false);
     }
-  }, [isStackView]);
+    handleJumpToStory(storyIndex, 0, true);
+  };
 
   useEffect(() => {
     if (!isStackView) {
