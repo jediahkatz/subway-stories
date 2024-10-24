@@ -713,6 +713,7 @@ const StoriesView = React.memo(({
   setCurrentStoryIndex,
   setCurrentPartIndex,
   setHoveredStation,
+  refreshHoverInfo,
   mapRef,
 }) => {
   const containerRef = useRef(null);
@@ -890,23 +891,31 @@ const StoriesView = React.memo(({
     }
   }, [handleStepEnter, isStackView]);
 
+  const mousePosition = useTrackMousePositionRef();
+
   useEffect(() => {
     let timeoutId;
     if (animation) {
+      const changeDataAndRefreshHoverInfo = (newDataSettings) => {
+        handleDataSettingsChange(newDataSettings).then(() => {
+          refreshHoverInfo(mousePosition.current.x, mousePosition.current.y);
+        });
+      }
+
       let frameIndex = 0;
       const animateFrame = () => {
         if (frameIndex < animation.frames.length) {
           const frame = animation.frames[frameIndex];
           if (animation.field === 'hour') {
-            handleDataSettingsChange({
+            changeDataAndRefreshHoverInfo({
               newSelectedHour: frame.value,
             });
           } else if (animation.field === 'months') {
-            handleDataSettingsChange({
+            changeDataAndRefreshHoverInfo({
               newSelectedMonths: frame.value,
-            });
+            }) ;
           } else if (animation.field === 'day') {
-            handleDataSettingsChange({
+            changeDataAndRefreshHoverInfo({
               newSelectedDay: frame.value,
             });
           }
@@ -1130,5 +1139,21 @@ const StationHighlight = ({ children, stationId, setHoveredStation, containerRef
     </span>
   );
 };
+
+const useTrackMousePositionRef = () => {
+  const mousePosition = useRef({ x: 0, y: 0 });
+  const handleMouseMove = React.useCallback((e) => {
+    mousePosition.current = { x: e.clientX, y: e.clientY };
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [handleMouseMove]);
+
+  return mousePosition;
+}
 
 export default StoriesView;
