@@ -123,6 +123,7 @@ const MTADataMap = ({ mapboxToken }) => {
   });
 
   const mapRef = useRef(null);
+  const deckglRef = useRef(null);
 
   const barScaleLocked = useRef(selectedBarScale !== null);
   const initialBarScale = useRef(getInitialBarScale(data.current, selectedStation));
@@ -612,10 +613,35 @@ const MTADataMap = ({ mapboxToken }) => {
     }
   }, [setHoverInfo, selectedDirection, selectedStation, filteredData, showPercentage])
 
+  const refreshHoverInfo = useCallback((mouseX, mouseY) => {
+    if (!deckglRef.current) {
+      return
+    }
+    const hoveredLayer = deckglRef.current.pickObject({ x: mouseX, y: mouseY })
+    if (!hoveredLayer) {
+      return
+    }
+
+    const stationName = getStationName(hoveredLayer.object.station_id);
+    const totalRidership = filteredData.current.reduce((acc, d) => acc + d.ridership, 0);
+    setHoverInfo({
+      x: mouseX,
+      y: mouseY,
+      stationName,
+      stationId: hoveredLayer.object.station_id,
+      ridership: totalRidership,
+      ridershipLabel: selectedDirection === 'goingTo' ? 'Total departures' : 'Total arrivals',
+      showPercentage: false,
+      positionedLoosely: true,
+    });
+    
+  }, [setHoverInfo, filteredData])
+
   return (
     <div className="map-container">
       <ViewTabs activeView={activeView} setActiveView={setActiveView} limitVisibleLines={limitVisibleLines} setSelectedBarScale={handleSetSelectedBarScale} />
       <DeckGL
+        ref={deckglRef}
         viewState={viewport}
         controller={activeView === 'visualization' ? true : { scrollZoom: false }}
         layers={[...mainStationIndicatorLayers, mapBarLayer]}
@@ -681,6 +707,7 @@ const MTADataMap = ({ mapboxToken }) => {
         setCurrentStoryIndex={setCurrentStoryIndex}
         setCurrentPartIndex={setCurrentPartIndex}
         setHoveredStation={setHoveredStation}
+        refreshHoverInfo={refreshHoverInfo}
         mapRef={mapRef}
       />}
       {hoverInfo && !isLoading && (
