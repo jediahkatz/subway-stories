@@ -24,10 +24,10 @@ const getStories = (StationHighlightComponent) => [
           />
           <p>
             <span className="opening-phrase">"They go in the morning for Dim Sum,"</span>
-            {" "}explains Anna Li, 28, when I ask why hundreds of people flock from her neighborhood in deep Brooklyn to Manhattan's Chinatown every Saturday at 8 a.m. 
+            {" "}explains Anna Li, 28, when I ask why hundreds of people flock from her neighborhood in far Brooklyn to Chinatown, Manhattan at 8 a.m. every Saturday.
           </p>
           <p>
-            Bensonhurst, where Anna has lived since college, and Sunset Park, where she grew up, house the two largest Chinese communities in Brooklyn. 
+            <StationHighlightComponent stationId="68">Bensonhurst</StationHighlightComponent>, where Anna has lived since college, and <StationHighlightComponent stationId="59">Sunset Park</StationHighlightComponent>, where she grew up, house the two largest Chinese communities in Brooklyn. 
             Although younger generations of Chinese are choosing more and more to settle away from the din of Manhattan, the original Chinatown is still a crucial gathering place for the community.
           </p>
         </>,
@@ -87,10 +87,10 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            Increasingly crowded and prosperous, Flushing is now the fourth largest business district in New York City. During rush hour, a surge of accountants, teachers, nurses, and retail workers pour in.
+            Increasingly prosperous—and also crowded—Flushing is now the fourth largest business district in New York City. During rush hour, a surge of accountants, teachers, nurses, and retail workers pour in.
           </p>
           <p>
-            Many of them hail from mainland Chinese enclaves in the satellite neighborhoods of <StationHighlightComponent stationId="452">Elmhurst</StationHighlightComponent> and <StationHighlightComponent stationId="450">Corona</StationHighlightComponent>. In Flushing, the chatter one hears is often in Mandarin, unlike the Cantonese more commonly heard in Manhattan's Chinatown and Bensonhurst.
+            Many of them hail from mainland Chinese enclaves in the satellite neighborhoods of <StationHighlightComponent stationId="452">Elmhurst</StationHighlightComponent> and <StationHighlightComponent stationId="450">Corona</StationHighlightComponent>. In Flushing, the chatter one hears is often in Mandarin, unlike the Cantonese more commonly thrown around in Manhattan's Chinatown and Bensonhurst.
           </p>
         </>,
         // viewport: { longitude: -73.882, latitude: 40.745, zoom: 12, bearing: 0, pitch: 0 },
@@ -112,7 +112,7 @@ const getStories = (StationHighlightComponent) => [
             On weekends, straphangers pour back into Flushing for another reason: the food. The neighborhood is a mecca for regional cuisine, featuring staple dishes like Hunan stewed fish, Shanghai braised pork belly, and bing tanghulu (candied hawthorn fruits).
           </p>
           <p>
-            Restaurant workers are first out the door at 7 a.m. Come lunchtime and dinnertime, the Corona crowd is joined by a new lot of younger, affluent Chinese from Manhattan and <StationHighlightComponent stationId="461">Long Island City</StationHighlightComponent>. 
+            Restaurant workers are the first out the door at 7 a.m. Come lunchtime and dinnertime, the Corona crowd is joined by a new lot of younger, affluent Chinese from Manhattan and <StationHighlightComponent stationId="461">Long Island City</StationHighlightComponent>. 
           </p>
           <p>
             While LIC isn't considered a Chinatown on its own, its population has soared as young professionals and tech workers seeking newer apartment buildings close to both Flushing and Midtown have set up camp. <span className="story-end-marker"/>
@@ -178,7 +178,7 @@ const getStories = (StationHighlightComponent) => [
             Midtown is massive, and its busiest stations are near commuter hubs like Grand Central that connect the city to the suburbs. But we can look at <StationHighlightComponent stationId="612">Lexington Avenue/51 St</StationHighlightComponent> as a representative example.
           </p>
           <p>
-            Workers are coming from all over the city, especially from high-density areas with a direct trip to the station, like Jackson Heights in Queens. The largest local spike, <StationHighlightComponent stationId="397">86 St</StationHighlightComponent>, likely represents commuters from Yorkville, the most densely populated neighborhood in the city.
+            Workers are coming from all over the city, especially from high-density areas with a direct trip to the station, like Jackson Heights in Queens. The largest local spike, <StationHighlightComponent stationId="397">86 St</StationHighlightComponent>, represents commuters from Yorkville, the most densely populated neighborhood in the city.
           </p>
           <p>
             But it's notable that a large share of riders appear to be traveling from outside New York, with spikes at <StationHighlightComponent stationId="164">Penn Station</StationHighlightComponent> and the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>.
@@ -278,7 +278,7 @@ const getStories = (StationHighlightComponent) => [
             For young people in New York, life unfolds most vividly after dark. In recent years, nightlife along the L train has exploded, with enticing options from 8th Avenue to Bushwick. One of the most popular neighborhoods along the line is the East Village.
           </p>
           <p>
-            Considering the arrivals to 1st Avenue at 11PM on a Saturday night, we can see that the East Village and Alphabet City are a hotbed of nightlife, with bars like Niagara, Heaven Can Wait, and The Penny Farthing drawing crowds from Midtown to Bushwick. 
+            Considering the arrivals to <StationHighlightComponent stationId="119">1st Avenue</StationHighlightComponent> at 11PM on a Saturday night, we can see that the East Village and Alphabet City are a hotbed of nightlife, with bars like Niagara, Heaven Can Wait, and The Penny Farthing drawing crowds from Midtown to Bushwick. 
           </p>
         </>,
         // Halsey St (L), 8 Av (L), 59 St-Columbus Circle
@@ -622,35 +622,6 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          </p>
-        </>,
-        // Woodlawn, Bowling Green
-        pointsToInclude: [stationIdToStation['378'], stationIdToStation['414']], 
-        dataview: {
-          station: '604', // 161 St-Yankee Stadium
-          direction: 'goingTo',
-          day: 'Wednesday',
-          hour: 8,
-          months: ALL_MONTHS,
-          barScale: 0.013,
-          animate: {
-            field: 'day',
-            frames: [
-              { value: 'Wednesday', duration: 2500 },
-              { value: 'Friday', duration: 2500 },
-              { value: 'Saturday', duration: 2500 },
-              { value: 'Sunday', duration: 2500 },
-            ]
-          }
-        },
-      },
-      {
-        description: <>
-          <p>
             <StationHighlightComponent stationId="616">Jackson Heights</StationHighlightComponent> is one of the most culturally diverse areas in Queens, dubbed "the whole world in one neighborhood." It's home to a large South Asian and Latin population. 
           </p>
           <p>
@@ -669,6 +640,38 @@ const getStories = (StationHighlightComponent) => [
           hour: 8,
           months: ALL_MONTHS,
           barScale: 0.007,
+          animate: {
+            field: 'day',
+            frames: [
+              { value: 'Wednesday', duration: 2500 },
+              { value: 'Friday', duration: 2500 },
+              { value: 'Saturday', duration: 2500 },
+              { value: 'Sunday', duration: 2500 },
+            ]
+          }
+        },
+      },
+      {
+        description: <>
+          <p>
+            <StationHighlightComponent stationId="604">Concourse</StationHighlightComponent> is neighborhood in the Bronx whose commercial and residential buildings sit in the shadow of Yankee Stadium. Mostly Latino and Black communities reside in the South Bronx. Relative to the rest of the city, it is a middle- to low-income neighborhood. 
+          </p>
+          <p>
+            Similar to Jackson Heights, 86% of peak commuters head to Manhattan early on Friday mornings. On Saturday, the rate matches Jackson Heights at 38%.
+          </p>
+          <p>
+            In 2022, the Times declared that "<a href="https://www.nytimes.com/2022/04/01/style/four-day-workweek-friday.html">Fridays are for free time</a>." While data supports their claim in wealthier, white-collar neighborhoods, that option is often out of reach for working-class communities.
+          </p>
+        </>,
+        // Woodlawn, Bowling Green
+        pointsToInclude: [stationIdToStation['378'], stationIdToStation['414']], 
+        dataview: {
+          station: '604', // 161 St-Yankee Stadium
+          direction: 'goingTo',
+          day: 'Wednesday',
+          hour: 8,
+          months: ALL_MONTHS,
+          barScale: 0.013,
           animate: {
             field: 'day',
             frames: [

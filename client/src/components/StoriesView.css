@@ -79,6 +79,19 @@
   hyphens: auto;
 }
 
+.stories-box a {
+  color: #333;
+  text-decoration: underline;
+  text-decoration-color: rgba(0, 0, 0, 0.3);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.stories-box a:hover {
+  color: #000000;
+  text-decoration-color: #000000;
+}
+
 .floating-info-bar {
   position: fixed;
   bottom: 20px;
