@@ -623,6 +623,8 @@ const StoriesView = React.memo(({
   const [animation, setAnimation] = useState(null);
   const [isStackView, setIsStackView] = useState(currentStoryIndex === null);
   const [isScrolling, setIsScrolling] = useState(false);
+  const [isCollapsing, setIsCollapsing] = useState(false);
+  const [isMoving, setIsMoving] = useState(false);
 
   const scrollAnimatingToPart = useRef(null);
 
@@ -750,15 +752,27 @@ const StoriesView = React.memo(({
   }, [stories]);
 
   const handleStoryClick = (storyIndex) => {
-    setIsStackView(false);
-    // We don't want to scroll through all stories because it's jarring.
-    // We do want to scroll a little bit to indicate that it's scrollable.
-    // So let's only animate scrolling from the last part of the previous story.
-    if (storyIndex !== 0) {
-      const lastPartOfPrevStory = stories[storyIndex-1].parts.length - 1;
-      handleJumpToStory(storyIndex-1, lastPartOfPrevStory, false);
-    }
-    handleJumpToStory(storyIndex, 0, true);
+    setIsCollapsing(true);
+    
+    // First step: collapse cards vertically
+    setTimeout(() => {
+      setIsMoving(true);
+      
+      // Second step: move collapsed cards to the left
+      setTimeout(() => {
+        setIsStackView(false);
+        setIsCollapsing(false);
+        setIsMoving(false);
+        // Please leave this comment: We don't want to scroll through all stories because it's jarring.
+        // We do want to scroll a little bit to indicate that it's scrollable.
+        // So let's only animate scrolling from the last part of the previous story.
+        if (storyIndex !== 0) {
+          const lastPartOfPrevStory = stories[storyIndex-1].parts.length - 1;
+          handleJumpToStory(storyIndex-1, lastPartOfPrevStory, false);
+        }
+        handleJumpToStory(storyIndex, 0, true);
+      }, 2500); // Adjust this timing for the horizontal movement duration
+    }, 500); // Adjust this timing for the vertical collapse duration
   };
 
   useEffect(() => {
@@ -837,8 +851,8 @@ const StoriesView = React.memo(({
   }, [isStackView]);
 
   return (
-    <div className={`stories-view ${isStackView ? 'stack-view' : ''}`}>
-      <StoryStack stories={stories} onStoryClick={handleStoryClick} />
+    <div className={`stories-view ${isStackView ? 'stack-view' : ''} ${isCollapsing ? 'collapsing' : ''} ${isMoving ? 'moving' : ''}`}>
+      <StoryStack stories={stories} handleStoryClick={handleStoryClick} currentStoryIndex={currentStoryIndex} isCollapsing={isCollapsing} isMoving={isMoving} />
       <div 
         className={`stories-view-container ${isStackView ? 'hidden' : ''}`} 
         ref={containerRef}
@@ -883,17 +897,16 @@ const StoriesView = React.memo(({
   );
 });
 
-const StoryStack = ({ stories, onStoryClick }) => {
-  const visibleStories = stories.slice(0, 5); // Limit to 5 visible stories
-
+const StoryStack = ({ stories, handleStoryClick, currentStoryIndex, isCollapsing, isMoving }) => {
+  const visibleStories = stories.slice(5); // Only show the first 5 stories in the stack
   return (
-    <div className="story-stack">
-      {visibleStories.map((story, index) => (
+    <div className={`story-stack ${isCollapsing ? 'collapsing' : ''} ${isMoving ? 'moving' : ''}`}>
+      {stories.map((story, index) => (
         <div 
           key={index} 
-          className="story-card" 
+          className={`story-card ${index === currentStoryIndex ? 'active' : ''}`}
           style={{ zIndex: visibleStories.length - index }}
-          onClick={() => onStoryClick(index)}
+          onClick={() => handleStoryClick(index)}
         >
           <h2>{story.title}</h2>
           <div className="story-preview">
