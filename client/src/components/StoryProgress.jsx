@@ -1,9 +1,19 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './StoriesView.css';
 
 const StoryProgress = ({ stories, currentStoryIndex, currentPartIndex, handleJumpToStory, handleJumpToPart, setPreviewStory }) => {
     const [activePreview, setActivePreview] = useState(null);
+    const [isExpanded, setIsExpanded] = useState(false);
     const timeoutRef = useRef(null);
+
+    useEffect(() => {
+        // Trigger expansion animation after a short delay
+        const timer = setTimeout(() => {
+            setIsExpanded(v => !v);
+        }, 100);
+
+        return () => clearTimeout(timer);
+    }, []);
 
     const handleClickStory = (storyIndex) => {
         handleJumpToStory(storyIndex, 0);
@@ -55,9 +65,9 @@ const StoryProgress = ({ stories, currentStoryIndex, currentPartIndex, handleJum
                         />
                     </div>
                     {storyIndex === currentStoryIndex && (
-                        <div className="part-lines">
+                        <div className={`part-lines ${!isExpanded ? 'hidden' : ''}`} style={isExpanded ? { height: `${(story.parts.length - 1) * 16 - 12}px` } : {}}>
                             {story.parts.slice(1).map((_, partIndex) => (
-                                <div key={partIndex} className="part-line-wrapper">
+                                <div key={partIndex} className={`part-line-wrapper ${!isExpanded ? 'hidden' : ''}`}>
                                     <div 
                                         className={`part-line ${partIndex + 1 === currentPartIndex ? 'active' : ''}`}
                                     />
