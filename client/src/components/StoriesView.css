@@ -5,6 +5,7 @@
   right: 0;
   bottom: 0;
   overflow: hidden;
+  pointer-events: none;
 }
 
 .stories-view.stack-view .stories-view-container {
@@ -24,12 +25,11 @@
   scrollbar-color: rgb(150, 150, 150) transparent;
   opacity: 1;
   transition: opacity 0.5s ease;
-  pointer-events: all;
+  pointer-events: none;
 }
 
 .stories-view-container.hidden {
   opacity: 0;
-  pointer-events: none;
 }
 
 .story-stack {
@@ -40,6 +40,7 @@
   width: 350px;
   height: 75vh;
   z-index: 1000;
+  pointer-events: all;
 }
 
 .stories-view:not(.stack-view) .story-stack {
@@ -279,7 +280,7 @@
 }
 
 .story-card {
-  background-color: #ffffff;
+  background-color: rgb(235, 235, 235);
   border-radius: 2px;
   padding: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
