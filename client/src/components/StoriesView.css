@@ -330,7 +330,7 @@
   top: calc((100vh - var(--story-height) - (4*var(--story-vertical-offset)) - (2*var(--story-padding))) / 2);
   z-index: 1000;
   pointer-events: all;
-  transition: left 0.5s ease, top 0.5s ease, transform 0.5s ease, opacity 0.5s ease;
+  transition: left 0.3s ease, top 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
 
 .stories-view:not(.stack-view) .story-stack {
@@ -343,7 +343,7 @@
   padding: var(--story-padding);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  transition: transform 0.5s ease, height 0.5s ease, opacity 0.5s ease, border-radius 0.5s ease, background-color 0.5s ease, width 0.5s ease, left 0.5s ease, top 0.5s ease;
+  transition: transform 0.3s ease, height 0.3s ease, opacity 0.3s ease, border-radius 0.3s ease, background-color 0.3s ease, width 0.3s ease, left 0.3s ease, top 0.3s ease;
   position: absolute;
   width: 100%;
   max-height: 500px;
@@ -391,19 +391,19 @@
 }
 .collapsing .story-card:nth-child(2) { 
   top: calc(-1 * (var(--total-collapsed-height) / 2) + (1 * var(--collapsed-vertical-offset))); 
-  transition-delay: 0.1s;
+  transition-delay: 0.05s;
 }
 .collapsing .story-card:nth-child(3) { 
   top: calc(-1 * (var(--total-collapsed-height) / 2) + (2 * var(--collapsed-vertical-offset))); 
-  transition-delay: 0.2s;
+  transition-delay: 0.1s;
 }
 .collapsing .story-card:nth-child(4) { 
   top: calc(-1 * (var(--total-collapsed-height) / 2) + (3 * var(--collapsed-vertical-offset))); 
-  transition-delay: 0.3s;
+  transition-delay: 0.15s;
 }
 .collapsing .story-card:nth-child(5) { 
   top: calc(-1 * (var(--total-collapsed-height) / 2) + (4 * var(--collapsed-vertical-offset))); 
-  transition-delay: 0.4s;
+  transition-delay: 0.2s;
 }
 
 .collapsing .story-stack {
@@ -422,7 +422,7 @@
 .collapsing .story-card .story-preview,
 .collapsing .story-card .scroll-shadow {
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.3s ease;
 }
 
 /* Ensure the active story line is white */

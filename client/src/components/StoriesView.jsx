@@ -773,7 +773,7 @@ const StoriesView = React.memo(({
         }
         handleJumpToStory(storyIndex, 0, true);
       }, 500); // Adjust this timing for the horizontal movement duration
-    }, 500); // Adjust this timing for the vertical collapse duration
+    }, 300); // Adjust this timing for the vertical collapse duration
   };
 
   useEffect(() => {
