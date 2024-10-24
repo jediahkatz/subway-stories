@@ -224,7 +224,7 @@ const getStories = (StationHighlightComponent) => [
             When we look at the ridership to the Financial District, anchored by the <StationHighlightComponent stationId="628">Fulton St</StationHighlightComponent> station, the pattern is strikingly different. By far the largest share of riders are coming from <StationHighlightComponent stationId="610">Grand Central</StationHighlightComponent>, dwarfing those from <StationHighlightComponent stationId="318">Penn Station</StationHighlightComponent> and the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>.
           </p>
           <p>
-            One explanation for this unbalance is that Grand Central is the main hub for commuters from wealthy suburbs like Scarsdale in Westchester and New Canaan in Connecticut. That demographic might be more likely to work in high-paying finance jobs than, say, bus riders from New Jersey.
+            One explanation for this unbalance is that Grand Central is the main hub for commuters from wealthy suburbs like Scarsdale in Westchester and New Canaan in Connecticut. That demographic might be more likely to work in high-paying finance jobs than bus riders from New Jersey. And the completion of the Grand Central LIRR connection in January 2023 has drawn Long Islanders from Penn Station as well. 
           </p>
         </>,
         // Bowling Green, 168 St-Washington Heights, Kew Gardens-Union Tpke, Flatbush Ave-Brooklyn College
@@ -415,7 +415,7 @@ const getStories = (StationHighlightComponent) => [
     ]
   },
   {
-    title: 'Fans & Food in Flushing Meadows',
+    title: 'Fans at Flushing Meadows',
     parts: [
       {
         description: <>
@@ -551,35 +551,133 @@ const getStories = (StationHighlightComponent) => [
     ]
   },
   {
-    title: 'Working on the Weekend',
+    title: 'The Weekend Shift',
     parts: [
       {
         description: <>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          <p>
+            Rush hour traffic peaks on Wednesday. But by Friday, some workers have more flexibility.
+          </p>
+          <p>
+            Such is the case at <StationHighlightComponent stationId="629">Metropolitan Av</StationHighlightComponent>, a trendy area in Williamsburg, Brooklyn. Once an up-and-coming neighborhood, a new wave of gentrification over the past decades has converted many of its old buildings into luxury apartments.
+          </p>
+          <p>
+            From Wednesday to Friday, the number of people heading catching the train at 8 a.m. drops to about 55% of its peak. This may reflect the effects of work-from-home arrangements in a post-pandemic world. By Saturday, that number is down to 15% as residents enjoy their weekend.
+          </p>
         </>,
-        viewport: { longitude: -73.98, latitude: 40.75, zoom: 12, bearing: 0, pitch: 0 },
-        pointsToInclude: [stationIdToStation['611'], stationIdToStation['318']], // Times Sq-42 St (1 2 3) and 34 St-Penn Station (1 2 3)
+        // 59 St-Columbus Circle, Bowling Green, Carroll St, Myrtle-Wyckoff
+        pointsToInclude: [stationIdToStation['614'], stationIdToStation['414'], stationIdToStation['237'], stationIdToStation['630']], 
         dataview: {
-          station: '611', // Times Sq-42 St (1 2 3)
+          station: '629', // Metropolitan Av
           direction: 'goingTo',
-          day: 'Monday',
-          hour: 9,
+          day: 'Wednesday',
+          hour: 8,
           months: ALL_MONTHS,
-          visibleLines: ['1', '2', '3'],
+          barScale: 0.007,
+          animate: {
+            field: 'day',
+            frames: [
+              { value: 'Wednesday', duration: 2500 },
+              { value: 'Friday', duration: 2500 },
+              { value: 'Saturday', duration: 2500 },
+              { value: 'Sunday', duration: 2500 },
+            ]
+          }
+        },
+      },
+      {
+        description: <> 
+          <p>
+            The Upper East Side is one of the more affluent districts in NYC, offering upscale shopping, dining, and residential buildings. With the Metropolitan Museum and the Guggenheim nearby, it attracts many tourists seeking a dose of New York's art scene. 
+          </p>
+          <p>
+            Curiously, the rush hour traffic going into the weekend follows exactly the same pattern as Williamsburg. On Friday morning, only 55% of Wednesday's traffic remains. By Saturday, that ridership is again down to just 15%.
+          </p>
+        </>,
+        // 161st-Yankee Stadium, Times Sq-42 St, Bowling Green (4 5)
+        pointsToInclude: [stationIdToStation['604'], stationIdToStation['611'], stationIdToStation['414']], 
+        dataview: {
+          station: '397', // 86 St (4 5 6)
+          direction: 'goingTo',
+          day: 'Wednesday',
+          hour: 8,
+          months: ALL_MONTHS,
+          barScale: 0.003,
+          animate: {
+            field: 'day',
+            frames: [
+              { value: 'Wednesday', duration: 2500 },
+              { value: 'Friday', duration: 2500 },
+              { value: 'Saturday', duration: 2500 },
+              { value: 'Sunday', duration: 2500 },
+            ]
+          }
         },
       },
       {
         description: <>
-          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          </p>
         </>,
-        pointsToInclude: [stationIdToStation['611'], stationIdToStation['318']],
+        // Woodlawn, Bowling Green
+        pointsToInclude: [stationIdToStation['378'], stationIdToStation['414']], 
         dataview: {
-          station: '127', // 34 St-Penn Station (1 2 3)
-          direction: 'comingFrom',
-          day: 'Friday',
-          hour: 18,
+          station: '604', // 161 St-Yankee Stadium
+          direction: 'goingTo',
+          day: 'Wednesday',
+          hour: 8,
           months: ALL_MONTHS,
-          visibleLines: ['1', '2', '3'],
+          barScale: 0.013,
+          animate: {
+            field: 'day',
+            frames: [
+              { value: 'Wednesday', duration: 2500 },
+              { value: 'Friday', duration: 2500 },
+              { value: 'Saturday', duration: 2500 },
+              { value: 'Sunday', duration: 2500 },
+            ]
+          }
+        },
+      },
+      {
+        description: <>
+          <AttributedPhoto 
+            src="/jackson-heights.jpg" 
+            alt="Busy street in Jackson Heights" 
+            attribution="Photo: NYC & Company"
+          />
+          <p>
+            <StationHighlightComponent stationId="616">Jackson Heights</StationHighlightComponent> is one of the most culturally diverse areas in Queens, dubbed "the whole world in one neighborhood." It's home to a large South Asian and Latin population. 
+          </p>
+          <p>
+            It is one of the more affordable neighborhoods in New York City, home to many working-class communities. Many residents are employed in the service industry. This is reflected in the data, which shows that people in these communities continue to work through the weekend at a higher rate.
+          </p>
+          <p>
+            On Friday morning, the number of commuters is still about 85% of its Wednesday peak. By Saturday, 38% continue to ride the train—a rate more than twice that of the wealthier neighborhoods.
+          </p>
+        </>,
+        // Flushing-Main St, Times Sq-42 St, Bowling Green (4 5)
+        pointsToInclude: [stationIdToStation['447'], stationIdToStation['611'], stationIdToStation['414']], 
+        dataview: {
+          station: '616', // Jackson Heights-Roosevelt Av (7 E F M R)
+          direction: 'goingTo',
+          day: 'Wednesday',
+          hour: 8,
+          months: ALL_MONTHS,
+          barScale: 0.007,
+          animate: {
+            field: 'day',
+            frames: [
+              { value: 'Wednesday', duration: 2500 },
+              { value: 'Friday', duration: 2500 },
+              { value: 'Saturday', duration: 2500 },
+              { value: 'Sunday', duration: 2500 },
+            ]
+          }
         },
       },
     ]
@@ -699,7 +797,8 @@ const StoriesView = React.memo(({
       ? currentPart.dataview.animate.frames[0].value 
       : currentPart.dataview.months;
 
-    handleDataSettingsChange({
+    limitVisibleLines(currentPart.dataview.visibleLines);
+    const loadPromise = handleDataSettingsChange({
       newSelectedStation: currentPart.dataview.station,
       newSelectedDirection: currentPart.dataview.direction,
       newSelectedDay: currentPart.dataview.day,
@@ -707,16 +806,13 @@ const StoriesView = React.memo(({
       newSelectedMonths: months,
       newSelectedBarScale: currentPart.dataview.barScale,
     });
-    limitVisibleLines(currentPart.dataview.visibleLines);
 
     if (currentPart.dataview.animate) {
-      setAnimation(currentPart.dataview.animate);
+      loadPromise.then(() => {
+        setAnimation(currentPart.dataview.animate);
+      });
     } else {
       setAnimation(null);
-      handleDataSettingsChange({
-        newSelectedHour: currentPart.dataview.hour,
-        newSelectedMonths: currentPart.dataview.months,
-      });
     }
   }, [setViewport, handleDataSettingsChange, limitVisibleLines, setCurrentStoryIndex, setCurrentPartIndex]);
 
@@ -808,6 +904,10 @@ const StoriesView = React.memo(({
           } else if (animation.field === 'months') {
             handleDataSettingsChange({
               newSelectedMonths: frame.value,
+            });
+          } else if (animation.field === 'day') {
+            handleDataSettingsChange({
+              newSelectedDay: frame.value,
             });
           }
           timeoutId = setTimeout(() => {
@@ -976,18 +1076,22 @@ const formatInfoBarText = (direction, stationId, hour, day, selectedMonths, anim
     {' '}{preposition} {monthText}
   </> : '';
 
+  const dayText = animatingField === 'day' 
+    ? <span className="animating">{day}</span> 
+    : day;
+
   if (stationId === ALL_STATIONS_ID) {
     const allStationsDirectionText = direction === 'comingFrom' ? 'getting off' : 'getting on';
     return (
       <>
-        Where are people {allStationsDirectionText} the train at {hourText} {splitText ? <br /> : ''} on a {day}{fullMonthText}?
+        Where are people {allStationsDirectionText} the train at {hourText} {splitText ? <br /> : ''} on a {dayText}{fullMonthText}?
       </>
     )
   }
 
   return (
     <>
-      Who's {directionText} <span className="highlight-station" style={{color: `rgb(${MAIN_STATION_COLOR.join(',')})`}}>{stationName}</span> at {hourText} {splitText ? <br /> : ''} on a {day}{fullMonthText}?
+      Who's {directionText} <span className="highlight-station" style={{color: `rgb(${MAIN_STATION_COLOR.join(',')})`}}>{stationName}</span> at {hourText} {splitText ? <br /> : ''} on a {dayText}{fullMonthText}?
     </>
   );
 };

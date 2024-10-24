@@ -53,15 +53,16 @@ const StoryProgress = ({ stories, currentStoryIndex, currentPartIndex, handleJum
         <div className="story-progress">
             {stories.map((story, storyIndex) => (
                 <div key={storyIndex} className="story-line-container">
-                    <div className="story-line-wrapper">
-                        <div onClick={() => handleClickStory(storyIndex)}
+                    <div className="story-line-wrapper" 
+                        onClick={() => handleClickStory(storyIndex)}
+                        onMouseEnter={() => handleMouseEnter(storyIndex)}
+                        onMouseLeave={handleMouseLeave}
+                    >
+                        <div 
                             className={`story-line ${storyIndex === currentStoryIndex && currentPartIndex === 0 ? 'active' : ''}`}
                         />
                         <div 
                             className="story-line-hitbox"
-                            onClick={() => handleClickStory(storyIndex)}
-                            onMouseEnter={() => handleMouseEnter(storyIndex)}
-                            onMouseLeave={handleMouseLeave}
                         />
                     </div>
                     {storyIndex === currentStoryIndex && (
@@ -69,6 +70,7 @@ const StoryProgress = ({ stories, currentStoryIndex, currentPartIndex, handleJum
                             {story.parts.slice(1).map((_, partIndex) => (
                                 <div key={partIndex} className={`part-line-wrapper ${!isExpanded ? 'hidden' : ''}`}>
                                     <div 
+                                        onClick={() => handleClickPart(storyIndex, partIndex + 1)}
                                         className={`part-line ${partIndex + 1 === currentPartIndex ? 'active' : ''}`}
                                     />
                                     <div 
