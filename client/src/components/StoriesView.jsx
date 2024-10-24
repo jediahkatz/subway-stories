@@ -587,7 +587,7 @@ const getStories = (StationHighlightComponent) => [
 ];
 
 // todo: make this dynamic based on the width of the screen
-const STORY_BOX_WIDTH_AND_OFFSET = 440;
+const STORY_BOX_WIDTH_AND_OFFSET = 450;
 const FLOATING_INFO_BAR_HEIGHT = 54;
 const FLOATING_INFO_BAR_OFFSET = 20;
 const COLOR_LEGEND_WIDTH_AND_OFFSET = 105;
