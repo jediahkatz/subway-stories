@@ -429,7 +429,7 @@ const getStories = (StationHighlightComponent) => [
             Known for its high concentration of “open until the sun comes up" bars, Bushwick features a crowd eager to stay out later than most. 
           </p>
           <p>
-            Looking at late-night departures from stations along the L, we can see that the party rages later in Bushwick than in its tamer counterpart of Williamsburg. Though more revelers are initially leaving <StationHighlightComponent stationId="120">Bedford Av</StationHighlightComponent> and <StationHighlightComponent stationId="629">Metropolitan Av</StationHighlightComponent> at midnight, by 3 a.m. <StationHighlightComponent stationId="126">Jefferson St</StationHighlightComponent> has overtaken them both.
+            Looking at late-night departures from stations along the L, we can see that the party rages later in Bushwick than in its tamer counterpart of Williamsburg. Though more revelers are initially leaving <StationHighlightComponent stationId="120">Bedford Av</StationHighlightComponent> and <StationHighlightComponent stationId="629">Metropolitan Av</StationHighlightComponent> at midnight, by 3 a.m. <StationHighlightComponent stationId="126">Jefferson St</StationHighlightComponent> has overtaken them both. <span className="story-end-marker"/>
           </p>
         </>,
         viewport: {
@@ -706,7 +706,7 @@ const getStories = (StationHighlightComponent) => [
             Similar to Jackson Heights, 86% of peak commuters head to Manhattan early on Friday mornings. On Saturday, the rate matches Jackson Heights at 38%.
           </p>
           <p>
-            In 2022, the Times declared that "<a href="https://www.nytimes.com/2022/04/01/style/four-day-workweek-friday.html">Fridays are for free time</a>." While data supports their claim in wealthier, white-collar neighborhoods, that option is often out of reach for working-class communities.
+            In 2022, the Times declared that "<a href="https://www.nytimes.com/2022/04/01/style/four-day-workweek-friday.html">Fridays are for free time</a>." While data supports their claim in wealthier, white-collar neighborhoods, that option is often out of reach for working-class communities. <span className="story-end-marker"/>
           </p>
         </>,
         // Woodlawn, Bowling Green
@@ -744,6 +744,9 @@ const StoryBox = ({ story, partIndex = 0, isPreview = false }) => (
     {story.title !== undefined && partIndex === 0 && <h2>{story.title}</h2>}
     <div className="story-content">
       {story.parts[partIndex].description}
+    </div>
+    <div className="part-indicator">
+      {partIndex + 1}/{story.parts.length}
     </div>
   </div>
 );

@@ -480,3 +480,12 @@
   text-align: justify;
   hyphens: auto;
 }
+
+.stories-box .part-indicator {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  font-size: 12px;
+  color: #666;
+  opacity: 0.8;
+}
