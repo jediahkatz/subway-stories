@@ -346,7 +346,7 @@ const getStories = (StationHighlightComponent) => [
             attribution="Photo: /u/donny_hype"
           />
           <p>
-            For young people in New York, life unfolds most vividly after dark. In recent years, nightlife along the L train has exploded, with enticing options from 8th Avenue to Bushwick. One of the most popular neighborhoods along the line is the East Village.
+            For young people in New York, life unfolds most vividly after dark. In recent years, nightlife along the L train has exploded, with enticing options from <StationHighlightComponent stationId="618">8th Avenue</StationHighlightComponent> to <StationHighlightComponent stationId="126">Bushwick</StationHighlightComponent>. One of the most popular neighborhoods along the line is the East Village.
           </p>
           <p>
             Considering the arrivals to <StationHighlightComponent stationId="119">1st Avenue</StationHighlightComponent> at 11 p.m. on a Saturday night, we can see that the East Village and Alphabet City are a hotbed of nightlife, with bars like Niagara, Heaven Can Wait, and The Penny Farthing drawing crowds from Midtown to Bushwick. 
@@ -371,7 +371,7 @@ const getStories = (StationHighlightComponent) => [
             Even with this plethora of options, some residents of the East Village prefer to go out in other locales, sometimes even intentionally avoiding their neighborhood. Becca Foley, a young resident, explains:
           </p>
           <p>
-            “I'm 26 and the crowd in the East Village feels a lot younger. A lot of kids are visiting and some are interns, so I think it's more fun to go out with a more local scene in Williamsburg and Bushwick. It's mostly about the age, but I also have better conversations with people [in Bushwick] since they're more mature and there's a lot more diversity in terms of sexuality, gender, and background.”
+            “I'm 26 and the crowd in the East Village feels a lot younger. A lot of kids are visiting and some are interns, so I think it's more fun to go out with a more local scene in <StationHighlightComponent stationId="120">Williamsburg</StationHighlightComponent> and <StationHighlightComponent stationId="126">Bushwick</StationHighlightComponent>. It's mostly about the age, but I also have better conversations with people [in Bushwick] since they're more mature and there's a lot more diversity in terms of sexuality, gender, and background.”
           </p>
         </>,
         // Halsey St (L), 8 Av (L), 59 St-Columbus Circle
