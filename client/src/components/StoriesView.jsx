@@ -191,7 +191,7 @@ const getStories = (StationHighlightComponent) => [
             <StationHighlightComponent stationId="610">Grand Central Terminal</StationHighlightComponent> is the main hub for travelers from Westchester and Connecticut.
           </p>
           <p>
-            The PATH train runs from nearby Jersey City, Hoboken, and Newark. It drops commuters off in several locations including <StationHighlightComponent stationId="607">33rd St</StationHighlightComponent> and <StationHighlightComponent stationId="624">World Trade Center</StationHighlightComponent>.
+            The PATH train runs from nearby Jersey City, Hoboken, and Newark. It drops commuters off in several locations including <StationHighlightComponent stationId="607">33rd St</StationHighlightComponent> and the <StationHighlightComponent stationId="624">World Trade Center</StationHighlightComponent>.
           </p>
           <p>
             Finally, the largest spike is the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>.
@@ -324,7 +324,7 @@ const getStories = (StationHighlightComponent) => [
             For young people in New York, life unfolds most vividly after dark. In recent years, nightlife along the L train has exploded, with enticing options from 8th Avenue to Bushwick. One of the most popular neighborhoods along the line is the East Village.
           </p>
           <p>
-            Considering the arrivals to <StationHighlightComponent stationId="119">1st Avenue</StationHighlightComponent> at 11PM on a Saturday night, we can see that the East Village and Alphabet City are a hotbed of nightlife, with bars like Niagara, Heaven Can Wait, and The Penny Farthing drawing crowds from Midtown to Bushwick. 
+            Considering the arrivals to <StationHighlightComponent stationId="119">1st Avenue</StationHighlightComponent> at 11 p.m. on a Saturday night, we can see that the East Village and Alphabet City are a hotbed of nightlife, with bars like Niagara, Heaven Can Wait, and The Penny Farthing drawing crowds from Midtown to Bushwick. 
           </p>
         </>,
         // Halsey St (L), 8 Av (L), 59 St-Columbus Circle
