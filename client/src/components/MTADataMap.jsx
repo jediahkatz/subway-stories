@@ -62,9 +62,9 @@ const MTADataMap = ({ mapboxToken }) => {
   const [viewport, setViewport] = useState(() => {
     const savedState = loadStateFromSessionStorage();
     return savedState?.viewport || {
-      latitude: 40.700292,
-      longitude: -73.925618,
-      zoom: 12,
+      latitude: stationIdToStation['611'].lat,
+      longitude: stationIdToStation['611'].lon,
+      zoom: 11.37,
       bearing: 0,
       pitch: 0,
       width: '100vw',
@@ -87,19 +87,19 @@ const MTADataMap = ({ mapboxToken }) => {
   const [infoTooltipInfo, setInfoTooltipInfo] = useState(null);
   const [selectedHour, setSelectedHour] = useState(() => {
     const savedState = loadStateFromSessionStorage();
-    return savedState?.selectedHour || 2;
+    return savedState?.selectedHour || 8;
   });
   const [selectedDay, setSelectedDay] = useState(() => {
     const savedState = loadStateFromSessionStorage();
-    return savedState?.selectedDay || 'Saturday';
+    return savedState?.selectedDay || 'Wednesday';
   });
   const [selectedStation, setSelectedStation] = useState(() => {
     const savedState = loadStateFromSessionStorage();
-    return savedState?.selectedStation || '126';
+    return savedState?.selectedStation || '611';
   });
   const [selectedDirection, setSelectedDirection] = useState(() => {
     const savedState = loadStateFromSessionStorage();
-    return savedState?.selectedDirection || 'goingTo';
+    return savedState?.selectedDirection || 'comingFrom';
   });
   const [isLoading, setIsLoading] = useState(false);
   const [selectedBarScale, setSelectedBarScale] = useState(null); // number | null (default)
@@ -548,7 +548,7 @@ const MTADataMap = ({ mapboxToken }) => {
   }, [viewport, selectedHour, selectedDay, selectedStation, selectedDirection, selectedMonths, showPercentage]);
 
   // Add new state for active view
-  const [activeView, setActiveView] = useState('visualization');
+  const [activeView, setActiveView] = useState('stories');
   
   const drawSubwayLines = useCallback((map) => {
     map.addSource('nyc-subway-routes', {
@@ -843,7 +843,7 @@ const useMainStationIndicatorLayers = (selectedStation, selectedDirection, filte
 
 const getInitialBarScale = (data, selectedStation) => {
   if (selectedStation === ALL_STATIONS_ID) {
-    return 0.001
+    return 0.0005
   } 
 
   const maxRidershipToday = Math.max(...data.map(d => d.ridership));
