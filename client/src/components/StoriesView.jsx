@@ -713,6 +713,7 @@ const StoriesView = React.memo(({
   selectedMonths,
   currentStoryIndex,
   currentPartIndex,
+  showAboutView,
   setCurrentStoryIndex,
   setCurrentPartIndex,
   setHoveredStation,
@@ -981,13 +982,13 @@ const StoriesView = React.memo(({
 
   return (
     <div className={`stories-view ${isStackView ? 'stack-view' : ''} ${isCollapsing ? 'collapsing' : ''} ${isMoving ? 'moving' : ''}`}>
-      <StoryStack stories={stories} handleStoryClick={handleStoryClick} currentStoryIndex={currentStoryIndex} isCollapsing={isCollapsing} isMoving={isMoving} />
+      {!showAboutView && <StoryStack stories={stories} handleStoryClick={handleStoryClick} currentStoryIndex={currentStoryIndex} isCollapsing={isCollapsing} isMoving={isMoving} />}
       <div 
         className={`stories-view-container ${isStackView ? 'hidden' : ''}`} 
         ref={containerRef}
         style={{ pointerEvents: !isStackView && isScrolling ? 'all' : 'none' }}
       >
-        <div className="stories-content" style={{ visibility: previewStory !== null ? 'hidden' : 'visible' }}>
+        <div className="stories-content" style={{ visibility: previewStory !== null || showAboutView ? 'hidden' : 'visible' }}>
           {stories.map((story, storyIndex) => (
             <React.Fragment key={storyIndex}>
               {story.parts.map((_, partIndex) => (
