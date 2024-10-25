@@ -624,7 +624,16 @@ const MTADataMap = ({ mapboxToken }) => {
     }
 
     const stationName = getStationName(hoveredLayer.object.station_id);
-    const totalRidership = filteredData.current.reduce((acc, d) => acc + d.ridership, 0);
+    let totalRidership;
+    if (hoveredLayer.object.station_id === selectedStation) {
+      totalRidership = filteredData.current.reduce((acc, d) => acc + d.ridership, 0);
+    } else {
+      const data = filteredData.current.find(d => d.station_id === hoveredLayer.object.station_id)
+      if (!data) {
+        return
+      }
+      totalRidership = data.ridership
+    }
     setHoverInfo({
       x: mouseX,
       y: mouseY,
@@ -636,7 +645,7 @@ const MTADataMap = ({ mapboxToken }) => {
       positionedLoosely: true,
     });
     
-  }, [setHoverInfo, filteredData])
+  }, [setHoverInfo, filteredData, selectedStation, selectedDirection])
 
   return (
     <div className="map-container">

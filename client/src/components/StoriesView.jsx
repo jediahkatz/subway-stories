@@ -148,12 +148,19 @@ const getStories = (StationHighlightComponent) => [
             An astronomical number of people flood into the city at rush hour every weekday to go to work. 
           </p>
           <p>
-            Economic activity is concentrated in the city's multiple central business districts. Midtown Manhattan is the densest business hub in the world, and the Financial District is not far behind. Downtown Brooklyn has grown significantly in recent decades, but still comes in a distant third. Let's take a look at each of them.
+            Economic activity is concentrated in the city's multiple central business districts. <StationHighlightComponent stationId="225">Midtown Manhattan</StationHighlightComponent> is the densest business hub in the world, and the <StationHighlightComponent stationId="628">Financial District</StationHighlightComponent> is not far behind. <StationHighlightComponent stationId="636">Downtown Brooklyn</StationHighlightComponent> has grown significantly in recent decades, but still comes in a distant third. Let's take a look at each of them.
           </p>
         </>,
         // Smith-9 Sts (F G), Bowling Green (4 5), 96 St (6), Mosholu Pkwy (4)
         // pointsToInclude: [stationIdToStation['238'], stationIdToStation['414'], stationIdToStation['396'], stationIdToStation['379']],
-        viewport: { longitude: -74.02, latitude: 40.68, zoom: 10.8, bearing: -110, pitch: 55 },
+        // viewport: { longitude: -74.02, latitude: 40.68, zoom: 10.8, bearing: -110, pitch: 55 },
+        viewport: {
+          latitude: 40.809,
+          longitude: -73.964,
+          zoom: 10.613,
+          bearing: 43.649,
+          pitch: 38.291,
+        },
         dataview: {
           station: ALL_STATIONS_ID,
           direction: 'comingFrom',
@@ -730,13 +737,26 @@ const StoriesView = React.memo(({
   const [isMoving, setIsMoving] = useState(false);
 
   const scrollAnimatingToPart = useRef(null);
+  const hoveredHighlightStationRef = useRef(null);
 
   const StationHighlightComponent = useCallback(({ children, stationId }) => (
-    <StationHighlight stationId={stationId} setHoveredStation={setHoveredStation} containerRef={containerRef}>
+    <StationHighlight stationId={stationId} setHoveredStation={setHoveredStation} containerRef={containerRef} hoveredStationRef={hoveredHighlightStationRef}>
       {children}
     </StationHighlight>
   ), [selectedStation, setHoveredStation]);
   const stories = useMemo(() => getStories(StationHighlightComponent), [getStories, StationHighlightComponent]);
+
+  const refreshHoveredStation = useCallback((mouseX, mouseY) => {
+    console.log({ hovered: hoveredHighlightStationRef.current })
+    if (hoveredHighlightStationRef.current) {
+      const station = stationIdToStation[hoveredHighlightStationRef.current];
+      const positionOnMap = [station.lon, station.lat]
+      const positionOnScreen = mapRef.current.project(positionOnMap)
+      refreshHoverInfo(positionOnScreen.x, positionOnScreen.y);
+    } else {
+      refreshHoverInfo(mouseX, mouseY);
+    }
+  }, [refreshHoverInfo, mapRef]);
 
   const getPadding = () => {
     return {
@@ -902,7 +922,7 @@ const StoriesView = React.memo(({
     if (animation) {
       const changeDataAndRefreshHoverInfo = (newDataSettings) => {
         handleDataSettingsChange(newDataSettings).then(() => {
-          refreshHoverInfo(mousePosition.current.x, mousePosition.current.y);
+          refreshHoveredStation(mousePosition.current.x, mousePosition.current.y);
         });
       }
 
@@ -1109,12 +1129,15 @@ const formatInfoBarText = (direction, stationId, hour, day, selectedMonths, anim
   );
 };
 
-const StationHighlight = ({ children, stationId, setHoveredStation, containerRef }) => {
+const StationHighlight = ({ children, stationId, setHoveredStation, containerRef, hoveredStationRef }) => {
+  
   const handleMouseEnter = () => {
+    hoveredStationRef.current = stationId;
     setHoveredStation(stationId);
   };
 
   const handleMouseLeave = (e) => {
+    hoveredStationRef.current = null;
     setHoveredStation(null);
   };
 
@@ -1123,6 +1146,7 @@ const StationHighlight = ({ children, stationId, setHoveredStation, containerRef
     if (!container) return;
 
     const handleScroll = () => {
+      hoveredStationRef.current = null;
       setHoveredStation(null);
     };
 
