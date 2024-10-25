@@ -182,24 +182,37 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            Midtown is massive, and its busiest stations are near commuter hubs like Grand Central that connect the city to the suburbs. But we can look at <StationHighlightComponent stationId="612">Lexington Avenue/51 St</StationHighlightComponent> as a representative example.
+            It's helpful to understand the main commuter gateways that bring suburbanites into the city. We can see them by viewing where the most people enter the subway system at rush hour.
           </p>
           <p>
-            Workers are coming from all over the city, especially from high-density areas with a direct trip to the station, like Jackson Heights in Queens. The largest local spike, <StationHighlightComponent stationId="397">86 St</StationHighlightComponent>, represents commuters from Yorkville, the most densely populated neighborhood in the city.
+            <StationHighlightComponent stationId="164">Penn</StationHighlightComponent> <StationHighlightComponent stationId="318">Station</StationHighlightComponent> is the busiest station complex in the Western Hemisphere, serving half a million passengers daily. It has both commuter and intercity routes.
           </p>
           <p>
-            But it's notable that a large share of riders appear to be traveling from outside New York, with spikes at <StationHighlightComponent stationId="164">Penn Station</StationHighlightComponent> and the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>.
+            <StationHighlightComponent stationId="610">Grand Central Terminal</StationHighlightComponent> is the main hub for travelers from Westchester and Connecticut.
+          </p>
+          <p>
+            The PATH train runs from nearby Jersey City, Hoboken, and Newark. It drops commuters off in several locations including <StationHighlightComponent stationId="607">33rd St</StationHighlightComponent> and <StationHighlightComponent stationId="624">World Trade Center</StationHighlightComponent>.
+          </p>
+          <p>
+            Finally, the largest spike is the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>.
           </p>
         </>,
-        // Bowling Green, 168 St-Washington Heights, Kew Gardens-Union Tpke, Prospect Park
-        pointsToInclude: [stationIdToStation['414'], stationIdToStation['605'], stationIdToStation['259'], stationIdToStation['42']],
+        // Smith-9 Sts (F G), Bowling Green (4 5), 96 St (6), Mosholu Pkwy (4)
+        // pointsToInclude: [stationIdToStation['238'], stationIdToStation['414'], stationIdToStation['396'], stationIdToStation['379']],
+        viewport: {
+          latitude: 40.810,
+          longitude: -74.047,
+          zoom: 10.770,
+          bearing: -19.414,
+          pitch: 59.758,
+        },
         dataview: {
-          station: '612', // Lexington Av/51 St
-          direction: 'comingFrom',
+          station: ALL_STATIONS_ID,
+          direction: 'goingTo',
           day: 'Wednesday',
           hour: 8,
           months: ALL_MONTHS,
-          barScale: 0.003,
+          barScale: 0.0005,
         },
       },
       {
@@ -211,7 +224,7 @@ const getStories = (StationHighlightComponent) => [
             "The foot traffic was insane, like difficult to even move at points. But it was nice that I always got a seat on the bus, since everybody was coming into the city at 8 AM on weekdays, not leaving the city."
           </p>
           <p>
-            Most commuters arriving at the Port Authority will remain in Manhattan. They go to Midtown the most, then the Financial District and Downtown Brooklyn, in accordance with the size of those business hubs.
+            <StationHighlightComponent stationId="612">Midtown</StationHighlightComponent> is the most popular destination for commuters arriving at the Port Authority, followed by the <StationHighlightComponent stationId="628">Financial District</StationHighlightComponent> and <StationHighlightComponent stationId="636">Downtown Brooklyn</StationHighlightComponent>, reflecting the prominence of these business centers.
           </p>
         </>,
         // Bowling Green, 168 St-Washington Heights, Kew Gardens-Union Tpke, Prospect Park
@@ -228,10 +241,36 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
+            Midtown is massive, and its busiest stations dominated by the commuter gateway hubs. We can look at <StationHighlightComponent stationId="612">Lexington Avenue/51 St</StationHighlightComponent> as a representative example.
+          </p>
+          <p>
+            Workers are coming from all over the city, especially from high-density areas with a direct trip to the station, like Jackson Heights in Queens. The largest local spike, <StationHighlightComponent stationId="397">86 St</StationHighlightComponent>, represents commuters from Yorkville, the most densely populated neighborhood in the city.
+          </p>
+          <p>
+            But it's notable that a large share of riders appear to be traveling from outside New York, with spikes at <StationHighlightComponent stationId="164">Penn Station</StationHighlightComponent> and the <StationHighlightComponent stationId="611">PABT</StationHighlightComponent>.
+          </p>
+        </>,
+        // Bowling Green, 168 St-Washington Heights, Kew Gardens-Union Tpke, Prospect Park
+        pointsToInclude: [stationIdToStation['414'], stationIdToStation['605'], stationIdToStation['259'], stationIdToStation['42']],
+        dataview: {
+          station: '612', // Lexington Av/51 St
+          direction: 'comingFrom',
+          day: 'Wednesday',
+          hour: 8,
+          months: ALL_MONTHS,
+          barScale: 0.003,
+        },
+      },
+      {
+        description: <>
+          <p>
             When we look at the ridership to the Financial District, anchored by the <StationHighlightComponent stationId="628">Fulton St</StationHighlightComponent> station, the pattern is strikingly different. By far the largest share of riders are coming from <StationHighlightComponent stationId="610">Grand Central</StationHighlightComponent>, dwarfing those from <StationHighlightComponent stationId="318">Penn Station</StationHighlightComponent> and the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>.
           </p>
           <p>
-            One explanation for this unbalance is that Grand Central is the main hub for commuters from wealthy suburbs like Scarsdale in Westchester and New Canaan in Connecticut. That demographic might be more likely to work in high-paying finance jobs than bus riders from New Jersey. And the completion of the Grand Central LIRR connection in January 2023 has drawn Long Islanders away from Penn Station as well. 
+            One explanation for this unbalance is that Grand Central brings commuters from wealthy suburbs like Scarsdale in Westchester and New Canaan, Connecticut. The completion of the Grand Central–LIRR connection in January 2023 has drawn Long Islanders away from Penn Station as well.
+          </p>
+          <p>
+            Those demographics may be more likely to work in high-paying finance jobs than bus riders from New Jersey. Plus, some Jersey commuters can take the PATH directly to the <StationHighlightComponent stationId="624">World Trade Center</StationHighlightComponent> and avoid the subway altogether.
           </p>
         </>,
         // Bowling Green, 168 St-Washington Heights, Kew Gardens-Union Tpke, Flatbush Ave-Brooklyn College
@@ -251,7 +290,7 @@ const getStories = (StationHighlightComponent) => [
             Many of Brooklyn's downtown offices are a short walk from the <StationHighlightComponent stationId="636">Jay St-MetroTech</StationHighlightComponent> stop. The MetroTech Center itself was recently renamed Brooklyn Commons, after it was purchased by the investment firm Brookfield.
           </p>
           <p>
-            There's still plenty of out-of-town traffic to Downtown Brooklyn, from the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>, <StationHighlightComponent stationId="164">Penn Station</StationHighlightComponent>, and the PATH train through the Financial District. But this business district draws a higher proportion of local commuters than Manhattan's larger corridors.
+            There's still plenty of out-of-town traffic to Downtown Brooklyn, from the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>, <StationHighlightComponent stationId="164">Penn Station</StationHighlightComponent>, and the <StationHighlightComponent stationId="628">PATH train</StationHighlightComponent>. But this business district draws a higher proportion of local commuters than Manhattan's larger corridors.
           </p>
           <p>
             It serves as a hub for workers across the borough, from <StationHighlightComponent stationId="240">Park Slope</StationHighlightComponent> to <StationHighlightComponent stationId="36">Bay Ridge</StationHighlightComponent> to <StationHighlightComponent stationId="188">East New York</StationHighlightComponent>. A number of people come all the way from Queens. Most of them must transfer through Manhattan, due to the lack of interborough connections.
@@ -328,7 +367,7 @@ const getStories = (StationHighlightComponent) => [
             A smaller but equally dedicated crowd, hundreds of young revelers embark on a weekly pilgrimage to Bushwick. Featuring megaclubs like House Of Yes and a range of bars like Carousel, Abe's Pagoda, and The Johnson's, the neighborhood is inundated with partygoers who liven the streets around the <StationHighlightComponent stationId="126">Jefferson St</StationHighlightComponent>, <StationHighlightComponent stationId="127">DeKalb Avenue</StationHighlightComponent>, and <StationHighlightComponent stationId="630">Myrtle-Wyckoff</StationHighlightComponent> stops along the L train. 
           </p>
           <p>
-            Considering, for example, the Jefferson St station at 11 PM on a Saturday evening, we can see the influx coming from Williamsburg, the East Village, the Lower East Side, and even as far as Times Square in Manhattan.
+            Considering, for example, the Jefferson St station at 11 PM on a Saturday evening, we can see the influx coming from <StationHighlightComponent stationId="120">Williamsburg</StationHighlightComponent>, the <StationHighlightComponent stationId="119">East Village</StationHighlightComponent>, the <StationHighlightComponent stationId="625">Lower East Side</StationHighlightComponent>, and even as far as <StationHighlightComponent stationId="611">Times Square</StationHighlightComponent> in Manhattan.
           </p>
         </>,
         // Halsey St (L), 8 Av (L), 59 St-Columbus Circle

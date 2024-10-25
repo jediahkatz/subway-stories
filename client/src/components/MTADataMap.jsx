@@ -657,7 +657,7 @@ const MTADataMap = ({ mapboxToken }) => {
         layers={[...mainStationIndicatorLayers, mapBarLayer]}
         onViewStateChange={({viewState}) => {
           const constrained = constrainViewState({viewState})
-          // console.log('constrained', constrained)
+          console.log('constrained', constrained)
           setViewport(constrained);
           saveStateToSessionStorage({ ...loadStateFromSessionStorage(), viewport: constrained });
           return constrained;
