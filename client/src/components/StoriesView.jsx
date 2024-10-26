@@ -96,8 +96,13 @@ const getStories = (StationHighlightComponent) => [
       },
       {
         description: <>
+          <AttributedPhoto 
+            src="/pabt.jpg" 
+            alt="Port Authority Bus Terminal" 
+            attribution="Photo: Ajay Suresh"
+          />
           <p>
-            The <StationHighlightComponent stationId="611">Port Authority Bus Terminal</StationHighlightComponent> is the busiest bus terminal in the world, with 225,000 passengers passing through on a typical weekday. One of our contributors, Marc Zitelli, recounts his experience commuting to New Jersey from the PABT while working on a political campaign.
+            The <StationHighlightComponent stationId="611">Port Authority Bus Terminal</StationHighlightComponent> is the busiest bus terminal in the world, with 225,000 passengers passing through on a typical weekday. Our contributor, Marc Zitelli, recounts his experience commuting to Jersey from the PABT while working on a political campaign.
           </p>
           <p>
             "The foot traffic was insane, like difficult to even move at points. But it was nice that I always got a seat on the bus, since everybody was coming into the city at 8 AM on weekdays, not leaving the city."
@@ -119,6 +124,11 @@ const getStories = (StationHighlightComponent) => [
       },
       {
         description: <>
+          <AttributedPhoto 
+            src="/midtown.jpg" 
+            alt="Midtown Manhattan skyline" 
+            attribution="Photo: Wikipedia"
+          />
           <p>
             Midtown is massive, and its busiest stations dominated by the commuter gateway hubs. We can look at <StationHighlightComponent stationId="612">Lexington Avenue/51 St</StationHighlightComponent> as a representative example.
           </p>
@@ -143,7 +153,7 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            When we look at the ridership to the Financial District, anchored by the <StationHighlightComponent stationId="628">Fulton St</StationHighlightComponent> station, the pattern is strikingly different. By far the largest share of riders are coming from <StationHighlightComponent stationId="610">Grand Central</StationHighlightComponent>, dwarfing those from <StationHighlightComponent stationId="318">Penn Station</StationHighlightComponent> and the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>.
+            When we look at ridership to the Financial District, anchored by the <StationHighlightComponent stationId="628">Fulton St</StationHighlightComponent> station, the pattern is strikingly different. By far the largest share of riders are coming from <StationHighlightComponent stationId="610">Grand Central</StationHighlightComponent>, dwarfing those from <StationHighlightComponent stationId="318">Penn Station</StationHighlightComponent> and the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>.
           </p>
           <p>
             One explanation for this unbalance is that Grand Central brings commuters from wealthy suburbs like Scarsdale in Westchester and New Canaan, Connecticut. The completion of the Grand Central–LIRR connection in January 2023 has drawn Long Islanders away from Penn Station as well.
@@ -165,6 +175,11 @@ const getStories = (StationHighlightComponent) => [
       },
       {
         description: <>
+          <AttributedPhoto 
+            src="/commons.jpg" 
+            alt="Office workers on their lunch break at Brooklyn Commons" 
+            attribution="Photo: Downtown Brooklyn Partnership"
+          />
           <p>
             Many of Brooklyn's downtown offices are a short walk from the <StationHighlightComponent stationId="636">Jay St-MetroTech</StationHighlightComponent> stop. The MetroTech Center itself was recently renamed Brooklyn Commons, after it was purchased by the investment firm Brookfield.
           </p>
@@ -222,6 +237,11 @@ const getStories = (StationHighlightComponent) => [
       },
       {
         description: <>
+          <AttributedPhoto 
+            src="/seward.jpg" 
+            alt="People sitting on benches in Seward Park" 
+            attribution="Photo: NYC Parks"
+          />
           <p>
             In her high school years, Anna joined the Saturday shuffle, taking the D train to <StationHighlightComponent stationId="231">Grand St</StationHighlightComponent> to play volleyball in Seward Park. Many of her friends held part-time jobs in the neighborhood. For these high school students without cars, downtown Manhattan served as a central and invigorating meeting point. 
           </p>
@@ -263,6 +283,11 @@ const getStories = (StationHighlightComponent) => [
       },
       {
         description: <>
+          <AttributedPhoto 
+            src="/flushing.png" 
+            alt="Bustling intersection in Flushing with colorful signs" 
+            attribution="Photo: Wikipedia"
+          /> 
           <p>
             Increasingly prosperous—and also crowded—Flushing is now the fourth largest business district in New York City. During rush hour, a surge of accountants, teachers, nurses, and retail workers pour in.
           </p>
@@ -425,6 +450,11 @@ const getStories = (StationHighlightComponent) => [
       },
       {
         description: <>
+          <AttributedPhoto 
+            src="/yes.jpg" 
+            alt="Early morning at House of Yes" 
+            attribution="Photo: House of Yes"
+          />
           <p>
             Known for its high concentration of “open until the sun comes up" bars, Bushwick features a crowd eager to stay out later than most. 
           </p>
@@ -531,11 +561,16 @@ const getStories = (StationHighlightComponent) => [
       },
       {
         description: <>
+          <AttributedPhoto 
+            src="/jackson-heights.jpg" 
+            alt="Little India inJackson Heights, Queens" 
+            attribution="Photo: nyctourism.com"
+          />
           <p>
             <StationHighlightComponent stationId="616">Jackson Heights</StationHighlightComponent> is one of the most culturally diverse areas in Queens, dubbed "the whole world in one neighborhood." It's home to a large South Asian and Latin population. 
           </p>
           <p>
-            Rahmn, who works at the 73rd St Halal Food truck, starts his Saturday shift by sunrise. "The weekend morning, that is a busy time. Lots of people going to work." Of his clientele, "many [are] Chinese restaurant workers, some self-employed, everybody is different."
+            Rahmn, who works at the 73rd St Halal Food truck, starts his Saturday shift by sunrise. "The weekend morning, that is a busy time. Lots of people going to work." He notes of his clientele, "many [are] Chinese restaurant workers, some self-employed, everybody is different."
           </p>
           <p>
             The data shows that on Friday morning, the number of commuters is still about 85% of its Wednesday peak. By Saturday, 38% continue to ride the train—a rate more than twice that of the wealthier neighborhoods.
@@ -642,6 +677,11 @@ const getStories = (StationHighlightComponent) => [
       },
       {
         description: <>
+          <AttributedPhoto 
+            src="/ballboy.jpg" 
+            alt="Eitan stands behind player Philipp Kohlschreiber at the US Open" 
+            attribution="Photo: Eitan Darwish"
+          />
           <p>
             In late summer, things get even more packed as the US Open kicks off. Eitan Darwish, a former ball boy, used to take the 7 to the Billie Jean King Tennis Center every morning. 
           </p>
@@ -707,6 +747,11 @@ const getStories = (StationHighlightComponent) => [
       },
       {
         description: <>
+          <AttributedPhoto 
+            src="/qnm.jpg" 
+            alt="A large crowd and vendor stalls at the Queens Night Market" 
+            attribution="Photo: Queens Night Market"
+          />
           <p>
             Since 2015, there's one more reason for New Yorkers to head to Flushing Meadows: the Queens Night Market.
           </p>
