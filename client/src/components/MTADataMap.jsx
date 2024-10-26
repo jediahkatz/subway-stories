@@ -616,10 +616,12 @@ const MTADataMap = ({ mapboxToken }) => {
 
   const refreshHoverInfo = useCallback((mouseX, mouseY) => {
     if (!deckglRef.current) {
+      setHoverInfo(null);
       return
     }
     const hoveredLayer = deckglRef.current.pickObject({ x: mouseX, y: mouseY })
     if (!hoveredLayer) {
+      setHoverInfo(null);
       return
     }
 
@@ -630,6 +632,7 @@ const MTADataMap = ({ mapboxToken }) => {
     } else {
       const data = filteredData.current.find(d => d.station_id === hoveredLayer.object.station_id)
       if (!data) {
+        setHoverInfo(null);
         return
       }
       totalRidership = data.ridership

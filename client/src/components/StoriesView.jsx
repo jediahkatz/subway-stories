@@ -739,8 +739,12 @@ const FLOATING_INFO_BAR_HEIGHT = 54;
 const FLOATING_INFO_BAR_OFFSET = 20;
 const COLOR_LEGEND_WIDTH_AND_OFFSET = 105;
 
-const StoryBox = ({ story, partIndex = 0, isPreview = false }) => (
-  <div className={`stories-box ${isPreview ? 'preview' : ''}`}>
+const StoryBox = ({ story, partIndex = 0, isPreview = false, isMouseOverStoryBox }) => (
+  <div 
+    className={`stories-box ${isPreview ? 'preview' : ''}`} 
+    onMouseEnter={() => isMouseOverStoryBox.current = true}
+    onMouseLeave={() => isMouseOverStoryBox.current = false}
+  >
     {story.title !== undefined && partIndex === 0 && <h2>{story.title}</h2>}
     <div className="story-content">
       {story.parts[partIndex].description}
@@ -780,6 +784,7 @@ const StoriesView = React.memo(({
 
   const scrollAnimatingToPart = useRef(null);
   const hoveredHighlightStationRef = useRef(null);
+  const isMouseOverStoryBox = useRef(false);
 
   const StationHighlightComponent = useCallback(({ children, stationId }) => (
     <StationHighlight stationId={stationId} setHoveredStation={setHoveredStation} containerRef={containerRef} hoveredStationRef={hoveredHighlightStationRef}>
@@ -789,13 +794,9 @@ const StoriesView = React.memo(({
   const stories = useMemo(() => getStories(StationHighlightComponent), [getStories, StationHighlightComponent]);
 
   const refreshHoveredStation = useCallback((mouseX, mouseY) => {
-    console.log({ hovered: hoveredHighlightStationRef.current })
     if (hoveredHighlightStationRef.current) {
-      const station = stationIdToStation[hoveredHighlightStationRef.current];
-      const positionOnMap = [station.lon, station.lat]
-      const positionOnScreen = mapRef.current.project(positionOnMap)
-      refreshHoverInfo(positionOnScreen.x, positionOnScreen.y);
-    } else {
+      setHoveredStation(hoveredHighlightStationRef.current);
+    } else if (!isMouseOverStoryBox.current) {
       refreshHoverInfo(mouseX, mouseY);
     }
   }, [refreshHoverInfo, mapRef]);
@@ -1058,6 +1059,7 @@ const StoriesView = React.memo(({
                   key={`${storyIndex}-${partIndex}`}
                   story={story}
                   partIndex={partIndex}
+                  isMouseOverStoryBox={isMouseOverStoryBox}
                 />
               ))}
             </React.Fragment>
