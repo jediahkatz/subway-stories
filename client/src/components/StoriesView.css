@@ -175,7 +175,7 @@
 }
 
 .story-line {
-  width: 30px;
+  width: 40px;
   height: 4px;
   background-color: #555;
   border-radius: 7px;
@@ -391,8 +391,7 @@
 
 .collapsing .story-card {
   height: var(--collapsed-line-height);
-  width: 30px;
-  /* transform: translateY(calc((var(--story-height) - var(--collapsed-line-height)) / 2)); */
+  width: 40px;
   background-color: #555;
   opacity: 1;
   border-radius: 7px;
