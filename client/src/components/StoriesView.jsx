@@ -13,127 +13,6 @@ export const ALL_MONTHS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
 const getStories = (StationHighlightComponent) => [
   {
-    title: 'A Tale of Five Chinatowns',
-    parts: [
-      {
-        description: <>
-          <AttributedPhoto 
-            src="/chinatown.jpeg" 
-            alt="Busy street in Chinatown with colorful signs" 
-            attribution="Photo: Peeter Viisimaa"
-          />
-          <p>
-            <span className="opening-phrase">"They go in the morning for Dim Sum,"</span>
-            {" "}explains Anna Li, 28, when I ask why hundreds of people flock from her neighborhood in far Brooklyn to Chinatown, Manhattan at 8 a.m. every Saturday.
-          </p>
-          <p>
-            <StationHighlightComponent stationId="68">Bensonhurst</StationHighlightComponent>, where Anna has lived since college, and <StationHighlightComponent stationId="59">Sunset Park</StationHighlightComponent>, where she grew up, house the two largest Chinese communities in Brooklyn. 
-            Although younger generations of Chinese are choosing more and more to settle away from the din of Manhattan, the original Chinatown is still a crucial gathering place for the community.
-          </p>
-        </>,
-        // Spring St (6), Coney Island-Stillwell Av (D F N Q), and Bay Ridge-95 St (R)
-        pointsToInclude: [stationIdToStation['409'], stationIdToStation['58'], stationIdToStation['39']], 
-        dataview: {
-          station: '231', // Grand St (B D)
-          direction: 'comingFrom',
-          day: 'Saturday',
-          hour: 8,
-          months: ALL_MONTHS,
-          visibleLines: ['B', 'D', 'N', 'F', 'R', 'Q'],
-          barScale: 0.008,
-        },
-      },
-      {
-        description: <>
-          <p>
-            In her high school years, Anna joined the Saturday shuffle, taking the D train to <StationHighlightComponent stationId="231">Grand St</StationHighlightComponent> to play volleyball in Seward Park. Many of her friends held part-time jobs in the neighborhood. For these high school students without cars, downtown Manhattan served as a central and invigorating meeting point. 
-          </p>
-          <p>
-            Even the adults, who would normally drive when in Brooklyn, chose to take the subway into Chinatown to attend to business and call on older family members. “The elders who live in Chinatown, we don't make them come to us. We come to them.”
-          </p>
-        </>,
-        pointsToInclude: [stationIdToStation['409'], stationIdToStation['58'], stationIdToStation['39']],
-        dataview: {
-          station: '231', // Grand St (B D)
-          direction: 'comingFrom',
-          day: 'Saturday',
-          hour: 8,
-          months: ALL_MONTHS,
-          visibleLines: ['D'],
-          barScale: 0.008,
-        },
-      },
-      {
-        description: <>
-          <p>
-            The Brooklyn Chinese aren't the only ones heading into Manhattan's Chinatown on the weekend. A smaller but just as determined handful makes the even longer trek from <StationHighlightComponent stationId="447">Flushing</StationHighlightComponent>, Queens, catching the 7 train into Manhattan and transferring downtown. 
-          </p>
-          <p>
-            But Flushing, too, draws crowds from near and far. Home to the largest Chinatown outside of Asia, the neighborhood has become a mammoth destination in its own right. 
-          </p>
-        </>,
-        // Grand St (B D) and Flushing-Main St (7)
-        pointsToInclude: [stationIdToStation['231'], stationIdToStation['447']],
-        dataview: {
-          station: '231', // Grand St (B D)
-          direction: 'comingFrom',
-          day: 'Saturday',
-          hour: 8,
-          months: ALL_MONTHS,
-          visibleLines: ['7', '6', 'D', 'N'],
-          barScale: 0.008,
-        },
-      },
-      {
-        description: <>
-          <p>
-            Increasingly prosperous—and also crowded—Flushing is now the fourth largest business district in New York City. During rush hour, a surge of accountants, teachers, nurses, and retail workers pour in.
-          </p>
-          <p>
-            Many of them hail from mainland Chinese enclaves in the satellite neighborhoods of <StationHighlightComponent stationId="452">Elmhurst</StationHighlightComponent> and <StationHighlightComponent stationId="450">Corona</StationHighlightComponent>. In Flushing, the chatter one hears is often in Mandarin, unlike the Cantonese more commonly thrown around in Manhattan's Chinatown and Bensonhurst.
-          </p>
-        </>,
-        // viewport: { longitude: -73.882, latitude: 40.745, zoom: 12, bearing: 0, pitch: 0 },
-        // Flushing-Main St (7) and Vernon Blvd-Jackson Av (7)
-        pointsToInclude: [stationIdToStation['447'], stationIdToStation['464']],
-        dataview: {
-          station: '447', // Flushing-Main St (7)
-          direction: 'comingFrom',
-          day: 'Monday',
-          hour: 7,
-          months: ALL_MONTHS,
-          visibleLines: ['7'],
-          barScale: 0.004,
-        },
-      },
-      {
-        description: <>
-          <p>
-            On weekends, straphangers pour back into Flushing for another reason: the food. The neighborhood is a mecca for regional cuisine, featuring staple dishes like Hunan stewed fish, Shanghai braised pork belly, and bing tanghulu (candied hawthorn fruits).
-          </p>
-          <p>
-            Restaurant workers are the first out the door at 7 a.m. Come lunchtime and dinnertime, the Corona crowd is joined by a new lot of younger, affluent Chinese from Manhattan and <StationHighlightComponent stationId="461">Long Island City</StationHighlightComponent>. 
-          </p>
-          <p>
-            While LIC isn't considered a Chinatown on its own, its population has soared as young professionals and tech workers seeking newer apartment buildings close to both Flushing and Midtown have set up camp. <span className="story-end-marker"/>
-          </p>
-        </>,
-        // viewport: { longitude: -73.882, latitude: 40.745, zoom: 12, bearing: 0, pitch: 0 },
-        // Flushing-Main St (7) and Vernon Blvd-Jackson Av (7), 34th St-Hudson Yards (7)
-        pointsToInclude: [stationIdToStation['447'], stationIdToStation['464'], stationIdToStation['471']],
-        dataview: {
-          station: '447', // Flushing-Main St (7)
-          direction: 'comingFrom',
-          day: 'Saturday',
-          hour: 17,
-          months: ALL_MONTHS,
-          visibleLines: ['7'],
-          barScale: 0.008,
-        },
-      }
-    ]
-  },
-  {
     title: 'How New York City Works',
     parts: [
       {
@@ -311,6 +190,127 @@ const getStories = (StationHighlightComponent) => [
     ]
   },
   {
+    title: 'A Tale of Five Chinatowns',
+    parts: [
+      {
+        description: <>
+          <AttributedPhoto 
+            src="/chinatown.jpeg" 
+            alt="Busy street in Chinatown with colorful signs" 
+            attribution="Photo: Peeter Viisimaa"
+          />
+          <p>
+            <span className="opening-phrase">"They go in the morning for Dim Sum,"</span>
+            {" "}explains Anna Li, 28, when I ask why hundreds of people flock from her neighborhood in far Brooklyn to Chinatown, Manhattan at 8 a.m. every Saturday.
+          </p>
+          <p>
+            <StationHighlightComponent stationId="68">Bensonhurst</StationHighlightComponent>, where Anna has lived since college, and <StationHighlightComponent stationId="59">Sunset Park</StationHighlightComponent>, where she grew up, house the two largest Chinese communities in Brooklyn. 
+            Although younger generations of Chinese are choosing more and more to settle away from the din of Manhattan, the original Chinatown is still a crucial gathering place for the community.
+          </p>
+        </>,
+        // Spring St (6), Coney Island-Stillwell Av (D F N Q), and Bay Ridge-95 St (R)
+        pointsToInclude: [stationIdToStation['409'], stationIdToStation['58'], stationIdToStation['39']], 
+        dataview: {
+          station: '231', // Grand St (B D)
+          direction: 'comingFrom',
+          day: 'Saturday',
+          hour: 8,
+          months: ALL_MONTHS,
+          visibleLines: ['B', 'D', 'N', 'F', 'R', 'Q'],
+          barScale: 0.008,
+        },
+      },
+      {
+        description: <>
+          <p>
+            In her high school years, Anna joined the Saturday shuffle, taking the D train to <StationHighlightComponent stationId="231">Grand St</StationHighlightComponent> to play volleyball in Seward Park. Many of her friends held part-time jobs in the neighborhood. For these high school students without cars, downtown Manhattan served as a central and invigorating meeting point. 
+          </p>
+          <p>
+            Even the adults, who would normally drive when in Brooklyn, chose to take the subway into Chinatown to attend to business and call on older family members. “The elders who live in Chinatown, we don't make them come to us. We come to them.”
+          </p>
+        </>,
+        pointsToInclude: [stationIdToStation['409'], stationIdToStation['58'], stationIdToStation['39']],
+        dataview: {
+          station: '231', // Grand St (B D)
+          direction: 'comingFrom',
+          day: 'Saturday',
+          hour: 8,
+          months: ALL_MONTHS,
+          visibleLines: ['D'],
+          barScale: 0.008,
+        },
+      },
+      {
+        description: <>
+          <p>
+            The Brooklyn Chinese aren't the only ones heading into Manhattan's Chinatown on the weekend. A smaller but just as determined handful makes the even longer trek from <StationHighlightComponent stationId="447">Flushing</StationHighlightComponent>, Queens, catching the 7 train into Manhattan and transferring downtown. 
+          </p>
+          <p>
+            But Flushing, too, draws crowds from near and far. Home to the largest Chinatown outside of Asia, the neighborhood has become a mammoth destination in its own right. 
+          </p>
+        </>,
+        // Grand St (B D) and Flushing-Main St (7)
+        pointsToInclude: [stationIdToStation['231'], stationIdToStation['447']],
+        dataview: {
+          station: '231', // Grand St (B D)
+          direction: 'comingFrom',
+          day: 'Saturday',
+          hour: 8,
+          months: ALL_MONTHS,
+          visibleLines: ['7', '6', 'D', 'N'],
+          barScale: 0.008,
+        },
+      },
+      {
+        description: <>
+          <p>
+            Increasingly prosperous—and also crowded—Flushing is now the fourth largest business district in New York City. During rush hour, a surge of accountants, teachers, nurses, and retail workers pour in.
+          </p>
+          <p>
+            Many of them hail from mainland Chinese enclaves in the satellite neighborhoods of <StationHighlightComponent stationId="452">Elmhurst</StationHighlightComponent> and <StationHighlightComponent stationId="450">Corona</StationHighlightComponent>. In Flushing, the chatter one hears is often in Mandarin, unlike the Cantonese more commonly thrown around in Manhattan's Chinatown and Bensonhurst.
+          </p>
+        </>,
+        // viewport: { longitude: -73.882, latitude: 40.745, zoom: 12, bearing: 0, pitch: 0 },
+        // Flushing-Main St (7) and Vernon Blvd-Jackson Av (7)
+        pointsToInclude: [stationIdToStation['447'], stationIdToStation['464']],
+        dataview: {
+          station: '447', // Flushing-Main St (7)
+          direction: 'comingFrom',
+          day: 'Monday',
+          hour: 7,
+          months: ALL_MONTHS,
+          visibleLines: ['7'],
+          barScale: 0.004,
+        },
+      },
+      {
+        description: <>
+          <p>
+            On weekends, straphangers pour back into Flushing for another reason: the food. The neighborhood is a mecca for regional cuisine, featuring staple dishes like Hunan stewed fish, Shanghai braised pork belly, and bing tanghulu (candied hawthorn fruits).
+          </p>
+          <p>
+            Restaurant workers are the first out the door at 7 a.m. Come lunchtime and dinnertime, the Corona crowd is joined by a new lot of younger, affluent Chinese from Manhattan and <StationHighlightComponent stationId="461">Long Island City</StationHighlightComponent>. 
+          </p>
+          <p>
+            While LIC isn't considered a Chinatown on its own, its population has soared as young professionals and tech workers seeking newer apartment buildings close to both Flushing and Midtown have set up camp. <span className="story-end-marker"/>
+          </p>
+        </>,
+        // viewport: { longitude: -73.882, latitude: 40.745, zoom: 12, bearing: 0, pitch: 0 },
+        // Flushing-Main St (7) and Vernon Blvd-Jackson Av (7), 34th St-Hudson Yards (7)
+        pointsToInclude: [stationIdToStation['447'], stationIdToStation['464'], stationIdToStation['471']],
+        dataview: {
+          station: '447', // Flushing-Main St (7)
+          direction: 'comingFrom',
+          day: 'Saturday',
+          hour: 17,
+          months: ALL_MONTHS,
+          visibleLines: ['7'],
+          barScale: 0.008,
+        },
+      }
+    ]
+  },
+  {
     title: 'Nightlife Along the L Train',
     parts: [
       {
@@ -461,6 +461,141 @@ const getStories = (StationHighlightComponent) => [
     ]
   },
   {
+    title: 'The Weekend Shift',
+    parts: [
+      {
+        description: <>
+          <AttributedPhoto 
+            src="/foodtrucks.jpg" 
+            alt="A man sitting outside his food truck near Penn Station" 
+            attribution="Photo: David Kidd/Governing"
+          />
+          <p>
+            Rush hour traffic peaks on Wednesday. But by Friday, some workers have more flexibility.
+          </p>
+          <p>
+            Such is the case at <StationHighlightComponent stationId="629">Metropolitan Av</StationHighlightComponent>, a trendy area in Williamsburg, Brooklyn. Once an up-and-coming neighborhood, a wave of gentrification has cemented its status as a home for wealthy young creatives and tech workers.
+          </p>
+          <p>
+            From Wednesday to Friday, the number of people heading catching the train at 8 a.m. drops to about 55% of its peak. This may reflect the effects of work-from-home arrangements in a post-pandemic world. By Saturday, that number is down to 15% as residents enjoy their weekend.
+          </p>
+        </>,
+        // 59 St-Columbus Circle, Bowling Green, Carroll St, Myrtle-Wyckoff
+        pointsToInclude: [stationIdToStation['614'], stationIdToStation['414'], stationIdToStation['237'], stationIdToStation['630']], 
+        dataview: {
+          station: '629', // Metropolitan Av
+          direction: 'goingTo',
+          day: 'Wednesday',
+          hour: 8,
+          months: ALL_MONTHS,
+          barScale: 0.007,
+          animate: {
+            field: 'day',
+            frames: [
+              { value: 'Wednesday', duration: 2500 },
+              { value: 'Friday', duration: 2500 },
+              { value: 'Saturday', duration: 2500 },
+              { value: 'Sunday', duration: 2500 },
+            ]
+          }
+        },
+      },
+      {
+        description: <> 
+          <p>
+            The <StationHighlightComponent stationId="397">Upper East Side</StationHighlightComponent> is one of the more affluent districts in NYC, known for upscale shopping and impressive residences. With the Met and the Guggenheim nearby, it attracts many tourists seeking a dose of the city's art scene. Its east side, Yorkville, has seen a wave of new development since the arrival of the Second Avenue Subway in 2017.
+          </p>
+          <p>
+            Curiously, the rush hour traffic going into the weekend follows exactly the same pattern we saw in Williamsburg. On Friday morning, only 55% of peak traffic remains. By Saturday, that ridership is again down to just 15%.
+          </p>
+        </>,
+        // 161st-Yankee Stadium, Times Sq-42 St, Bowling Green (4 5)
+        pointsToInclude: [stationIdToStation['604'], stationIdToStation['611'], stationIdToStation['414']], 
+        dataview: {
+          station: '397', // 86 St (4 5 6)
+          direction: 'goingTo',
+          day: 'Wednesday',
+          hour: 8,
+          months: ALL_MONTHS,
+          barScale: 0.003,
+          animate: {
+            field: 'day',
+            frames: [
+              { value: 'Wednesday', duration: 2500 },
+              { value: 'Friday', duration: 2500 },
+              { value: 'Saturday', duration: 2500 },
+              { value: 'Sunday', duration: 2500 },
+            ]
+          }
+        },
+      },
+      {
+        description: <>
+          <p>
+            <StationHighlightComponent stationId="616">Jackson Heights</StationHighlightComponent> is one of the most culturally diverse areas in Queens, dubbed "the whole world in one neighborhood." It's home to a large South Asian and Latin population. 
+          </p>
+          <p>
+            Rahmn, who works at the 73rd St Halal Food truck, starts his Saturday shift by sunrise. "The weekend morning, that is a busy time. Lots of people going to work." Of his clientele, "many [are] Chinese restaurant workers, some self-employed, everybody is different."
+          </p>
+          <p>
+            The data shows that on Friday morning, the number of commuters is still about 85% of its Wednesday peak. By Saturday, 38% continue to ride the train—a rate more than twice that of the wealthier neighborhoods.
+          </p>
+        </>,
+        // Flushing-Main St, Times Sq-42 St, Bowling Green (4 5)
+        pointsToInclude: [stationIdToStation['447'], stationIdToStation['611'], stationIdToStation['414']], 
+        dataview: {
+          station: '616', // Jackson Heights-Roosevelt Av (7 E F M R)
+          direction: 'goingTo',
+          day: 'Wednesday',
+          hour: 8,
+          months: ALL_MONTHS,
+          barScale: 0.007,
+          animate: {
+            field: 'day',
+            frames: [
+              { value: 'Wednesday', duration: 2500 },
+              { value: 'Friday', duration: 2500 },
+              { value: 'Saturday', duration: 2500 },
+              { value: 'Sunday', duration: 2500 },
+            ]
+          }
+        },
+      },
+      {
+        description: <>
+          <p>
+            <StationHighlightComponent stationId="604">Concourse</StationHighlightComponent> is neighborhood in the Bronx whose commercial and residential buildings sit in the shadow of Yankee Stadium. Mostly Latino and Black communities reside in the South Bronx. Relative to the rest of the city, it is a lower-income neighborhood. 
+          </p>
+          <p>
+            Similar to Jackson Heights, 86% of peak commuters head to Manhattan early on Friday mornings. On Saturday, the rate matches Jackson Heights at 38%.
+          </p>
+          <p>
+            In 2022, the Times declared that "<a href="https://www.nytimes.com/2022/04/01/style/four-day-workweek-friday.html" target="blank">Fridays are for free time</a>." While data supports their claim in wealthier, white-collar neighborhoods, that option is often out of reach for working-class communities. <span className="story-end-marker"/>
+          </p>
+        </>,
+        // Woodlawn, Bowling Green
+        pointsToInclude: [stationIdToStation['378'], stationIdToStation['414']], 
+        dataview: {
+          station: '604', // 161 St-Yankee Stadium
+          direction: 'goingTo',
+          day: 'Wednesday',
+          hour: 8,
+          months: ALL_MONTHS,
+          barScale: 0.013,
+          animate: {
+            field: 'day',
+            frames: [
+              { value: 'Wednesday', duration: 2500 },
+              { value: 'Friday', duration: 2500 },
+              { value: 'Saturday', duration: 2500 },
+              { value: 'Sunday', duration: 2500 },
+            ]
+          }
+        },
+      },
+    ]
+  },
+  {
     title: 'Fans at Flushing Meadows',
     parts: [
       {
@@ -596,141 +731,6 @@ const getStories = (StationHighlightComponent) => [
       },
     ]
   },
-  {
-    title: 'The Weekend Shift',
-    parts: [
-      {
-        description: <>
-          <AttributedPhoto 
-            src="/foodtrucks.jpg" 
-            alt="A man sitting outside his food truck near Penn Station" 
-            attribution="Photo: David Kidd/Governing"
-          />
-          <p>
-            Rush hour traffic peaks on Wednesday. But by Friday, some workers have more flexibility.
-          </p>
-          <p>
-            Such is the case at <StationHighlightComponent stationId="629">Metropolitan Av</StationHighlightComponent>, a trendy area in Williamsburg, Brooklyn. Once an up-and-coming neighborhood, a wave of gentrification has cemented its status as a home for wealthy young creatives and tech workers.
-          </p>
-          <p>
-            From Wednesday to Friday, the number of people heading catching the train at 8 a.m. drops to about 55% of its peak. This may reflect the effects of work-from-home arrangements in a post-pandemic world. By Saturday, that number is down to 15% as residents enjoy their weekend.
-          </p>
-        </>,
-        // 59 St-Columbus Circle, Bowling Green, Carroll St, Myrtle-Wyckoff
-        pointsToInclude: [stationIdToStation['614'], stationIdToStation['414'], stationIdToStation['237'], stationIdToStation['630']], 
-        dataview: {
-          station: '629', // Metropolitan Av
-          direction: 'goingTo',
-          day: 'Wednesday',
-          hour: 8,
-          months: ALL_MONTHS,
-          barScale: 0.007,
-          animate: {
-            field: 'day',
-            frames: [
-              { value: 'Wednesday', duration: 2500 },
-              { value: 'Friday', duration: 2500 },
-              { value: 'Saturday', duration: 2500 },
-              { value: 'Sunday', duration: 2500 },
-            ]
-          }
-        },
-      },
-      {
-        description: <> 
-          <p>
-            The <StationHighlightComponent stationId="397">Upper East Side</StationHighlightComponent> is one of the more affluent districts in NYC, known for upscale shopping and impressive residences. With the Met and the Guggenheim nearby, it attracts many tourists seeking a dose of the city's art scene. Its east side, Yorkville, has seen a wave of new development since the arrival of the Second Avenue Subway in 2017.
-          </p>
-          <p>
-            Curiously, the rush hour traffic going into the weekend follows exactly the same pattern we saw in Williamsburg. On Friday morning, only 55% of peak traffic remains. By Saturday, that ridership is again down to just 15%.
-          </p>
-        </>,
-        // 161st-Yankee Stadium, Times Sq-42 St, Bowling Green (4 5)
-        pointsToInclude: [stationIdToStation['604'], stationIdToStation['611'], stationIdToStation['414']], 
-        dataview: {
-          station: '397', // 86 St (4 5 6)
-          direction: 'goingTo',
-          day: 'Wednesday',
-          hour: 8,
-          months: ALL_MONTHS,
-          barScale: 0.003,
-          animate: {
-            field: 'day',
-            frames: [
-              { value: 'Wednesday', duration: 2500 },
-              { value: 'Friday', duration: 2500 },
-              { value: 'Saturday', duration: 2500 },
-              { value: 'Sunday', duration: 2500 },
-            ]
-          }
-        },
-      },
-      {
-        description: <>
-          <p>
-            <StationHighlightComponent stationId="616">Jackson Heights</StationHighlightComponent> is one of the most culturally diverse areas in Queens, dubbed "the whole world in one neighborhood." It's home to a large South Asian and Latin population. 
-          </p>
-          <p>
-            Rahmn, who works at the 73rd St Halal Food truck, starts his Saturday shift by sunrise. "The weekend morning, that is a busy time. Lots of people going to work." Of his clientele, "many [are] Chinese restaurant workers, some self-employed, everybody is different."
-          </p>
-          <p>
-            The data shows that on Friday morning, the number of commuters is still about 85% of its Wednesday peak. By Saturday, 38% continue to ride the train—a rate more than twice that of the wealthier neighborhoods.
-          </p>
-        </>,
-        // Flushing-Main St, Times Sq-42 St, Bowling Green (4 5)
-        pointsToInclude: [stationIdToStation['447'], stationIdToStation['611'], stationIdToStation['414']], 
-        dataview: {
-          station: '616', // Jackson Heights-Roosevelt Av (7 E F M R)
-          direction: 'goingTo',
-          day: 'Wednesday',
-          hour: 8,
-          months: ALL_MONTHS,
-          barScale: 0.007,
-          animate: {
-            field: 'day',
-            frames: [
-              { value: 'Wednesday', duration: 2500 },
-              { value: 'Friday', duration: 2500 },
-              { value: 'Saturday', duration: 2500 },
-              { value: 'Sunday', duration: 2500 },
-            ]
-          }
-        },
-      },
-      {
-        description: <>
-          <p>
-            <StationHighlightComponent stationId="604">Concourse</StationHighlightComponent> is neighborhood in the Bronx whose commercial and residential buildings sit in the shadow of Yankee Stadium. Mostly Latino and Black communities reside in the South Bronx. Relative to the rest of the city, it is a lower-income neighborhood. 
-          </p>
-          <p>
-            Similar to Jackson Heights, 86% of peak commuters head to Manhattan early on Friday mornings. On Saturday, the rate matches Jackson Heights at 38%.
-          </p>
-          <p>
-            In 2022, the Times declared that "<a href="https://www.nytimes.com/2022/04/01/style/four-day-workweek-friday.html" target="blank">Fridays are for free time</a>." While data supports their claim in wealthier, white-collar neighborhoods, that option is often out of reach for working-class communities. <span className="story-end-marker"/>
-          </p>
-        </>,
-        // Woodlawn, Bowling Green
-        pointsToInclude: [stationIdToStation['378'], stationIdToStation['414']], 
-        dataview: {
-          station: '604', // 161 St-Yankee Stadium
-          direction: 'goingTo',
-          day: 'Wednesday',
-          hour: 8,
-          months: ALL_MONTHS,
-          barScale: 0.013,
-          animate: {
-            field: 'day',
-            frames: [
-              { value: 'Wednesday', duration: 2500 },
-              { value: 'Friday', duration: 2500 },
-              { value: 'Saturday', duration: 2500 },
-              { value: 'Sunday', duration: 2500 },
-            ]
-          }
-        },
-      },
-    ]
-  }
 ];
 
 // todo: make this dynamic based on the width of the screen

@@ -19,9 +19,9 @@ export default function AboutView({ toggleAboutView }) {
 
             <div className="credits">
                 <h4>Proudly brought to you by this New York-based team:</h4>
-                <p>Jediah Katz (Development, Data Analysis, Storytelling & Design)</p>
+                <p>Jediah Katz (Development, Data Analysis, Reporting & Design)</p>
                 <p>Julia Han (Design)</p>
-                <p>Marc Zitelli (Data Analysis & Storytelling)</p>
+                <p>Marc Zitelli (Data Analysis & Reporting)</p>
 
                 <h4>Special thanks to:</h4>
                 <p>Christina Lu, Michael Donnelly, Ricky Grullon, Tyler Hutton</p>
