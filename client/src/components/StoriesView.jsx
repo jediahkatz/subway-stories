@@ -182,7 +182,7 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            It's helpful to understand the main commuter gateways that bring suburbanites into the city. We can see them by viewing where the most people enter the subway system at rush hour.
+            First, it's helpful to know the main commuter gateways that bring suburbanites into the city. We can see them by viewing where the most people enter the subway system at rush hour.
           </p>
           <p>
             <StationHighlightComponent stationId="164">Penn</StationHighlightComponent> <StationHighlightComponent stationId="318">Station</StationHighlightComponent> is the busiest station complex in the Western Hemisphere, serving half a million passengers daily. It has both commuter and intercity routes.
@@ -671,10 +671,10 @@ const getStories = (StationHighlightComponent) => [
             <StationHighlightComponent stationId="616">Jackson Heights</StationHighlightComponent> is one of the most culturally diverse areas in Queens, dubbed "the whole world in one neighborhood." It's home to a large South Asian and Latin population. 
           </p>
           <p>
-            It is one of the more affordable neighborhoods in New York City, home to many working-class communities. Many residents are employed in the service industry. This is reflected in the data, which shows that people in these communities continue to work through the weekend at a higher rate.
+            Rahmn, who works at the 73rd St Halal Food truck, starts his Saturday shift by sunrise. "The weekend morning, that is a busy time. Lots of people going to work." Of his clientele, "many [are] Chinese restaurant workers, some self-employed, everybody is different."
           </p>
           <p>
-            On Friday morning, the number of commuters is still about 85% of its Wednesday peak. By Saturday, 38% continue to ride the train—a rate more than twice that of the wealthier neighborhoods.
+            The data shows that on Friday morning, the number of commuters is still about 85% of its Wednesday peak. By Saturday, 38% continue to ride the train—a rate more than twice that of the wealthier neighborhoods.
           </p>
         </>,
         // Flushing-Main St, Times Sq-42 St, Bowling Green (4 5)
@@ -700,13 +700,13 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            <StationHighlightComponent stationId="604">Concourse</StationHighlightComponent> is neighborhood in the Bronx whose commercial and residential buildings sit in the shadow of Yankee Stadium. Mostly Latino and Black communities reside in the South Bronx. Relative to the rest of the city, it is a middle- to low-income neighborhood. 
+            <StationHighlightComponent stationId="604">Concourse</StationHighlightComponent> is neighborhood in the Bronx whose commercial and residential buildings sit in the shadow of Yankee Stadium. Mostly Latino and Black communities reside in the South Bronx. Relative to the rest of the city, it is a lower-income neighborhood. 
           </p>
           <p>
             Similar to Jackson Heights, 86% of peak commuters head to Manhattan early on Friday mornings. On Saturday, the rate matches Jackson Heights at 38%.
           </p>
           <p>
-            In 2022, the Times declared that "<a href="https://www.nytimes.com/2022/04/01/style/four-day-workweek-friday.html">Fridays are for free time</a>." While data supports their claim in wealthier, white-collar neighborhoods, that option is often out of reach for working-class communities. <span className="story-end-marker"/>
+            In 2022, the Times declared that "<a href="https://www.nytimes.com/2022/04/01/style/four-day-workweek-friday.html" target="blank">Fridays are for free time</a>." While data supports their claim in wealthier, white-collar neighborhoods, that option is often out of reach for working-class communities. <span className="story-end-marker"/>
           </p>
         </>,
         // Woodlawn, Bowling Green

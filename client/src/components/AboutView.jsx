@@ -25,7 +25,7 @@ export default function AboutView({ toggleAboutView }) {
 
                 <h4>Special thanks to:</h4>
                 <p>Christina Lu, Michael Donnelly, Ricky Grullon, Tyler Hutton</p>
-                <p>Anna Li, Becca Foley, Eitan Darwish</p>
+                <p>Anna Li, Becca Foley, Eitan Darwish, Rahmn</p>
 
                 <h4>People whose work inspired us:</h4>
                 <p>Justin Fung, Matt Yarri, Julia Lynn, Joshua Pekera</p>
