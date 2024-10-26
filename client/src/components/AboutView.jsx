@@ -19,7 +19,7 @@ export default function AboutView({ toggleAboutView }) {
 
             <div className="credits">
                 <h4>Proudly brought to you by this New York-based team:</h4>
-                <p>Jediah Katz (Development, Data Analysis, Reporting & Design)</p>
+                <p>Jediah Katz (Development, Data Analysis, Design & Reporting)</p>
                 <p>Julia Han (Design)</p>
                 <p>Marc Zitelli (Data Analysis & Reporting)</p>
 
