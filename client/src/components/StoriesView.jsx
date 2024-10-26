@@ -159,7 +159,7 @@ const getStories = (StationHighlightComponent) => [
             One explanation for this unbalance is that Grand Central brings commuters from wealthy suburbs like Scarsdale in Westchester and New Canaan, Connecticut. The completion of the Grand Central–LIRR connection in January 2023 has drawn Long Islanders away from Penn Station as well.
           </p>
           <p>
-            Those demographics may be more likely to work in high-paying finance jobs than bus riders from New Jersey. Plus, some Jersey commuters can take the PATH directly to the <StationHighlightComponent stationId="624">World Trade Center</StationHighlightComponent> and avoid the subway altogether.
+            Those demographics could be more likely to work in high-paying finance jobs. In addition, many New Jersey commuters may find the <StationHighlightComponent stationId="624">World Trade Center</StationHighlightComponent> a more convenient stop.
           </p>
         </>,
         // Bowling Green, 168 St-Washington Heights, Kew Gardens-Union Tpke, Flatbush Ave-Brooklyn College
