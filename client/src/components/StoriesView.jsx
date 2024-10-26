@@ -979,6 +979,8 @@ const StoriesView = React.memo(({
         if (storyIndex !== 0) {
           const lastPartOfPrevStory = stories[storyIndex-1].parts.length - 1;
           handleJumpToStory(storyIndex-1, lastPartOfPrevStory, false);
+        } else {
+          handleJumpToStory(storyIndex, 1, false);
         }
         handleJumpToStory(storyIndex, 0, true);
       }, 500); // Adjust this timing for the horizontal movement duration
@@ -1146,6 +1148,10 @@ const StoryStack = ({ stories, handleStoryClick, currentStoryIndex, isCollapsing
           className="story-card"
           style={{ zIndex: visibleStories.length - index }}
           onClick={(e) => {
+            // remove active class from all story cards
+            document.querySelectorAll('.story-card').forEach(card => {
+              card.classList.remove('active');
+            });
             // add 'active' class to the clicked story card
             e.currentTarget.classList.add('active');
             handleStoryClick(index)
