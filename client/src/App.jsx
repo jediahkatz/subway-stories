@@ -12,12 +12,6 @@ const App = () => {
   const [shouldLoadMapbox, setShouldLoadMapbox] = useState(false);
   const [lastCheckTime, setLastCheckTime] = useState(0);
 
-  const checkMobileOrScreenTooSmall = () => {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    const screenTooSmall = window.innerWidth < 1000;
-    return isMobile || screenTooSmall;
-  };
-
   useEffect(() => {
     const checkShouldLoad = async () => {
       const now = Date.now();
@@ -52,14 +46,31 @@ const App = () => {
     checkShouldLoad();
   }, [lastCheckTime]);
 
-  const isMobileOrScreenTooSmall = React.useMemo(() => checkMobileOrScreenTooSmall(), []);
+  const isMobileDevice = React.useMemo(() => {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    return isMobile;
+  }, []);
 
-  if (isMobileOrScreenTooSmall) {
+  const isScreenTooSmall = React.useMemo(() => {
+    return window.innerWidth < 1000;
+  }, []);
+
+  if (isMobileDevice) {
     return (
       <div className="mobile-not-supported">
         <div className="metrocard-background"></div>
         <h2>Please carry MetroCard at all times</h2>
         <h3>Support for mobile devices is coming soon</h3>
+      </div>
+    );
+  }
+
+  if (isScreenTooSmall) {
+    return (
+      <div className="mobile-not-supported">
+        <div className="metrocard-background"></div>
+        <h2>Please reload on a full-sized window.</h2>
+        <h3>Support for smaller screens is coming soon</h3>
       </div>
     );
   }
