@@ -911,6 +911,10 @@ const StoriesView = React.memo(({
       : currentPart.dataview.months;
 
     limitVisibleLines(currentPart.dataview.visibleLines);
+
+    // Cancel any existing animation
+    setAnimation(null);
+    
     const loadPromise = handleDataSettingsChange({
       newSelectedStation: currentPart.dataview.station,
       newSelectedDirection: currentPart.dataview.direction,
@@ -924,8 +928,6 @@ const StoriesView = React.memo(({
       loadPromise.then(() => {
         setAnimation(currentPart.dataview.animate);
       });
-    } else {
-      setAnimation(null);
     }
   }, [setViewport, handleDataSettingsChange, limitVisibleLines, setCurrentStoryIndex, setCurrentPartIndex]);
 
