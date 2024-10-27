@@ -59,7 +59,7 @@ function constrainViewState({viewState}) {
 }
 
 const MTADataMap = ({ mapboxToken }) => {
-  const [viewport, setViewport] = useState(() => {
+  const [initialViewport, setViewport] = useState(() => {
     const savedState = loadStateFromSessionStorage();
     return savedState?.viewport || {
       latitude: stationIdToStation['611'].lat,
@@ -528,6 +528,7 @@ const MTADataMap = ({ mapboxToken }) => {
     }
   })
 
+  const viewport = deckglRef.current?.deck.viewState || initialViewport;
   const viewportIs3d = viewport.pitch > 0 || viewport.bearing > 0;
   const mapBarLayer = viewportIs3d ? mapBarLayer3d : mapBarLayer2d;
 
@@ -655,13 +656,11 @@ const MTADataMap = ({ mapboxToken }) => {
       <ViewTabs activeView={activeView} setActiveView={setActiveView} limitVisibleLines={limitVisibleLines} setSelectedBarScale={handleSetSelectedBarScale} />
       <DeckGL
         ref={deckglRef}
-        viewState={viewport}
+        initialViewState={initialViewport}
         controller={activeView === 'visualization' ? true : { scrollZoom: false }}
         layers={[...mainStationIndicatorLayers, mapBarLayer]}
         onViewStateChange={({viewState}) => {
           const constrained = constrainViewState({viewState})
-          // console.log('constrained', constrained)
-          setViewport(constrained);
           saveStateToSessionStorage({ ...loadStateFromSessionStorage(), viewport: constrained });
           return constrained;
         }}
