@@ -1054,7 +1054,6 @@ const StoriesView = React.memo(({
 
   useEffect(() => {
     if (!isStackView) {
-
       // While scrolling on the map, we want the stories view to capture the events.
       // Once we're done scrolling we want to disable pointer events again so 
       // the user can interact with the map.
@@ -1064,13 +1063,20 @@ const StoriesView = React.memo(({
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
           setIsScrolling(false);
-        }, 50);
+        }, 500);
+      };
+
+      const handleMouseDown = () => {
+        setIsScrolling(false);
+        clearTimeout(scrollTimeout);
       };
 
       window.addEventListener('wheel', handleWheel);
+      window.addEventListener('mousedown', handleMouseDown);
 
       return () => {
         window.removeEventListener('wheel', handleWheel);
+        window.removeEventListener('mousedown', handleMouseDown);
         setIsScrolling(false);
       };
     }
