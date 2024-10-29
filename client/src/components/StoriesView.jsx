@@ -776,6 +776,39 @@ const getStories = (StationHighlightComponent) => [
       },
     ]
   },
+  {
+    title: 'Share Your Story',
+    parts: [
+      {
+        description: <>
+          <p>
+            We'd love to hear about how you ride the subway. If you have a compelling story that can be told through data, we'd be happy to feature it on this site!
+          </p>
+          <p>
+            To share your story, whether it's a short personal anecdote or a full data-driven analysis, please submit it to <a href="https://forms.gle/HDZ6npr3uLaqivZe7" target="blank">this form</a>.
+          </p>
+          <p>
+            Thanks from the <i>Subway Stories</i> team!
+          </p>
+        </>,
+        // Wakefield-241 St, W 8 St-NY Aquarium, Bay Ridge-95 St, Jamaica-179 St
+        pointsToInclude: [stationIdToStation['416'], stationIdToStation['57'], stationIdToStation['39'], stationIdToStation['254']],
+        dataview: {
+          station: ALL_STATIONS_ID,
+          direction: 'goingTo',
+          day: 'Wednesday',
+          months: ALL_MONTHS,
+          barScale: 0.0005,
+          // animate over all 24 hours
+          animate: {
+            field: 'hour',
+            frames: Array.from({ length: 24 }, (_, i) => ({ value: i, duration: 500 })),
+            type: 'linear',
+          }
+        },
+      },
+    ]
+  },
 ];
 
 // todo: make this dynamic based on the width of the screen
@@ -922,6 +955,7 @@ const StoriesView = React.memo(({
       newSelectedHour: hour,
       newSelectedMonths: months,
       newSelectedBarScale: currentPart.dataview.barScale,
+      animationType: currentPart.dataview.animate?.type,
     });
 
     if (currentPart.dataview.animate) {

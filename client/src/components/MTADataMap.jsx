@@ -159,6 +159,7 @@ const MTADataMap = ({ mapboxToken }) => {
     newShowPercentage,
     newSelectedBarScale,
     initialFetch = false,
+    animationType = 'cubic',
   }) => {
     const { selectedDay, selectedStation, selectedDirection, selectedMonths, selectedHour, showPercentage, selectedBarScale } = dataStateRef.current;
 
@@ -211,11 +212,13 @@ const MTADataMap = ({ mapboxToken }) => {
         if (newSelectedStation === ALL_STATIONS_ID) {
           animationCompletedOncePromise = startBarAnimation({
             type: 'WAVE_VERTICAL_DOWN',
+            animationType,
             stationLocations: Object.fromEntries(stations.map(d => [d.complex_id, [d.lon, d.lat]]))
           });
         } else {
           animationCompletedOncePromise = startBarAnimation({
             type: newSelectedDirection === 'comingFrom' ? 'WAVE_RADIAL_IN' : 'WAVE_RADIAL_OUT',
+            animationType,
             centerLocation: [stationIdToStation[newSelectedStation].lon, stationIdToStation[newSelectedStation].lat],
             otherStationLocations: Object.fromEntries(stations.map(d => [d.complex_id, [d.lon, d.lat]]))
           });

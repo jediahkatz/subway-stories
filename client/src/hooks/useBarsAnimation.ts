@@ -80,7 +80,7 @@ export const useBarsAnimation = () => {
         }
     }, []);
 
-    const startAnimation = useCallback((animation: Animation): Promise<void> => {
+    const startAnimation = useCallback((animation: Animation & { animationType?: 'linear' | 'cubic' }): Promise<void> => {
         cancelAnimation();
 
         return new Promise((resolve) => {
@@ -195,19 +195,25 @@ const createWaveRadialAnimation = (animation: WaveRadialAnimation): { animationR
 
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 const ANIMATE_BAR_CHANGE_DURATION = 500;
-const createBarChangeAnimation = (animation: BarChangeAnimation & { initialBarHeights: { [key: string]: { currentHeight: number } } }): { animationResultFunc: AnimationResultFunc, getProgress: () => number } => {
-    const { initialBarHeights, newBarHeights } = animation;
+const createBarChangeAnimation = (
+    animation: BarChangeAnimation & { 
+        animationType?: 'linear' | 'cubic', 
+        initialBarHeights: { [key: string]: { currentHeight: number } } 
+    }): { animationResultFunc: AnimationResultFunc, getProgress: () => number } => {
+    const { initialBarHeights, newBarHeights, animationType } = animation;
 
     const startTime = Date.now();
     const getProgress = () => {
         return Math.min((Date.now() - startTime) / ANIMATE_BAR_CHANGE_DURATION, 1);
     }
 
+    const easeFunc = animationType === 'cubic' ? easeOutCubic : (t: number) => t;
+
     const animationResultFunc = (progress: number) => {
         const heights = Object.keys(stationIdToStation).reduce((acc, stationId) => {
             const initialHeight = initialBarHeights[stationId]?.currentHeight ?? 0;
             const newBarHeight = newBarHeights[stationId] ?? 0;
-            const newHeight = initialHeight + (newBarHeight - initialHeight) * easeOutCubic(progress);
+            const newHeight = initialHeight + (newBarHeight - initialHeight) * easeFunc(progress);
             acc[stationId] = { currentHeight: newHeight };
             return acc;
         }, {});
