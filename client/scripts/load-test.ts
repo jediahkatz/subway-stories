@@ -1,3 +1,4 @@
+// Run with: k6 run load-test.ts
 // Oct 28: 50 max users/RPS  -->  p95 of 1.29s
 //         30 max users/RPS  -->  p95 of 479ms
 //         10 max users/RPS  -->  p95 of 156ms
