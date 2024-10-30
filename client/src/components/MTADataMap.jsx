@@ -59,7 +59,7 @@ function constrainViewState({viewState}) {
 }
 
 const MTADataMap = ({ mapboxToken }) => {
-  const [initialViewport, setViewport] = useState(() => {
+  const [initialViewport, setInitialViewport] = useState(() => {
     const savedState = loadStateFromSessionStorage();
     return savedState?.viewport || {
       latitude: stationIdToStation['611'].lat,
@@ -125,6 +125,23 @@ const MTADataMap = ({ mapboxToken }) => {
 
   const mapRef = useRef(null);
   const deckglRef = useRef(null);
+
+  const setViewport = useCallback((prevViewportUpdateFunction) => {
+    setInitialViewport(prevInitialViewport => {
+      const prevViewport = deckglRef.current?.deck.viewState 
+        ? { ...deckglRef.current.deck.viewState, ...deckglRef.current.deck.viewState['default-view'] }
+        : prevInitialViewport;
+      const newViewport = prevViewportUpdateFunction({
+        latitude: prevViewport.latitude,
+        longitude: prevViewport.longitude,
+        zoom: prevViewport.zoom,
+        bearing: prevViewport.bearing,
+        pitch: prevViewport.pitch,
+      });
+      console.log('newViewport', newViewport)
+      return newViewport;
+    });
+  }, []);
 
   const barScaleLocked = useRef(selectedBarScale !== null);
   const initialBarScale = useRef(getInitialBarScale(data.current, selectedStation));
@@ -531,7 +548,10 @@ const MTADataMap = ({ mapboxToken }) => {
     }
   })
 
-  const viewport = deckglRef.current?.deck.viewState || initialViewport;
+  const viewport = deckglRef.current?.deck.viewState 
+    ? { ...deckglRef.current.deck.viewState, ...deckglRef.current.deck.viewState['default-view'] }
+    : initialViewport;
+
   const viewportIs3d = viewport.pitch > 0 || viewport.bearing > 0;
   const mapBarLayer = viewportIs3d ? mapBarLayer3d : mapBarLayer2d;
 
@@ -653,7 +673,7 @@ const MTADataMap = ({ mapboxToken }) => {
     });
     
   }, [setHoverInfo, filteredData, selectedStation, selectedDirection])
-
+  
   return (
     <div className="map-container">
       <ViewTabs activeView={activeView} setActiveView={setActiveView} limitVisibleLines={limitVisibleLines} setSelectedBarScale={handleSetSelectedBarScale} />
