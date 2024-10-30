@@ -1181,10 +1181,10 @@ const StoriesView = React.memo(({
 });
 
 const StoryStack = ({ stories, handleStoryClick, currentStoryIndex, isCollapsing, isMoving }) => {
-  const visibleStories = stories.slice(5); // Only show the first 5 stories in the stack
+  const visibleStories = stories.slice(0, 5); // Only show the first 5 stories in the stack
   return (
     <div className={`story-stack ${isCollapsing ? 'collapsing' : ''} ${isMoving ? 'moving' : ''}`}>
-      {stories.map((story, index) => (
+      {visibleStories.map((story, index) => (
         <div 
           key={index} 
           className="story-card"

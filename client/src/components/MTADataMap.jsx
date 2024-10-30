@@ -138,7 +138,6 @@ const MTADataMap = ({ mapboxToken }) => {
         bearing: prevViewport.bearing,
         pitch: prevViewport.pitch,
       });
-      console.log('newViewport', newViewport)
       return newViewport;
     });
   }, []);
@@ -673,7 +672,7 @@ const MTADataMap = ({ mapboxToken }) => {
     });
     
   }, [setHoverInfo, filteredData, selectedStation, selectedDirection])
-  
+
   return (
     <div className="map-container">
       <ViewTabs activeView={activeView} setActiveView={setActiveView} limitVisibleLines={limitVisibleLines} setSelectedBarScale={handleSetSelectedBarScale} />
