@@ -507,7 +507,7 @@ const getStories = (StationHighlightComponent) => [
             Such is the case at <StationHighlightComponent stationId="629">Metropolitan Av</StationHighlightComponent>, a trendy area in Williamsburg, Brooklyn. Once an up-and-coming neighborhood, a wave of gentrification has cemented its status as a home for wealthy young creatives and tech workers.
           </p>
           <p>
-            From Wednesday to Friday, the number of people heading catching the train at 8 a.m. drops to about 55% of its peak. This may reflect the effects of work-from-home arrangements in a post-pandemic world. By Saturday, that number is down to 15% as residents enjoy their weekend.
+            From Wednesday to Friday, the number of people catching the train at 8 a.m. drops to about 55% of its peak. This may reflect the effects of work-from-home arrangements in a post-pandemic world. By Saturday, that number is down to 15% as residents enjoy their weekend.
           </p>
         </>,
         // 59 St-Columbus Circle, Bowling Green, Carroll St, Myrtle-Wyckoff
@@ -599,10 +599,10 @@ const getStories = (StationHighlightComponent) => [
       {
         description: <>
           <p>
-            <StationHighlightComponent stationId="604">Concourse</StationHighlightComponent> is neighborhood in the Bronx whose commercial and residential buildings sit in the shadow of Yankee Stadium. Mostly Latino and Black communities reside in the South Bronx. Relative to the rest of the city, it is a lower-income neighborhood. 
+            <StationHighlightComponent stationId="604">Concourse</StationHighlightComponent> is neighborhood in the Bronx whose commercial and residential buildings sit in the shadow of Yankee Stadium. Mostly Black and Latino communities reside in the South Bronx. Relative to the rest of the city, it is a lower-income neighborhood. 
           </p>
           <p>
-            Similar to Jackson Heights, 86% of peak commuters head to Manhattan early on Friday mornings. On Saturday, the rate matches Jackson Heights at 38%.
+            Similar to Jackson Heights, 86% of the peak number of commuters head to work early on Friday mornings. On Saturday, the rate matches Jackson Heights almost exactly at 38%.
           </p>
           <p>
             In 2022, the Times declared that "<a href="https://www.nytimes.com/2022/04/01/style/four-day-workweek-friday.html" target="blank">Fridays are for free time</a>." While data supports their claim in wealthier, white-collar neighborhoods, that option is often out of reach for working-class communities. <span className="story-end-marker"/>
