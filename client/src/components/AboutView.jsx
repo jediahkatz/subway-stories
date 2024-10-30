@@ -24,7 +24,7 @@ export default function AboutView({ toggleAboutView }) {
                 <p>Marc Zitelli (Data Analysis & Reporting)</p>
 
                 <h4>Special thanks to:</h4>
-                <p>Christina Lu, Michael Donnelly, Ricky Grullon, Tyler Hutton</p>
+                <p>Carly Ayres, Christina Lu, Michael Donnelly, Ricky Grullon, Tyler Hutton</p>
                 <p>Anna Li, Becca Foley, Eitan Darwish, Michael Kwan, Rahmn</p>
 
                 <h4>Inspired by the work of:</h4>
