@@ -605,6 +605,7 @@ body.pointer-cursor {
 .faq h4 {
   margin: 0 0 15px 0;
   font-size: 18px;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .faq h5 {
