@@ -108,7 +108,7 @@ const getStories = (StationHighlightComponent) => [
             "The foot traffic was insane, like difficult to even move at points. But it was nice that I always got a seat on the bus, since everybody was coming into the city at 8 AM on weekdays, not leaving the city."
           </p>
           <p>
-            <StationHighlightComponent stationId="612">Midtown</StationHighlightComponent> is the most popular destination for commuters arriving at the Port Authority, followed by the <StationHighlightComponent stationId="628">Financial District</StationHighlightComponent> and <StationHighlightComponent stationId="636">Downtown Brooklyn</StationHighlightComponent>, reflecting the prominence of these business centers.
+            <StationHighlightComponent stationId="612">Midtown</StationHighlightComponent> is the most popular destination for commuters arriving at the Port Authority, followed by the <StationHighlightComponent stationId="628">Financial District</StationHighlightComponent> and <StationHighlightComponent stationId="636">Downtown Brooklyn</StationHighlightComponent>, reflecting the prominence of these business districts.
           </p>
         </>,
         // Bowling Green, 168 St-Washington Heights, Kew Gardens-Union Tpke, Prospect Park
@@ -136,7 +136,7 @@ const getStories = (StationHighlightComponent) => [
             Workers are coming from all over the city, especially from high-density areas with a direct trip to the station, like Jackson Heights in Queens. The largest local spike, <StationHighlightComponent stationId="397">86 St</StationHighlightComponent>, represents commuters from Yorkville, the most densely populated neighborhood in the city.
           </p>
           <p>
-            But it's notable that a large share of riders appear to be traveling from outside New York, with spikes at <StationHighlightComponent stationId="164">Penn Station</StationHighlightComponent> and the <StationHighlightComponent stationId="611">PABT</StationHighlightComponent>.
+            A large share of riders appear to be traveling from outside New York, with spikes at <StationHighlightComponent stationId="164">Penn Station</StationHighlightComponent> and the <StationHighlightComponent stationId="611">PABT</StationHighlightComponent>. In fact, 20% of the city's workforce commutes from out of town!
           </p>
         </>,
         // Bowling Green, 168 St-Washington Heights, Kew Gardens-Union Tpke, Prospect Park
@@ -156,7 +156,7 @@ const getStories = (StationHighlightComponent) => [
             When we look at ridership to the Financial District, anchored by the <StationHighlightComponent stationId="628">Fulton St</StationHighlightComponent> station, the pattern is strikingly different. By far the largest share of riders are coming from <StationHighlightComponent stationId="610">Grand Central</StationHighlightComponent>, dwarfing those from <StationHighlightComponent stationId="318">Penn Station</StationHighlightComponent> and the <StationHighlightComponent stationId="611">Port Authority</StationHighlightComponent>.
           </p>
           <p>
-            One explanation for this unbalance is that Grand Central brings commuters from wealthy suburbs like Scarsdale in Westchester and New Canaan, Connecticut. The completion of the Grand Central–LIRR connection in January 2023 has drawn Long Islanders away from Penn Station as well.
+            One explanation for this inbalance is that Grand Central brings commuters from wealthy suburbs like Scarsdale in Westchester and New Canaan, Connecticut. The completion of the Grand Central–LIRR connection in January 2023 has drawn Long Islanders away from Penn Station as well.
           </p>
           <p>
             Those demographics could be more likely to work in high-paying finance jobs. In addition, many New Jersey commuters may find the <StationHighlightComponent stationId="624">World Trade Center</StationHighlightComponent> a more convenient stop.
