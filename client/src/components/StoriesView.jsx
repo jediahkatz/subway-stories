@@ -4,7 +4,7 @@ import './StoriesView.css';
 import { FlyToInterpolator } from 'deck.gl';
 import { areViewportsNearlyEqual, getViewportForBounds } from '../lib/map-bounds';
 import { stationIdToStation } from '../lib/stations';
-import { MAIN_STATION_COLOR } from './MTADataMap';
+import { MAIN_STATION_COLOR_ARRIVING, MAIN_STATION_COLOR_DEPARTING } from './MTADataMap';
 import StoryProgress from './StoryProgress';
 import AttributedPhoto from './AttributedPhoto';
 import { ALL_STATIONS_ID } from '../lib/all-stations';
@@ -1212,8 +1212,9 @@ const StoryStack = ({ stories, handleStoryClick, currentStoryIndex, isCollapsing
 
 const formatInfoBarText = (direction, stationId, hour, day, selectedMonths, animatingField) => {
   const stationName = stationIdToStation[stationId]?.display_name.split('(')[0].trim() || 'here';
-  const directionText = direction === 'comingFrom' ? 'going to' : 'coming from';
-
+  const directionText = direction === 'comingFrom' 
+    ? 'arriving at'
+    : 'departing from';
 
   const formattedHour = hour % 12 || 12;
   const amPm = hour < 12 ? 'a.m.' : 'p.m.';
@@ -1259,9 +1260,13 @@ const formatInfoBarText = (direction, stationId, hour, day, selectedMonths, anim
     )
   }
 
+  const mainStationColor = direction === 'comingFrom' 
+    ? MAIN_STATION_COLOR_ARRIVING 
+    : MAIN_STATION_COLOR_DEPARTING;
+
   return (
     <>
-      Who's {directionText} <span className="highlight-station" style={{color: `rgb(${MAIN_STATION_COLOR.join(',')})`}}>{stationName}</span> at {hourText} {splitText ? <br /> : ''} on a {dayText}{fullMonthText}?
+      Who's <span style={{color: `rgb(${mainStationColor.join(',')}, 0.9)`}}>{directionText}</span> <span className="highlight-station" style={{color: `rgb(${mainStationColor.join(',')})`}}>{stationName}</span> at {hourText} {splitText ? <br /> : ''} on a {dayText}{fullMonthText}?
     </>
   );
 };

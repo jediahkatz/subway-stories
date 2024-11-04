@@ -33,7 +33,8 @@ const NYC_BOUNDS = {
   minZoom: 10,
 };
 
-export const MAIN_STATION_COLOR = [107, 159, 255];//[65, 146, 246]; //[50, 115, 246];
+export const MAIN_STATION_COLOR_ARRIVING = [107, 159, 255];//[65, 146, 246]; //[50, 115, 246];
+export const MAIN_STATION_COLOR_DEPARTING = [107, 255, 159];
 const LOADING_COLOR = [204, 204, 255];
 
 const PERCENTAGE_BAR_SCALE = 1 / 25;
@@ -630,7 +631,7 @@ const MTADataMap = ({ mapboxToken }) => {
         stationName,
         stationId: stationId,
         ridership,
-        ridershipLabel: 'Ridership',
+        ridershipLabel: 'Riders ',
         showPercentage: false,
         positionedLoosely: false,
       });
@@ -679,7 +680,7 @@ const MTADataMap = ({ mapboxToken }) => {
       <DeckGL
         ref={deckglRef}
         initialViewState={initialViewport}
-        controller={activeView === 'visualization' ? true : { scrollZoom: false }}
+        controller={activeView === 'visualization' ? true : { scrollZoom: true }}
         layers={[...mainStationIndicatorLayers, mapBarLayer]}
         onViewStateChange={({viewState}) => {
           const constrained = constrainViewState({viewState})
@@ -807,6 +808,10 @@ const useMainStationIndicatorLayers = (selectedStation, selectedDirection, filte
 
   const sizeMultiplier = getSizeMultiplier(viewport.zoom);
 
+  const mainStationColor = selectedDirection === 'comingFrom' 
+    ? MAIN_STATION_COLOR_ARRIVING 
+    : MAIN_STATION_COLOR_DEPARTING;
+
   const mainStationPulse = new ScatterplotLayer({
     id: 'main-station-pulse-scatterplot-layer',
     data: pulseData,
@@ -820,9 +825,10 @@ const useMainStationIndicatorLayers = (selectedStation, selectedDirection, filte
     billboard: true,
     getPosition: d => d.position,
     getRadius: d => 50 * d.scale * sizeMultiplier,
-    getLineColor: d => [...MAIN_STATION_COLOR, d.opacity],
+    getLineColor: d => [...mainStationColor, d.opacity],
     updateTriggers: {
-      getRadius: [pulseData]
+      getRadius: [pulseData],
+      getLineColor: [mainStationColor]
     }
   })
 
@@ -836,11 +842,12 @@ const useMainStationIndicatorLayers = (selectedStation, selectedDirection, filte
     lineWidthMinPixels: 2,
     getPosition: d => d.position,
     getRadius: 50 * sizeMultiplier,
-    getFillColor: MAIN_STATION_COLOR,
+    getFillColor: mainStationColor,
     // Always face the camera
     billboard: true,
     updateTriggers: {
-      getPosition: [selectedStationData]
+      getPosition: [selectedStationData],
+      getFillColor: [mainStationColor]
     },
     onHover: (info) => {
       if (info.object) {
