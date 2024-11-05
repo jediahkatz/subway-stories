@@ -395,10 +395,24 @@ const MTADataMap = ({ mapboxToken }) => {
   };
 
   const getColorAbsolute = (value) => {
-    let colorIndex = colorIntervals.findIndex(interval => value < interval) - 1;
-    if (colorIndex === -2) colorIndex = colorScale.length - 1; // For values 1280+
+    // Find the interval that contains our value
+    let intervalIndex = colorIntervals.findIndex(interval => value < interval);
+    if (intervalIndex === -1) return colorScale[colorScale.length - 1]; // For values above the highest interval
+    if (intervalIndex === 0) return colorScale[0]; // For values below the lowest interval
 
-    return colorScale[colorIndex];
+    // Get the two colors to interpolate between
+    const color1 = colorScale[intervalIndex - 1];
+    const color2 = colorScale[intervalIndex];
+
+    // Get the interval bounds
+    const lowerBound = colorIntervals[intervalIndex - 1] || 0;
+    const upperBound = colorIntervals[intervalIndex];
+
+    // Calculate how far between the bounds our value is (0 to 1)
+    const t = (value - lowerBound) / (upperBound - lowerBound);
+
+    // Linearly interpolate between the colors
+    return color1.map((c, i) => Math.round(c + (color2[i] - c) * t));
   };
 
   const convertToGrayscale = (rgba) => {
