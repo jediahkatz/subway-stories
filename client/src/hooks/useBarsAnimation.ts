@@ -194,7 +194,7 @@ const createWaveRadialAnimation = (animation: WaveRadialAnimation): { animationR
 }
 
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
-const ANIMATE_BAR_CHANGE_DURATION = 500;
+const ANIMATE_BAR_CHANGE_DURATION = 4000 / 24;
 const createBarChangeAnimation = (
     animation: BarChangeAnimation & { 
         animationType?: 'linear' | 'cubic', 

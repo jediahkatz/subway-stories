@@ -798,11 +798,11 @@ const getStories = (StationHighlightComponent) => [
           direction: 'goingTo',
           day: 'Wednesday',
           months: ALL_MONTHS,
-          barScale: 0.0005,
+          barScale: 0.0003,
           // animate over all 24 hours
           animate: {
             field: 'hour',
-            frames: Array.from({ length: 24 }, (_, i) => ({ value: i, duration: 500 })),
+            frames: Array.from({ length: 24 }, (_, i) => ({ value: i, duration: 4000 / 24 })),
             type: 'linear',
           }
         },
