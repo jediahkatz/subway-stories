@@ -21,7 +21,6 @@
   right: 0;
   bottom: 0;
   overflow-y: auto;
-  scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: rgb(150, 150, 150) transparent;
   opacity: 1;

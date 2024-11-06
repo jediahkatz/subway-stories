@@ -856,7 +856,6 @@ const StoriesView = React.memo(({
   const [previewStory, setPreviewStory] = useState(null);
   const [animation, setAnimation] = useState(null);
   const [isStackView, setIsStackView] = useState(currentStoryIndex === null);
-  const [isScrolling, setIsScrolling] = useState(false);
   const [isCollapsing, setIsCollapsing] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
 
@@ -1091,27 +1090,32 @@ const StoriesView = React.memo(({
       // While scrolling on the map, we want the stories view to capture the events.
       // Once we're done scrolling we want to disable pointer events again so 
       // the user can interact with the map.
-      let scrollTimeout;
-      const handleWheel = () => {
-        setIsScrolling(true);
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-          setIsScrolling(false);
-        }, 500);
+      const handleWheel = (e) => {
+        const storiesViewContainer = document.getElementById('stories-view-container')
+        switch (e.deltaMode) {
+          case 0: 		//DOM_DELTA_PIXEL		Chrome
+            storiesViewContainer.scrollTop+=e.deltaY
+            console.log('scrollTop after', storiesViewContainer.scrollTop)
+            storiesViewContainer.scrollLeft+=e.deltaX
+            break;
+          case 1: 		//DOM_DELTA_LINE		Firefox
+            storiesViewContainer.scrollTop+=15*e.deltaY
+            storiesViewContainer.scrollLeft+=15*e.deltaX
+            break;
+          case 2: 		//DOM_DELTA_PAGE
+            storiesViewContainer.scrollTop+=0.03*e.deltaY
+            storiesViewContainer.scrollLeft+=0.03*e.deltaX
+            break;
+        }
+
+        e.stopPropagation();
+        e.preventDefault();
       };
 
-      const handleMouseDown = () => {
-        setIsScrolling(false);
-        clearTimeout(scrollTimeout);
-      };
-
-      window.addEventListener('wheel', handleWheel);
-      window.addEventListener('mousedown', handleMouseDown);
+      window.addEventListener('wheel', handleWheel, { passive: false });
 
       return () => {
         window.removeEventListener('wheel', handleWheel);
-        window.removeEventListener('mousedown', handleMouseDown);
-        setIsScrolling(false);
       };
     }
   }, [isStackView]);
@@ -1136,9 +1140,9 @@ const StoriesView = React.memo(({
     <div className={`stories-view ${isStackView ? 'stack-view' : ''} ${isCollapsing ? 'collapsing' : ''} ${isMoving ? 'moving' : ''}`}>
       {!showAboutView && <StoryStack stories={stories} handleStoryClick={handleStoryClick} currentStoryIndex={currentStoryIndex} isCollapsing={isCollapsing} isMoving={isMoving} />}
       <div 
+        id="stories-view-container"
         className={`stories-view-container ${isStackView ? 'hidden' : ''}`} 
         ref={containerRef}
-        style={{ pointerEvents: !isStackView && isScrolling ? 'all' : 'none' }}
       >
         <div className="stories-content" style={{ visibility: previewStory !== null || showAboutView ? 'hidden' : 'visible' }}>
           {stories.map((story, storyIndex) => (

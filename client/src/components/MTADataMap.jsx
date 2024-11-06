@@ -694,7 +694,7 @@ const MTADataMap = ({ mapboxToken }) => {
       <DeckGL
         ref={deckglRef}
         initialViewState={initialViewport}
-        controller={activeView === 'visualization' ? true : { scrollZoom: true }}
+        controller={activeView === 'visualization' ? true : { scrollZoom: false }}
         layers={[...mainStationIndicatorLayers, mapBarLayer]}
         pickingRadius={8}
         getCursor={({ isDragging, isHovering }) => {
