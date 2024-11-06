@@ -3,6 +3,7 @@ import {LineLayer, ScatterplotLayer} from '@deck.gl/layers';
 
 const CIRCLE_SPACING = 0.00005;
 const MAX_CIRCLES = 20;
+export const BAR_RADIUS = 25;
 
 /**
  * This is the new version of the MapBarLayer, which creates "bars" rising out of the map
@@ -21,7 +22,7 @@ class FewerObjectsMapBarLayer extends CompositeLayer {
         const height = getHeight(d);
         return [base[0], base[1] + height];
       },
-      getRadius: d => getWidth(d) * 0.5,
+      getRadius: d => getWidth(d),
       pickable,
       onHover,
       getFillColor: getColor,
@@ -102,7 +103,7 @@ FewerObjectsMapBarLayer.layerName = 'MapBarLayer';
 FewerObjectsMapBarLayer.defaultProps = {
   getBasePosition: {type: 'accessor', value: d => [d.lon, d.lat]},
   getHeight: {type: 'accessor', value: d => d.height || 100},
-  getWidth: {type: 'accessor', value: _d => 30},
+  getWidth: {type: 'accessor', value: _d => BAR_RADIUS},
   getColor: {type: 'accessor', value: [255, 0, 0]}
 };
 
@@ -119,7 +120,7 @@ class CirclesOnlyMapBarLayer extends CompositeLayer {
       data: data.flatMap(d => this.generatePoints(d)),
       getPosition: d => d.position,
       getFillColor: d => d.color,
-      getRadius: d => getWidth(d) * 0.5,
+      getRadius: d => getWidth(d),
       pickable,
       onHover,
       updateTriggers: {
@@ -159,7 +160,7 @@ CirclesOnlyMapBarLayer.layerName = 'CirclesOnlyMapBarLayer';
 CirclesOnlyMapBarLayer.defaultProps = {
   getBasePosition: {type: 'accessor', value: d => [d.lon, d.lat]},
   getHeight: {type: 'accessor', value: d => d.height || 100},
-  getWidth: {type: 'accessor', value: _d => 30},
+  getWidth: {type: 'accessor', value: _d => BAR_RADIUS},
   getColor: {type: 'accessor', value: [255, 0, 0]}
 };
 

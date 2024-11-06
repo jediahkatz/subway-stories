@@ -10,7 +10,7 @@ import './MTADataMap.css';
 import { useDotPulseAnimation } from '../hooks/useDotAnimation';
 import subwayRoutes from '../data/nyc-subway-routes.js';
 import subwayLayerStyles from '../data/subway-layer-styles.js';
-import MapBarLayer from './MapBarLayer';
+import MapBarLayer, { BAR_RADIUS } from './MapBarLayer';
 import { saveStateToSessionStorage, loadStateFromSessionStorage } from '../lib/sessionManager.js';
 import ViewTabs from './ViewTabs';
 import StoriesView, { ALL_MONTHS } from './StoriesView';
@@ -468,7 +468,7 @@ const MTADataMap = ({ mapboxToken }) => {
     pickable: true,
     getBasePosition: d => [d.lon, d.lat],
     getHeight: d => barData.heights[d.station_id]?.currentHeight ?? 0,
-    getWidth: _d => 50,
+    getWidth: _d => BAR_RADIUS,
     getColor: d => {
       if (barData.type === 'LOADING') {
         return LOADING_COLOR;
@@ -529,7 +529,7 @@ const MTADataMap = ({ mapboxToken }) => {
     },
     getLineColor: [0, 0, 0],
     getLineWidthMinPixels: 1,
-    radius: 25,
+    radius: BAR_RADIUS,
     flatShading: true,
     material: {
       ambient: 1,
@@ -696,6 +696,12 @@ const MTADataMap = ({ mapboxToken }) => {
         initialViewState={initialViewport}
         controller={activeView === 'visualization' ? true : { scrollZoom: true }}
         layers={[...mainStationIndicatorLayers, mapBarLayer]}
+        pickingRadius={8}
+        getCursor={({ isDragging, isHovering }) => {
+          if (isDragging) return 'move'
+          if (isHovering) return 'pointer'
+          return 'default'
+        }}
         onViewStateChange={({viewState}) => {
           const constrained = constrainViewState({viewState})
           saveStateToSessionStorage({ ...loadStateFromSessionStorage(), viewport: constrained });

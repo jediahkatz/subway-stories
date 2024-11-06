@@ -621,3 +621,6 @@ body.pointer-cursor {
   line-height: 1.4;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
