@@ -462,6 +462,33 @@ const MTADataMap = ({ mapboxToken }) => {
     ];
   }, [filteredData.current]);
 
+  const getMapBarColor = useCallback(d => {
+    if (barData.type === 'LOADING') {
+      return LOADING_COLOR;
+    }
+
+    const color = [...getColorAbsolute(d.ridership), 255];
+
+    const name = getStationName(d.station_id);
+    const { lines } = splitNameAndLines(name);
+    const isOnVisibleLine = !visibleLines || visibleLines.intersection(new Set(lines)).size > 0;
+
+    if (!isOnVisibleLine) {
+      return convertToGrayscale(color);
+    }
+
+    const isHighlighted = hoverInfo?.stationId == d.station_id
+    if (isHighlighted) {
+      const highlightedColor = color.map((c, i) => 
+        // Don't modify alpha channel (index 3)
+        i === 3 ? c : Math.min(255, Math.round(c * 1.5))
+      )
+      return highlightedColor
+    }
+    
+    return color;
+  }, [barData, hoverInfo])
+
   const mapBarLayer2d = new MapBarLayer({
     id: 'ridership-composite-layer',
     data: filteredDataWithStationsAnimatingToZero,
@@ -469,22 +496,17 @@ const MTADataMap = ({ mapboxToken }) => {
     getBasePosition: d => [d.lon, d.lat],
     getHeight: d => barData.heights[d.station_id]?.currentHeight ?? 0,
     getWidth: _d => BAR_RADIUS,
-    getColor: d => {
-      if (barData.type === 'LOADING') {
-        return LOADING_COLOR;
+    getColor: getMapBarColor,
+    onHover: (info) => {
+      if (!info.object) {
+        setHoverInfo(null);
+        return
       }
 
-      const color = [...getColorAbsolute(d.ridership), 255];
-
-      const name = getStationName(d.station_id);
-      const { lines } = splitNameAndLines(name);
+      const stationName = getStationName(info.object.station_id);
+      const { lines } = splitNameAndLines(stationName);
       const isOnVisibleLine = !visibleLines || visibleLines.intersection(new Set(lines)).size > 0;
-      
-      return isOnVisibleLine ? color : convertToGrayscale(color);
-    },
-    onHover: (info) => {
-      if (info.object) {
-        const stationName = getStationName(info.object.station_id);
+      if (isOnVisibleLine) {
         setHoverInfo({
           x: info.x,
           y: info.y,
@@ -500,9 +522,17 @@ const MTADataMap = ({ mapboxToken }) => {
         setHoverInfo(null);
       }
     },
+    highlightColor: d => {
+      const originalColor = getMapBarColor(d)
+      const highlightedColor = originalColor.map((c, i) => 
+        // Don't modify alpha channel (index 3)
+        i === 3 ? c : Math.min(255, Math.round(c * 1.5))
+      )
+      return highlightedColor
+    },
     updateTriggers: {
       data: [filteredDataWithStationsAnimatingToZero],
-      getColor: [filteredDataWithStationsAnimatingToZero, barData, ],
+      getColor: [filteredDataWithStationsAnimatingToZero, getMapBarColor],
       getHeight: [barScale, filteredDataWithStationsAnimatingToZero, barData],
     }
   });
@@ -514,19 +544,7 @@ const MTADataMap = ({ mapboxToken }) => {
     extruded: true,
     getPosition: d => [d.lon, d.lat],
     getElevation: d => barData.heights[d.station_id]?.currentHeight ?? 0,
-    getFillColor: d => {
-      if (barData.type === 'LOADING') {
-        return LOADING_COLOR;
-      }
-
-      const color = [...getColorAbsolute(d.ridership), 255];
-
-      const name = getStationName(d.station_id);
-      const { lines } = splitNameAndLines(name);
-      const isOnVisibleLine = !visibleLines || visibleLines.intersection(new Set(lines)).size > 0;
-      
-      return isOnVisibleLine ? color : convertToGrayscale(color);
-    },
+    getFillColor: getMapBarColor,
     getLineColor: [0, 0, 0],
     getLineWidthMinPixels: 1,
     radius: BAR_RADIUS,
@@ -539,8 +557,15 @@ const MTADataMap = ({ mapboxToken }) => {
     },
     elevationScale: 100000,
     onHover: (info) => {
-      if (info.object) {
-        const stationName = getStationName(info.object.station_id);
+      if (!info.object) {
+        setHoverInfo(null);
+        return
+      }
+
+      const stationName = getStationName(info.object.station_id);
+      const { lines } = splitNameAndLines(stationName);
+      const isOnVisibleLine = !visibleLines || visibleLines.intersection(new Set(lines)).size > 0;
+      if (isOnVisibleLine) {
         setHoverInfo({
           x: info.x,
           y: info.y,
@@ -657,13 +682,20 @@ const MTADataMap = ({ mapboxToken }) => {
       setHoverInfo(null);
       return
     }
-    const hoveredLayer = deckglRef.current.pickObject({ x: mouseX, y: mouseY })
+    const hoveredLayer = deckglRef.current.pickObject({ x: mouseX, y: mouseY, radius: 8 })
     if (!hoveredLayer) {
       setHoverInfo(null);
       return
     }
 
     const stationName = getStationName(hoveredLayer.object.station_id);
+    const { lines } = splitNameAndLines(stationName);
+    const isOnVisibleLine = !visibleLines || visibleLines.intersection(new Set(lines)).size > 0;
+    if (!isOnVisibleLine) {
+      setHoverInfo(null);
+      return
+    }
+
     let totalRidership;
     if (hoveredLayer.object.station_id === selectedStation) {
       totalRidership = filteredData.current.reduce((acc, d) => acc + d.ridership, 0);
@@ -686,7 +718,7 @@ const MTADataMap = ({ mapboxToken }) => {
       positionedLoosely: true,
     });
     
-  }, [setHoverInfo, filteredData, selectedStation, selectedDirection])
+  }, [setHoverInfo, filteredData, selectedStation, selectedDirection, visibleLines])
 
   return (
     <div className="map-container">
