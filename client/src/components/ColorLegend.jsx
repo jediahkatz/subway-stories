@@ -14,20 +14,21 @@ export const colorScale = [
   [220, 20, 20],
 ];
 
-const ColorLegend = () => {
+const ColorLegend = ({ showFinalColor }) => {
+  const intervals = showFinalColor ? colorIntervals : colorIntervals.slice(0, -1);
   return (
     <div className="color-legend">
       <h3 className="legend-title">Hourly riders</h3>
-      {colorIntervals.map((interval, index) => (
+      {intervals.map((interval, index) => (
         <div key={index} className="legend-item">
           <div 
             className="color-box" 
             style={{backgroundColor: `rgb(${colorScale[index].join(',')})`}}
           ></div>
           <span className="interval-label">
-            {index === colorIntervals.length - 1 
+            {index === intervals.length - 1 
               ? `${interval}+` 
-              : `${interval}-${colorIntervals[index + 1]}`}
+              : `${interval}-${intervals[index + 1]}`}
           </span>
         </div>
       ))}

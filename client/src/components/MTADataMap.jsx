@@ -818,7 +818,7 @@ const MTADataMap = ({ mapboxToken }) => {
         </div>
       </Tooltip>}
       <View3DToggle is3D={viewportIs3d} setViewport={setViewport} />
-      <ColorLegend />
+      <ColorLegend showFinalColor={selectedStation === ALL_STATIONS_ID} />
       <div className="info-icon-container">
         <button className="info-button" onClick={toggleAboutView}>
           <span className="info-icon map-info-icon" />
