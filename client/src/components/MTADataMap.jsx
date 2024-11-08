@@ -20,7 +20,7 @@ import { useBarsAnimation } from '../hooks/useBarsAnimation';
 import { getAbsoluteHeight } from '../lib/bar-heights';
 import { usePrevious } from '../hooks/usePrevious';
 import { ALL_STATIONS_ID } from '../lib/all-stations';
-import { colorIntervals, colorScale } from './ColorLegend.jsx';
+import { getColorIntervals, colorScale } from './ColorLegend.jsx';
 import ColorLegend from './ColorLegend';
 import { splitNameAndLines } from './SubwayLineSymbol.jsx';
 import AboutView from './AboutView.jsx';
@@ -395,9 +395,10 @@ const MTADataMap = ({ mapboxToken }) => {
   };
 
   const getColorAbsolute = (value) => {
+    const colorIntervals = getColorIntervals(selectedStation === ALL_STATIONS_ID)
     // Find the interval that contains our value
     let intervalIndex = colorIntervals.findIndex(interval => value < interval);
-    if (intervalIndex === -1) return colorScale[colorScale.length - 1]; // For values above the highest interval
+    if (intervalIndex === -1) return colorScale[colorIntervals.length - 1]; // For values above the highest interval
     if (intervalIndex === 0) return colorScale[0]; // For values below the lowest interval
 
     // Get the two colors to interpolate between
@@ -818,7 +819,7 @@ const MTADataMap = ({ mapboxToken }) => {
         </div>
       </Tooltip>}
       <View3DToggle is3D={viewportIs3d} setViewport={setViewport} />
-      <ColorLegend showFinalColor={selectedStation === ALL_STATIONS_ID} />
+      <ColorLegend allStationsView={selectedStation === ALL_STATIONS_ID} />
       <div className="info-icon-container">
         <button className="info-button" onClick={toggleAboutView}>
           <span className="info-icon map-info-icon" />

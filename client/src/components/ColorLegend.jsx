@@ -1,21 +1,24 @@
 import React from 'react';
 
-export const colorIntervals = [0, 10, 20, 40, 80, 160, 320, 640, 1280, 5120];
+const colorIntervalsForOriginDestination = [0, 10, 20, 50, 100, 200, 400, 800];
+const colorIntervalsForAllStations = [50, 100, 200, 400, 800, 1600, 3200, 6400];
 export const colorScale = [
-  [255, 255, 240], // Light cream
+  [250, 250, 240], // Light cream
   [240, 220, 200], // Very light tan
   [230, 200, 170], // Light beige
   [220, 180, 150], // Soft tan
   [210, 140, 110], // Warm orange-beige
   [200, 100, 80],  // Muted orange
   [180, 60, 50],   // Deep orange-red
-  [140, 40, 30],   // Brick red
-  [150, 20, 20],
-  [220, 20, 20],
+  // [140, 40, 30],   // Brick red
+  [170, 20, 20],
+  [220, 10, 10],
 ];
 
-const ColorLegend = ({ showFinalColor }) => {
-  const intervals = showFinalColor ? colorIntervals : colorIntervals.slice(0, -1);
+export const getColorIntervals = (isAllStationsView) => isAllStationsView ? colorIntervalsForAllStations : colorIntervalsForOriginDestination
+
+const ColorLegend = ({ allStationsView }) => {
+  const intervals = getColorIntervals(allStationsView)
   return (
     <div className="color-legend">
       <h3 className="legend-title">Hourly riders</h3>
