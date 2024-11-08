@@ -56,11 +56,11 @@
 }
 
 .tab-selector.stories::before {
-  left: 136px;
+  left: 99px;
   right: 2px;
   width: 96.25px;
 }
 
 .tab-selector.visualization::before {
-  width: 138px;
+  width: 99px;
 }

@@ -10,7 +10,7 @@ export default function AboutView({ toggleAboutView }) {
             </p>
 
             <p>
-                We created <i>Subway Stories</i> for the 2024 MTA Open Data Challenge to help everyone explore and understand the city's ridership patterns. The visualization tab (top right) lets you dive into the data yourself after reading through our stories about how New Yorkers move through their city. We encourage you to share your own stories with us through <a href="https://forms.gle/HDZ6npr3uLaqivZe7" target="blank">this form</a>!
+                We created <i>Subway Stories</i> for the 2024 MTA Open Data Challenge to help everyone explore and understand the city's ridership patterns. The Explore tab (top right) lets you dive into the data yourself after reading through our stories about how New Yorkers move through their city. We encourage you to share your own stories with us through <a href="https://forms.gle/HDZ6npr3uLaqivZe7" target="blank">this form</a>!
             </p>
 
             <p>
@@ -49,7 +49,7 @@ export default function AboutView({ toggleAboutView }) {
                 </p>
                 <h5>What does "Arriving at" and "Departing from" mean?</h5>
                 <p>
-                    These refer to the direction of travel. For example, if you've selected "Arriving at Fulton St," the visualization displays the estimated number of riders who entered any other station and then exited at Fulton St. If you've selected "Departing from Fulton St," the visualization shows the estimated number of riders who exited from any other station after beginning their trip at Fulton St.
+                    These refer to the direction of travel. For example, if you've selected "Arriving at Fulton St," the Explore displays the estimated number of riders who entered any other station and then exited at Fulton St. If you've selected "Departing from Fulton St," the Explore shows the estimated number of riders who exited from any other station after beginning their trip at Fulton St.
                 </p>
                 <h5>How does the "Bar scale" setting work?</h5>
                 <p>

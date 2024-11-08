@@ -13,7 +13,7 @@ const ViewTabs = ({ activeView, setActiveView, limitVisibleLines, setSelectedBar
             setSelectedBarScale(null)
           }}
         >
-          Visualization
+          Explore
         </button>
         <button
           className={`tab-button stories ${activeView === 'stories' ? 'active' : ''}`}
