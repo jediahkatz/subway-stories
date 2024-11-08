@@ -964,17 +964,17 @@ const View3DToggle = ({ is3D, setViewport }) => {
       // Show expanded message
       setShowExpandedMessage(true);
       // Hide message after 5 seconds
-      setTimeout(() => setShowExpandedMessage(false), 5000);
+      setTimeout(() => setShowExpandedMessage(false), 6000);
     }
   };
 
   return (
     <button
-      className={`view-toggle ${showExpandedMessage ? 'expanded' : ''}`}
+      className={`view-toggle ${showExpandedMessage ? 'expanded' : ''} ${is3D ? 'active' : ''}`}
       onClick={toggleView}
       aria-label={`Switch to ${is3D ? '2D' : '3D'} view`}
     >
-      <div className={is3D ? "view-3d" : "view-2d"} />
+      <div className="view-3d" />
       <span className="expanded-message">Shift + Drag to rotate in 3D</span>
     </button>
   );
