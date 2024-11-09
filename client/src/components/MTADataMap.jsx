@@ -158,7 +158,7 @@ const MTADataMap = ({ mapboxToken }) => {
   const { fetchData } = useFetchData();
 
   // Add new state for story position
-  const [currentStoryIndex, setCurrentStoryIndex] = useState(null);
+  const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
   const [currentPartIndex, setCurrentPartIndex] = useState(0);
 
   const [showAboutView, setShowAboutView] = useState(false);

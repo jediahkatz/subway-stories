@@ -13,6 +13,35 @@ export const ALL_MONTHS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
 const getStories = (StationHighlightComponent) => [
   {
+    title: 'Subway Stories',
+    parts: [
+      { 
+        description: <>
+          <p>
+            This project visualizes how New Yorkers flow through the MTA subway system, station-by-station and hour-by-hour. Each story explores an aspect of city life through subway data.
+          </p>
+          <p>
+            The caption at the bottom explains the current visualization. Sometimes, it shows the total number of people entering (or exiting) each station. At other times, it will highlight a specific station, showing how many riders who entered there went to every other station (or the reverse: how many riders who arrived there came from every other station).
+            The ridership estimates are published by the MTA. They model subway trips by measuring turnstile data and assuming that a trip's destination is the next station that the rider swipes in.
+          </p>
+          <p> 
+            Mouse over to inspect stations on the map or in links (like <StationHighlightComponent stationId="611">Times Square</StationHighlightComponent>). To control the visualization, select the Explore tab at the top-right. To learn more, click the info (ℹ) icon. To read the stories, scroll down or click the lines to the left of this text.
+          </p>
+        </>,
+        // 215 St, Whitehall St-South Ferry
+        pointsToInclude: [stationIdToStation['297'], stationIdToStation['635']],
+        dataview: {
+          station: ALL_STATIONS_ID,
+          direction: 'comingFrom',
+          day: 'Saturday',
+          hour: 16,
+          months: ALL_MONTHS,
+          barScale: 0.0004,
+        },
+      }
+    ],
+  },
+  {
     title: 'How New York City Works',
     parts: [
       {
@@ -889,6 +918,7 @@ const StoriesView = React.memo(({
   
   const handleStepEnter = useCallback((response) => {
     const { index } = response;
+    
     let storyIndex = 0;
     let partIndex = index;
 
@@ -916,6 +946,8 @@ const StoriesView = React.memo(({
     const currentStory = stories[storyIndex];
     const currentPart = currentStory.parts[partIndex];
 
+    console.log({ currentStory, currentPart })
+
     setViewport(viewport => {
       const newViewport = currentPart.viewport || getViewportForBounds({
         pointsToInclude: currentPart.pointsToInclude,
@@ -934,6 +966,13 @@ const StoriesView = React.memo(({
       };
     });
 
+    // Cancel any existing animation
+    setAnimation(null);
+
+    if (!currentPart.dataview) {
+      return
+    }
+
     const hour = currentPart.dataview.animate?.field === 'hour' 
       ? currentPart.dataview.animate.frames[0].value 
       : currentPart.dataview.hour;
@@ -943,9 +982,6 @@ const StoriesView = React.memo(({
       : currentPart.dataview.months;
 
     limitVisibleLines(currentPart.dataview.visibleLines);
-
-    // Cancel any existing animation
-    setAnimation(null);
     
     const loadPromise = handleDataSettingsChange({
       newSelectedStation: currentPart.dataview.station,
@@ -1095,7 +1131,6 @@ const StoriesView = React.memo(({
         switch (e.deltaMode) {
           case 0: 		//DOM_DELTA_PIXEL		Chrome
             storiesViewContainer.scrollTop+=e.deltaY
-            console.log('scrollTop after', storiesViewContainer.scrollTop)
             storiesViewContainer.scrollLeft+=e.deltaX
             break;
           case 1: 		//DOM_DELTA_LINE		Firefox
@@ -1185,31 +1220,37 @@ const StoriesView = React.memo(({
 });
 
 const StoryStack = ({ stories, handleStoryClick, currentStoryIndex, isCollapsing, isMoving }) => {
-  const visibleStories = stories.slice(0, 5); // Only show the first 5 stories in the stack
+  // Skip the intro card, and only show the first 5 stories in the stack
+  const visibleStories = stories.slice(1, 1 + 5);
   return (
     <div className={`story-stack ${isCollapsing ? 'collapsing' : ''} ${isMoving ? 'moving' : ''}`}>
-      {visibleStories.map((story, index) => (
-        <div 
-          key={index} 
-          className="story-card"
-          style={{ zIndex: visibleStories.length - index }}
-          onClick={(e) => {
-            // remove active class from all story cards
-            document.querySelectorAll('.story-card').forEach(card => {
-              card.classList.remove('active');
-            });
-            // add 'active' class to the clicked story card
-            e.currentTarget.classList.add('active');
-            handleStoryClick(index)
-          }}
-        >
-          <h2>{story.title}</h2>
-          <div className="story-preview">
-            {story.parts[0].description}
+      {visibleStories.map((story, index) => {
+        // account for intro card
+        index += 1
+
+        return (
+          <div 
+            key={index} 
+            className="story-card"
+            style={{ zIndex: visibleStories.length - index }}
+            onClick={(e) => {
+              // remove active class from all story cards
+              document.querySelectorAll('.story-card').forEach(card => {
+                card.classList.remove('active');
+              });
+              // add 'active' class to the clicked story card
+              e.currentTarget.classList.add('active');
+              handleStoryClick(index)
+            }}
+          >
+            <h2>{story.title}</h2>
+            <div className="story-preview">
+              {story.parts[0].description}
+            </div>
+            <div className="scroll-shadow"/>
           </div>
-          <div className="scroll-shadow"/>
-        </div>
-      ))}
+        )
+      })}
     </div>
   );
 };

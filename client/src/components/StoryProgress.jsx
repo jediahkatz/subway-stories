@@ -49,40 +49,47 @@ const StoryProgress = ({ stories, currentStoryIndex, currentPartIndex, handleJum
         }, 500);
     }
 
+    const visibleStories = stories.slice(1)
+
     return (
         <div className="story-progress">
-            {stories.map((story, storyIndex) => (
-                <div key={storyIndex} className="story-line-container">
-                    <div className="story-line-wrapper" 
-                        onClick={() => handleClickStory(storyIndex)}
-                        onMouseEnter={() => handleMouseEnter(storyIndex)}
-                        onMouseLeave={handleMouseLeave}
-                    >
-                        <div 
-                            className={`story-line ${storyIndex === currentStoryIndex && currentPartIndex === 0 ? 'active' : ''}`}
-                        />
-                        <div 
-                            className="story-line-hitbox"
-                        />
-                    </div>
-                    {storyIndex === currentStoryIndex && (
-                        <div className={`part-lines ${!isExpanded ? 'hidden' : ''}`} style={isExpanded ? { height: `${(story.parts.length - 1) * 16 - 12}px` } : {}}>
-                            {story.parts.slice(1).map((_, partIndex) => (
-                                <div key={partIndex} className={`part-line-wrapper ${!isExpanded ? 'hidden' : ''}`}>
-                                    <div 
-                                        onClick={() => handleClickPart(storyIndex, partIndex + 1)}
-                                        className={`part-line ${partIndex + 1 === currentPartIndex ? 'active' : ''}`}
-                                    />
-                                    <div 
-                                        className="part-line-hitbox"
-                                        onClick={() => handleClickPart(storyIndex, partIndex + 1)}
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            ))}
+            {visibleStories.flatMap((story, storyIndex) => {
+                // account for intro card
+                storyIndex += 1
+
+                return (
+                  <div key={storyIndex} className="story-line-container">
+                      <div className="story-line-wrapper" 
+                          onClick={() => handleClickStory(storyIndex)}
+                          onMouseEnter={() => handleMouseEnter(storyIndex)}
+                          onMouseLeave={handleMouseLeave}
+                      >
+                          <div 
+                              className={`story-line ${storyIndex === currentStoryIndex && currentPartIndex === 0 ? 'active' : ''}`}
+                          />
+                          <div 
+                              className="story-line-hitbox"
+                          />
+                      </div>
+                      {storyIndex === currentStoryIndex && (
+                          <div className={`part-lines ${!isExpanded ? 'hidden' : ''}`} style={isExpanded ? { height: `${(story.parts.length - 1) * 16 - 12}px` } : {}}>
+                              {story.parts.slice(1).map((_, partIndex) => (
+                                  <div key={partIndex} className={`part-line-wrapper ${!isExpanded ? 'hidden' : ''}`}>
+                                      <div 
+                                          onClick={() => handleClickPart(storyIndex, partIndex + 1)}
+                                          className={`part-line ${partIndex + 1 === currentPartIndex ? 'active' : ''}`}
+                                      />
+                                      <div 
+                                          className="part-line-hitbox"
+                                          onClick={() => handleClickPart(storyIndex, partIndex + 1)}
+                                      />
+                                  </div>
+                              ))}
+                          </div>
+                      )}
+                  </div>
+                )
+              })}
         </div>
     );
 };
