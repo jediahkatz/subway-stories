@@ -671,7 +671,7 @@ const MTADataMap = ({ mapboxToken }) => {
         stationName,
         stationId: stationId,
         ridership,
-        ridershipLabel: 'Riders ',
+        ridershipLabel: 'Ridership',
         showPercentage: false,
         positionedLoosely: false,
       });
@@ -927,7 +927,7 @@ const useMainStationIndicatorLayers = (selectedStation, selectedDirection, filte
 
 const getInitialBarScale = (data, selectedStation) => {
   if (selectedStation === ALL_STATIONS_ID) {
-    return 0.0005
+    return 0.0004
   } 
 
   const maxRidershipToday = Math.max(...data.map(d => d.ridership));
