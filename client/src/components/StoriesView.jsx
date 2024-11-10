@@ -18,14 +18,15 @@ const getStories = (StationHighlightComponent) => [
       { 
         description: <>
           <p>
-            This project visualizes how New Yorkers flow through the MTA subway system, station-by-station and hour-by-hour. Each story explores an aspect of city life through subway data.
+            Every year, New Yorkers take more than a billion trips on the subway. Using data from the MTA, we mapped out how riders flow between stations at every hour. Each story explores a slice of city life. 
+            {/* In NYC, millions of stories unfold each day. 
+            As you scroll down to read 5 such stories, reference the map and captions to see how the data illustrates what is described. */}
+            {/* This project visualizes how New Yorkers flow through the MTA subway system, station-by-station and hour-by-hour. Each story explores an aspect of city life through subway data. */}
           </p>
           <p>
-            The caption at the bottom explains the current visualization. Sometimes, it shows the total number of people entering (or exiting) each station. At other times, it will highlight a specific station, showing how many riders who entered there went to every other station (or the reverse: how many riders who arrived there came from every other station).
-            The ridership estimates are published by the MTA. They model subway trips by measuring turnstile data and assuming that a trip's destination is the next station that the rider swipes in.
-          </p>
-          <p> 
-            Mouse over to inspect stations on the map or in links (like <StationHighlightComponent stationId="611">Times Square</StationHighlightComponent>). To control the visualization, select the Explore tab at the top-right. To learn more, click the info (ℹ) icon. To read the stories, scroll down or click the lines to the left of this text.
+            Scroll down to keep reading, or click the horizontal lines on the left to jump between stories. The captions at the bottom explain what's on the map for each page. Click the info (ℹ) icon at the top right for more details.
+            {/* The caption at the bottom explains the current visualization. Mouse over to inspect stations on the map or in links (like <StationHighlightComponent stationId="611">Times Square</StationHighlightComponent>). To control the visualization, select the Explore tab at the top-right. To learn more, click the info (ℹ) icon. To read the stories, scroll down or click the lines to the left of this text. */}
+            {/* The ridership estimates are published by the MTA. They model subway trips by measuring turnstile data and assuming that a trip's destination is the next station that the rider swipes in. */}
           </p>
         </>,
         // 215 St, Whitehall St-South Ferry
