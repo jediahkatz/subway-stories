@@ -205,12 +205,11 @@
   height: 16px;
   display: inline-block;
   vertical-align: middle;
-  opacity: 0.7;
-  transition: opacity 0.3s ease;
+  opacity: 0.5;
   position: relative;
 }
 
-.info-icon:hover {
+.info-button:hover .info-icon {
   opacity: 1;
 }
 

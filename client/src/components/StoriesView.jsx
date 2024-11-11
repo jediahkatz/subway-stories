@@ -1151,14 +1151,17 @@ const StoriesView = React.memo(({
     }
   }, [isStackView, showAboutView]);
 
+  const enterStackView = useCallback(() => {
+    setIsStackView(true);
+    setCurrentStoryIndex(null);
+    setCurrentPartIndex(0);
+  }, [setIsStackView, setCurrentStoryIndex, setCurrentPartIndex])
+
   const handleEscapeKey = useCallback((event) => {
     if (event.key === 'Escape' && !isStackView) {
-      setIsStackView(true);
-      setCurrentStoryIndex(null);
-      setCurrentPartIndex(0);
-      // Reset any other necessary state here
+      enterStackView();
     }
-  }, [isStackView, setCurrentStoryIndex, setCurrentPartIndex]);
+  }, [isStackView, enterStackView]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleEscapeKey);
@@ -1195,14 +1198,23 @@ const StoriesView = React.memo(({
           </p>
         </div>
       </div>
-      {!isStackView && <StoryProgress
-        stories={stories}
-        currentStoryIndex={currentStoryIndex}
-        currentPartIndex={currentPartIndex}
-        handleJumpToStory={(storyIndex, partIndex) => handleJumpToStory(storyIndex, partIndex, false)}
-        handleJumpToPart={(storyIndex, partIndex) => handleJumpToStory(storyIndex, partIndex, true)}
-        setPreviewStory={setPreviewStory}
-      />}
+      {!isStackView && (
+        <div className="story-progress-container">
+          <button className="view-all-button"
+            onClick={enterStackView}
+          >
+            <div className="view-all-icon" />
+          </button>
+          <StoryProgress
+            stories={stories}
+            currentStoryIndex={currentStoryIndex}
+            currentPartIndex={currentPartIndex}
+            handleJumpToStory={(storyIndex, partIndex) => handleJumpToStory(storyIndex, partIndex, false)}
+            handleJumpToPart={(storyIndex, partIndex) => handleJumpToStory(storyIndex, partIndex, true)}
+            setPreviewStory={setPreviewStory}
+          />
+        </div>
+      )}
       {previewStory !== null && (
         <div className="story-preview">
           <StoryBox 

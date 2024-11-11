@@ -389,9 +389,18 @@ body.pointer-cursor {
 }
 
 .view-toggle .view-3d {
+  opacity: 0.5;
   background-image: url('../assets/icon-3d.svg');
   width: 26px;
   /* transition: opacity 0.3s ease; */
+}
+
+.view-toggle:hover .view-3d {
+  opacity: 1;
+}
+
+.view-toggle.active .view-3d {
+  opacity: 1;
 }
 
 .view-toggle.expanded {
@@ -526,7 +535,6 @@ body.pointer-cursor {
   margin-left: 0;
   width: 24px;
   height: 24px;
-  opacity: 1;
 }
 
 .about-view {

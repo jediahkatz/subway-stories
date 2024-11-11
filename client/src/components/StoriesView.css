@@ -147,11 +147,17 @@
   border-radius: 10px;
 }
 
-.story-progress {
+.story-progress-container {
   position: fixed;
   left: 10px;
   top: 50%;
   transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.story-progress {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -486,4 +492,42 @@
   font-size: 12px;
   color: #666;
   opacity: 0.8;
+}
+
+.view-all-button {
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: all;
+  z-index: 1000;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2), 
+              inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  padding: 0;
+}
+
+.view-all-button:hover {
+  background-color: rgba(100, 100, 100, 0.8);
+}
+
+.view-all-button .view-all-icon {
+  width: 24px;
+  height: 24px;
+  background-image: url('../assets/icon-all.svg');
+  opacity: 0.5;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.view-all-button:hover .view-all-icon {
+  opacity: 1;
 }
