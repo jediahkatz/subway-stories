@@ -1200,11 +1200,6 @@ const StoriesView = React.memo(({
       </div>
       {!isStackView && (
         <div className="story-progress-container">
-          <button className="view-all-button"
-            onClick={enterStackView}
-          >
-            <div className="view-all-icon" />
-          </button>
           <StoryProgress
             stories={stories}
             currentStoryIndex={currentStoryIndex}
@@ -1213,6 +1208,11 @@ const StoriesView = React.memo(({
             handleJumpToPart={(storyIndex, partIndex) => handleJumpToStory(storyIndex, partIndex, true)}
             setPreviewStory={setPreviewStory}
           />
+          <button className="view-all-button"
+            onClick={enterStackView}
+          >
+            <div className="view-all-icon" />
+          </button>
         </div>
       )}
       {previewStory !== null && (

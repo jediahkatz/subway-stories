@@ -57,6 +57,8 @@ const StoryProgress = ({ stories, currentStoryIndex, currentPartIndex, handleJum
                 // account for intro card
                 storyIndex += 1
 
+                const numParts = story.parts.length
+
                 return (
                   <div key={storyIndex} className="story-line-container">
                       <div className="story-line-wrapper" 
@@ -72,7 +74,7 @@ const StoryProgress = ({ stories, currentStoryIndex, currentPartIndex, handleJum
                           />
                       </div>
                       {storyIndex === currentStoryIndex && (
-                          <div className={`part-lines ${!isExpanded ? 'hidden' : ''}`} style={isExpanded ? { height: `${(story.parts.length - 1) * 16 - 12}px` } : {}}>
+                          <div className={`part-lines ${!isExpanded || numParts <= 1 ? 'hidden' : ''}`} style={isExpanded ? { height: `${(story.parts.length - 1) * 16 - 12}px` } : {}}>
                               {story.parts.slice(1).map((_, partIndex) => (
                                   <div key={partIndex} className={`part-line-wrapper ${!isExpanded ? 'hidden' : ''}`}>
                                       <div 
