@@ -151,8 +151,8 @@
   position: fixed;
   left: 10px;
   top: 50%;
-  /* translateY(calc(-50% + 40px + 18px)) to center just the lines */
-  transform: translateY(calc(-50% + (40px + 18px) / 2));
+  /* translateY(calc(-50% + (40px + 18px) / 2)) to center just the lines */
+  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   gap: 18px;
