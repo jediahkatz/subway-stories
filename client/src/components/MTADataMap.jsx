@@ -435,9 +435,9 @@ const MTADataMap = ({ mapboxToken }) => {
       const layerId = `subway-line-${style.id}`;
 
       if (!visibleLines) {
-        map.setFilter(layerId, style.filter)
+        map?.setFilter(layerId, style.filter)
       } else {
-        map.setFilter(layerId, [
+        map?.setFilter(layerId, [
           'all',
           [...style.filter],
           ['any',

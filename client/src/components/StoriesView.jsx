@@ -24,8 +24,8 @@ const getStories = (StationHighlightComponent) => [
             Scroll down to keep reading, or click the horizontal lines on the left to jump between stories. The captions at the bottom explain what's on the map for each page. Click the info (ℹ) icon at the top right for more details.
           </p>
         </>,
-        // 215 St, Whitehall St-South Ferry
-        pointsToInclude: [stationIdToStation['297'], stationIdToStation['635']],
+        // 168 St-Wash Hts, Bowling Green, Barclays Ctr
+        pointsToInclude: [stationIdToStation['605'], stationIdToStation['414'], stationIdToStation['617']],
         dataview: {
           station: ALL_STATIONS_ID,
           direction: 'comingFrom',
@@ -942,8 +942,6 @@ const StoriesView = React.memo(({
     const currentStory = stories[storyIndex];
     const currentPart = currentStory.parts[partIndex];
 
-    console.log({ currentStory, currentPart })
-
     setViewport(viewport => {
       const newViewport = currentPart.viewport || getViewportForBounds({
         pointsToInclude: currentPart.pointsToInclude,
@@ -1057,6 +1055,7 @@ const StoriesView = React.memo(({
   useEffect(() => {
     // Resume from where we left off
     if (!isStackView) {
+      console.log({currentPartIndex, currentStoryIndex})
       handleJumpToStory(currentStoryIndex, currentPartIndex, false);
     }
   }, []);
