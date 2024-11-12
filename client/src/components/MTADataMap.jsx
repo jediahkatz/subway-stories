@@ -112,6 +112,12 @@ const MTADataMap = ({ mapboxToken }) => {
     const savedState = loadStateFromSessionStorage();
     return savedState?.showPercentage || false;
   });
+
+  const [activeView, setActiveView] = useState(() => {
+    const savedState =loadStateFromSessionStorage();
+    return savedState?.activeView || 'stories'
+  });
+
   // I know, this is a hack and doesn't really make sense. But it somehow fixes the issue where there's a stale
   // state value that's not updated in the handleDataSettingsChange function.
   const dataStateRef = useRef({
@@ -607,12 +613,10 @@ const MTADataMap = ({ mapboxToken }) => {
       selectedDirection,
       selectedMonths,
       showPercentage,
+      activeView
     };
     saveStateToSessionStorage(stateToSave);
-  }, [viewport, selectedHour, selectedDay, selectedStation, selectedDirection, selectedMonths, showPercentage]);
-
-  // Add new state for active view
-  const [activeView, setActiveView] = useState('stories');
+  }, [viewport, selectedHour, selectedDay, selectedStation, selectedDirection, selectedMonths, showPercentage, activeView]);
   
   const drawSubwayLines = useCallback((map) => {
     map.addSource('nyc-subway-routes', {
