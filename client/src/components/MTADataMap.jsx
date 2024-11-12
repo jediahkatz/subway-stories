@@ -10,7 +10,7 @@ import './MTADataMap.css';
 import { useDotPulseAnimation } from '../hooks/useDotAnimation';
 import subwayRoutes from '../data/nyc-subway-routes.js';
 import subwayLayerStyles from '../data/subway-layer-styles.js';
-import MapBarLayer, { BAR_RADIUS } from './MapBarLayer';
+import MapBarLayer, { BAR_RADIUS, useUpVector } from './MapBarLayer';
 import { saveStateToSessionStorage, loadStateFromSessionStorage } from '../lib/sessionManager.js';
 import ViewTabs from './ViewTabs';
 import StoriesView, { ALL_MONTHS } from './StoriesView';
@@ -46,7 +46,7 @@ function constrainViewState({viewState}) {
   const constrainedLongitude = Math.max(Math.min(longitude, NYC_BOUNDS.maxLng), NYC_BOUNDS.minLng);
   const constrainedLatitude = Math.max(Math.min(latitude, NYC_BOUNDS.maxLat), NYC_BOUNDS.minLat);
   const constrainedZoom = Math.max(NYC_BOUNDS.minZoom, zoom);
-  const constrainedPitch = Math.max(0, Math.min(pitch, 60));  // Limit pitch to 0-60 degrees
+  const constrainedPitch = pitch < 0.1 ? 0 : Math.max(0, Math.min(pitch, 60));  // Limit pitch to 0-60 degrees
   const constrainedBearing = bearing % 360;  // Keep bearing within 0-360 degrees
 
   return {
@@ -496,6 +496,14 @@ const MTADataMap = ({ mapboxToken }) => {
     return color;
   }, [barData, hoverInfo])
 
+  const viewport = deckglRef.current?.deck.viewState 
+    ? { ...deckglRef.current.deck.viewState, ...deckglRef.current.deck.viewState['default-view'] }
+    : initialViewport;
+
+  const upVector = useUpVector(mapRef.current, viewport)
+
+  console.log(viewport?.pitch)
+
   const mapBarLayer2d = new MapBarLayer({
     id: 'ridership-composite-layer',
     data: filteredDataWithStationsAnimatingToZero,
@@ -504,6 +512,7 @@ const MTADataMap = ({ mapboxToken }) => {
     getHeight: d => barData.heights[d.station_id]?.currentHeight ?? 0,
     getWidth: _d => BAR_RADIUS,
     getColor: getMapBarColor,
+    upVector,
     onHover: (info) => {
       if (!info.object) {
         setHoverInfo(null);
@@ -541,6 +550,7 @@ const MTADataMap = ({ mapboxToken }) => {
       data: [filteredDataWithStationsAnimatingToZero],
       getColor: [filteredDataWithStationsAnimatingToZero, getMapBarColor],
       getHeight: [barScale, filteredDataWithStationsAnimatingToZero, barData],
+      bearing: [viewport.bearing],
     }
   });
 
@@ -594,11 +604,8 @@ const MTADataMap = ({ mapboxToken }) => {
     }
   })
 
-  const viewport = deckglRef.current?.deck.viewState 
-    ? { ...deckglRef.current.deck.viewState, ...deckglRef.current.deck.viewState['default-view'] }
-    : initialViewport;
 
-  const viewportIs3d = viewport.pitch > 0 || viewport.bearing > 0;
+  const viewportIs3d = viewport.pitch > 0;
   const mapBarLayer = viewportIs3d ? mapBarLayer3d : mapBarLayer2d;
 
   const mainStationIndicatorLayers = useMainStationIndicatorLayers(selectedStation, selectedDirection, filteredData, viewport, setHoverInfo);

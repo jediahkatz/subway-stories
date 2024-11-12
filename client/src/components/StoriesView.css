@@ -74,7 +74,7 @@
   margin-bottom: 15px;
   line-height: 1.4;
   color: #333;
-  text-align: justify;
+  text-align: left;
   hyphens: auto;
 }
 
@@ -482,7 +482,7 @@
   font-size: 16px;
   color: #333;
   overflow: hidden;
-  text-align: justify;
+  text-align: left;
   hyphens: auto;
 }
 

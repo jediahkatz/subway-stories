@@ -1055,7 +1055,6 @@ const StoriesView = React.memo(({
   useEffect(() => {
     // Resume from where we left off
     if (!isStackView) {
-      console.log({currentPartIndex, currentStoryIndex})
       handleJumpToStory(currentStoryIndex, currentPartIndex, false);
     }
   }, []);
