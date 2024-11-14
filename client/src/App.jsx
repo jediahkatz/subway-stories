@@ -3,6 +3,7 @@ import MTADataMap from './components/MTADataMap';
 import PasswordPage from './components/Password';
 import './App.css';
 import { getEnvVar } from './lib/env';
+import { trackEvent } from './lib/analytics';
 
 const MAPBOX_TOKEN = getEnvVar('VITE_MAPBOX_TOKEN');
 const SERVER_BASE_URL = getEnvVar('VITE_SQL_SERVER_URL');
@@ -56,6 +57,7 @@ const App = () => {
   }, []);
 
   if (isMobileDevice) {
+    trackEvent('mobile_not_supported');
     return (
       <div className="mobile-not-supported">
         <div className="metrocard-background"></div>
@@ -66,6 +68,7 @@ const App = () => {
   }
 
   if (isScreenTooSmall) {
+    trackEvent('screen_too_small');
     return (
       <div className="mobile-not-supported">
         <div className="metrocard-background"></div>
