@@ -1306,7 +1306,7 @@ const formatInfoBarText = (direction, stationId, hour, day, selectedMonths, anim
     const allStationsDirectionText = direction === 'comingFrom' ? 'getting off' : 'getting on';
     return (
       <>
-        Where are people {allStationsDirectionText} the train at {hourText} {splitText ? <br /> : ''} on a {dayText}{fullMonthText}?
+        Where are people {allStationsDirectionText} the subway at {hourText} {splitText ? <br /> : ''} on a {dayText}{fullMonthText}?
       </>
     )
   }

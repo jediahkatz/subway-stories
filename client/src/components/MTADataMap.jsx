@@ -502,8 +502,6 @@ const MTADataMap = ({ mapboxToken }) => {
 
   const upVector = useUpVector(mapRef.current, viewport)
 
-  console.log(viewport?.pitch)
-
   const mapBarLayer2d = new MapBarLayer({
     id: 'ridership-composite-layer',
     data: filteredDataWithStationsAnimatingToZero,
