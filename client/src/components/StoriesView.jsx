@@ -8,6 +8,7 @@ import { MAIN_STATION_COLOR_ARRIVING, MAIN_STATION_COLOR_DEPARTING } from './MTA
 import StoryProgress from './StoryProgress';
 import AttributedPhoto from './AttributedPhoto';
 import { ALL_STATIONS_ID } from '../lib/all-stations';
+import { trackEvent } from '../lib/analytics';
 
 export const ALL_MONTHS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
@@ -992,6 +993,17 @@ const StoriesView = React.memo(({
         setAnimation(currentPart.dataview.animate);
       });
     }
+
+    // Track leaving the intro story
+    if (index > 0) {
+      trackEvent('story_reading_started');
+    }
+    
+    // Track each story section view
+    trackEvent('story_section_viewed', {
+      story_title: stories[storyIndex].title,
+      part_index: partIndex
+    });
   }, [setViewport, handleDataSettingsChange, limitVisibleLines, setCurrentStoryIndex, setCurrentPartIndex]);
 
   const handleJumpToStory = useCallback((storyIndex, partIndex, smooth = true) => {
@@ -1026,6 +1038,9 @@ const StoriesView = React.memo(({
   }, [stories]);
 
   const handleStoryClick = (storyIndex) => {
+    trackEvent('story_selected_from_stack', {
+      story_title: stories[storyIndex].title,
+    });
     setIsCollapsing(true);
     
     // First step: collapse cards vertically
@@ -1150,10 +1165,11 @@ const StoriesView = React.memo(({
   }, [isStackView, showAboutView]);
 
   const enterStackView = useCallback(() => {
+    trackEvent('view_all_stories_clicked');
     setIsStackView(true);
     setCurrentStoryIndex(null);
     setCurrentPartIndex(0);
-  }, [setIsStackView, setCurrentStoryIndex, setCurrentPartIndex])
+  }, [setIsStackView, setCurrentStoryIndex, setCurrentPartIndex]);
 
   const handleEscapeKey = useCallback((event) => {
     if (event.key === 'Escape' && !isStackView) {

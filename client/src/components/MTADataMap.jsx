@@ -24,6 +24,7 @@ import { getColorIntervals, colorScale } from './ColorLegend.jsx';
 import ColorLegend from './ColorLegend';
 import { splitNameAndLines } from './SubwayLineSymbol.jsx';
 import AboutView from './AboutView.jsx';
+import { trackEvent } from '../lib/analytics.js';
 
 const NYC_BOUNDS = {
   minLng: -74.2591,  // Southwest longitude
@@ -170,7 +171,13 @@ const MTADataMap = ({ mapboxToken }) => {
   const [showAboutView, setShowAboutView] = useState(false);
 
   const toggleAboutView = useCallback(() => {
-    setShowAboutView(prev => !prev);
+    setShowAboutView(prev => {
+      const isOpening = !prev;
+      if (isOpening) {
+        trackEvent('about_view_clicked');
+      }
+      return !prev;
+    });
   }, []);
 
   const handleDataSettingsChange = React.useCallback(async ({ 
@@ -952,6 +959,9 @@ const View3DToggle = ({ is3D, setViewport }) => {
   const [showExpandedMessage, setShowExpandedMessage] = useState(false);
 
   const toggleView = () => {
+    trackEvent('3d_view_toggled', {
+      new_state: !is3D,
+    });
     if (is3D) {
       // Switch to 2D view
       setShowExpandedMessage(false);
