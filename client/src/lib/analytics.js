@@ -3,7 +3,8 @@ const alreadyTrackedEvents = new Set();
 // Track events with GA4
 export const trackEvent = (eventName, eventParams = {}, firstTimeOnly = false) => {
     // Log locally for development
-    if (process.env.ENVIRONMENT === 'development') {
+    const isDev = typeof process !== 'undefined' && process?.env?.ENVIRONMENT === 'development';
+    if (isDev) {
         console.log('🔍 Analytics Event:', eventName, eventParams);
     }
 
@@ -15,7 +16,7 @@ export const trackEvent = (eventName, eventParams = {}, firstTimeOnly = false) =
         return;
     }
 
-    const prefix = process.env.ENVIRONMENT === 'development' ? 'dev-' : '';
+    const prefix = isDev ? 'dev-' : '';
     window.gtag('event', prefix + eventName, eventParams);
     alreadyTrackedEvents.add(eventName);
 };
