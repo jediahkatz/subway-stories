@@ -231,7 +231,6 @@ export const useUpVector = (map, viewport) => {
     
     // Project a point directly "up" in screen space (subtract from y since screen coords are inverted)
     const upScreen = [baseScreen.x, baseScreen.y - 100];
-
     
     // Unproject back to map coordinates to see which direction is "up" in the current view
     const upMap = map.unproject(upScreen);

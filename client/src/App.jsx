@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import MTADataMap from './components/MTADataMap';
+import MTADataMap, { MOBILE_BREAKPOINT_WIDTH } from './components/MTADataMap';
 import PasswordPage from './components/Password';
 import './App.css';
 import { getEnvVar } from './lib/env';
@@ -53,29 +53,15 @@ const App = () => {
   }, []);
 
   const isScreenTooSmall = React.useMemo(() => {
-    return window.innerWidth < 1000;
+    return window.innerWidth < MOBILE_BREAKPOINT_WIDTH;
   }, []);
 
   if (isMobileDevice) {
-    trackEvent('mobile_not_supported');
-    return (
-      <div className="mobile-not-supported">
-        <div className="metrocard-background"></div>
-        <h2>Please carry MetroCard at all times</h2>
-        <h3>Support for mobile devices is coming soon</h3>
-      </div>
-    );
+    trackEvent('mobile');
   }
 
   if (isScreenTooSmall) {
     trackEvent('screen_too_small');
-    return (
-      <div className="mobile-not-supported">
-        <div className="metrocard-background"></div>
-        <h2>Please reload on a full-sized window.</h2>
-        <h3>Support for smaller screens is coming soon</h3>
-      </div>
-    );
   }
 
   return (

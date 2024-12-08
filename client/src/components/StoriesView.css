@@ -107,6 +107,7 @@
   pointer-events: none;
   /* avoid overlapping with the story */
   max-width: calc(100vw - 965px);
+  min-width: 200px;
   width: fit-content;
   display: flex;
   justify-content: center;
@@ -531,4 +532,70 @@
 
 .view-all-button:hover .view-all-icon {
   opacity: 1;
+}
+
+/* Mobile styles */
+@media (max-width: 800px) {
+  .stories-content {
+    padding: 0;
+    width: 100%;
+    align-items: center;
+  }
+
+  .stories-box {
+    width: calc(100% - 40px);
+    max-width: 350px;
+    margin: 0 20px;
+    margin-bottom: 95vh; /* Larger gap between stories */
+  }
+
+  .stories-box:first-child {
+    margin-top: 80vh;
+  }
+
+  .stories-box:last-child {
+    margin-bottom: 80vh;
+  }
+
+  .story-progress-container {
+    left: 20px;
+  }
+
+  .floating-info-bar {
+    max-width: calc(100vw - 40px);
+    min-width: 0;
+    width: 80%;
+  }
+
+  .stories-view-container {
+    padding: 0;
+  }
+
+  /* Adjust story stack for mobile */
+  .story-stack {
+    left: 20px;
+    right: 20px;
+    width: auto;
+  }
+
+  .story-card {
+    width: 100%;
+    left: 0 !important;
+  }
+
+  .info-icon-container {
+    left: 10px;
+  }
+
+  .color-legend {
+    top: 10px;
+  }
+
+  html, body, #root {
+    overflow: hidden;
+  }
+
+  .stories-view-container {
+    pointer-events: all;
+  }
 }

@@ -40,6 +40,9 @@ const LOADING_COLOR = [204, 204, 255];
 
 const PERCENTAGE_BAR_SCALE = 1 / 25;
 
+// Keep in sync with StoriesView.css
+export const MOBILE_BREAKPOINT_WIDTH = 800;
+
 function constrainViewState({viewState}) {
   const {longitude, latitude, zoom, pitch, bearing} = viewState;
 
@@ -75,6 +78,8 @@ const MTADataMap = ({ mapboxToken }) => {
       transitionInterpolator: new FlyToInterpolator(),
     };
   });
+
+  const isMobileSize = window.innerWidth <= MOBILE_BREAKPOINT_WIDTH;
 
   const data = useRef([]);
   const filteredData = useRef(stations.map(s => ({
@@ -115,7 +120,7 @@ const MTADataMap = ({ mapboxToken }) => {
   });
 
   const [activeView, setActiveView] = useState(() => {
-    const savedState =loadStateFromSessionStorage();
+    const savedState = loadStateFromSessionStorage();
     return savedState?.activeView || 'stories'
   });
 
@@ -739,7 +744,7 @@ const MTADataMap = ({ mapboxToken }) => {
 
   return (
     <div className="map-container">
-      <ViewTabs activeView={activeView} setActiveView={setActiveView} limitVisibleLines={limitVisibleLines} setSelectedBarScale={handleSetSelectedBarScale} />
+      {!isMobileSize && <ViewTabs activeView={activeView} setActiveView={setActiveView} limitVisibleLines={limitVisibleLines} setSelectedBarScale={handleSetSelectedBarScale} />}
       <DeckGL
         ref={deckglRef}
         initialViewState={initialViewport}
@@ -834,7 +839,7 @@ const MTADataMap = ({ mapboxToken }) => {
           <p><strong>Locked mode:</strong> Manually set the scale, keeping it consistent across different views.</p>
         </div>
       </Tooltip>}
-      <View3DToggle is3D={viewportIs3d} setViewport={setViewport} />
+      {!isMobileSize && <View3DToggle is3D={viewportIs3d} setViewport={setViewport} />}
       <ColorLegend allStationsView={selectedStation === ALL_STATIONS_ID} />
       <div className="info-icon-container">
         <button className="info-button" onClick={toggleAboutView}>

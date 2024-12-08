@@ -4,7 +4,7 @@ import './StoriesView.css';
 import { FlyToInterpolator } from 'deck.gl';
 import { areViewportsNearlyEqual, getViewportForBounds } from '../lib/map-bounds';
 import { stationIdToStation } from '../lib/stations';
-import { MAIN_STATION_COLOR_ARRIVING, MAIN_STATION_COLOR_DEPARTING } from './MTADataMap';
+import { MAIN_STATION_COLOR_ARRIVING, MAIN_STATION_COLOR_DEPARTING, MOBILE_BREAKPOINT_WIDTH } from './MTADataMap';
 import StoryProgress from './StoryProgress';
 import AttributedPhoto from './AttributedPhoto';
 import { ALL_STATIONS_ID } from '../lib/all-stations';
@@ -889,6 +889,8 @@ const StoriesView = React.memo(({
   const hoveredHighlightStationRef = useRef(null);
   const isMouseOverStoryBox = useRef(false);
 
+  const isMobileSize = window.innerWidth <= MOBILE_BREAKPOINT_WIDTH;
+
   const StationHighlightComponent = useCallback(({ children, stationId }) => (
     <StationHighlight stationId={stationId} setHoveredStation={setHoveredStation} containerRef={containerRef} hoveredStationRef={hoveredHighlightStationRef}>
       {children}
@@ -905,6 +907,14 @@ const StoriesView = React.memo(({
   }, [refreshHoverInfo, mapRef]);
 
   const getPadding = () => {
+    if (isMobileSize) {
+      return {
+        top: window.innerHeight * 0.05,
+        bottom: window.innerHeight * 0.05 + FLOATING_INFO_BAR_HEIGHT + FLOATING_INFO_BAR_OFFSET,
+        left: window.innerWidth * 0.05,
+        right: window.innerWidth * 0.05,
+      }
+    }
     return {
       top: window.innerHeight * 0.05,
       bottom: window.innerHeight * 0.05 + FLOATING_INFO_BAR_HEIGHT + FLOATING_INFO_BAR_OFFSET,
@@ -955,6 +965,7 @@ const StoriesView = React.memo(({
         transitionDuration: 1000,
         transitionInterpolator: new FlyToInterpolator(),
       };
+
       return {
         ...newViewport,
         ...transition,
@@ -1076,12 +1087,15 @@ const StoriesView = React.memo(({
 
   useEffect(() => {
     if (!isStackView) {
+      // on mobile, we want to trigger the viewport change once the 
+      // next card is just coming up into view
+      const offset = isMobileSize ? 0.99 : 0.5;
       scrollerRef.current
         .setup({
           step: '.stories-box',
-          offset: 0.5,
+          offset,
         })
-        .onStepEnter(handleStepEnter);
+        .onStepEnter(handleStepEnter)
     }
   }, [handleStepEnter, isStackView]);
 
@@ -1212,7 +1226,7 @@ const StoriesView = React.memo(({
           </p>
         </div>
       </div>
-      {!isStackView && (
+      {!isStackView && !isMobileSize && (
         <div className="story-progress-container">
           <StoryProgress
             stories={stories}
