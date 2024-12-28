@@ -1146,10 +1146,12 @@ const StoriesView = React.memo(({
 
   useEffect(() => {
     if (!isStackView && !showAboutView) {
-      // While scrolling on the map, we want the stories view to capture the events.
-      // Once we're done scrolling we want to disable pointer events again so 
-      // the user can interact with the map.
       const handleWheel = (e) => {
+        if (e.altKey) {
+          // Let the event propagate to the map for zooming
+          return;
+        }
+
         const storiesViewContainer = document.getElementById('stories-view-container')
         switch (e.deltaMode) {
           case 0: 		//DOM_DELTA_PIXEL		Chrome

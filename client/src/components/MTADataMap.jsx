@@ -124,6 +124,31 @@ const MTADataMap = ({ mapboxToken }) => {
     return savedState?.activeView || 'stories'
   });
 
+  // Track Alt key for zooming in story view
+  const [altKeyDown, setAltKeyDown] = useState(false);
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Alt') {
+        setAltKeyDown(true);
+      }
+    };
+
+    const handleKeyUp = (e) => {
+      if (e.key === 'Alt') {
+        setAltKeyDown(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [activeView]);
+
   // I know, this is a hack and doesn't really make sense. But it somehow fixes the issue where there's a stale
   // state value that's not updated in the handleDataSettingsChange function.
   const dataStateRef = useRef({
@@ -742,16 +767,19 @@ const MTADataMap = ({ mapboxToken }) => {
     
   }, [setHoverInfo, filteredData, selectedStation, selectedDirection, visibleLines])
 
+  const canScrollZoom = activeView === 'visualization' || altKeyDown
+
   return (
     <div className="map-container">
       {!isMobileSize && <ViewTabs activeView={activeView} setActiveView={setActiveView} limitVisibleLines={limitVisibleLines} setSelectedBarScale={handleSetSelectedBarScale} />}
       <DeckGL
         ref={deckglRef}
         initialViewState={initialViewport}
-        controller={activeView === 'visualization' ? true : { scrollZoom: false }}
+        controller={{ scrollZoom: canScrollZoom }}
         layers={[...mainStationIndicatorLayers, mapBarLayer]}
         pickingRadius={8}
         getCursor={({ isDragging, isHovering }) => {
+          if (activeView === 'stories' && canScrollZoom) return 'ns-resize'
           if (isDragging) return 'move'
           if (isHovering) return 'pointer'
           return 'default'
