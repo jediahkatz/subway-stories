@@ -1,0 +1,47 @@
+.gif-view .floating-info-bar {
+    min-width: 20px;
+}
+
+.floating-info-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(128, 128, 128, 0.2);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    color: rgba(255, 255, 255, 1);
+    padding: 10px 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    z-index: 1001;
+    pointer-events: none;
+    /* avoid overlapping with the story */
+    max-width: calc(100vw - 965px);
+    min-width: 200px;
+    width: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease;
+}
+
+.floating-info-bar p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.floating-info-bar .highlight-station {
+    font-weight: bold;
+    color: rgba(255, 255, 255, 1);
+}
+
+.floating-info-bar .animating {
+    white-space: nowrap;
+    color: #ff6b6b;
+    /* color: rgb(246, 65, 65); */
+    font-weight: bold;
+}

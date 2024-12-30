@@ -1,9 +1,10 @@
+import { isDev } from "./env";
+
 const alreadyTrackedEvents = new Set();
 
 // Track events with GA4
 export const trackEvent = (eventName, eventParams = {}, firstTimeOnly = false) => {
     // Log locally for development
-    const isDev = typeof process !== 'undefined' && process?.env?.ENVIRONMENT === 'development';
     if (isDev) {
         console.log('🔍 Analytics Event:', eventName, eventParams);
     }

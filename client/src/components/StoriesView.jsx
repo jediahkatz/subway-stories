@@ -9,6 +9,7 @@ import StoryProgress from './StoryProgress';
 import AttributedPhoto from './AttributedPhoto';
 import { ALL_STATIONS_ID } from '../lib/all-stations';
 import { trackEvent } from '../lib/analytics';
+import FloatingInfoBar from './FloatingInfoBar';
 
 export const ALL_MONTHS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
@@ -876,11 +877,12 @@ const StoriesView = React.memo(({
   setHoveredStation,
   refreshHoverInfo,
   mapRef,
+  animation,
+  setAnimation,
 }) => {
   const containerRef = useRef(null);
   const scrollerRef = useRef(scrollama());
   const [previewStory, setPreviewStory] = useState(null);
-  const [animation, setAnimation] = useState(null);
   const [isStackView, setIsStackView] = useState(currentStoryIndex === null);
   const [isCollapsing, setIsCollapsing] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
@@ -1015,7 +1017,7 @@ const StoriesView = React.memo(({
       story_title: stories[storyIndex].title,
       part_index: partIndex
     });
-  }, [setViewport, handleDataSettingsChange, limitVisibleLines, setCurrentStoryIndex, setCurrentPartIndex]);
+  }, [setViewport, handleDataSettingsChange, limitVisibleLines, setCurrentStoryIndex, setCurrentPartIndex, setAnimation]);
 
   const handleJumpToStory = useCallback((storyIndex, partIndex, smooth = true) => {
     const storyBoxes = containerRef.current.querySelectorAll('.stories-box');
@@ -1099,50 +1101,6 @@ const StoriesView = React.memo(({
     }
   }, [handleStepEnter, isStackView]);
 
-  const mousePosition = useTrackMousePositionRef();
-
-  useEffect(() => {
-    let timeoutId;
-    if (animation) {
-      const changeDataAndRefreshHoverInfo = (newDataSettings) => {
-        handleDataSettingsChange(newDataSettings).then(() => {
-          refreshHoveredStation(mousePosition.current.x, mousePosition.current.y);
-        });
-      }
-
-      let frameIndex = 0;
-      const animateFrame = () => {
-        if (frameIndex < animation.frames.length) {
-          const frame = animation.frames[frameIndex];
-          if (animation.field === 'hour') {
-            changeDataAndRefreshHoverInfo({
-              newSelectedHour: frame.value,
-            });
-          } else if (animation.field === 'months') {
-            changeDataAndRefreshHoverInfo({
-              newSelectedMonths: frame.value,
-            }) ;
-          } else if (animation.field === 'day') {
-            changeDataAndRefreshHoverInfo({
-              newSelectedDay: frame.value,
-            });
-          }
-          timeoutId = setTimeout(() => {
-            frameIndex++;
-            animateFrame();
-          }, frame.duration);
-        } else {
-          // Animation complete, restart
-          frameIndex = 0;
-          animateFrame();
-        }
-      };
-      animateFrame();
-    }
-    return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, [animation]);
 
   useEffect(() => {
     if (!isStackView && !showAboutView) {
@@ -1222,11 +1180,16 @@ const StoriesView = React.memo(({
             </React.Fragment>
           ))}
         </div>
-        <div className="floating-info-bar" style={{visibility: previewStory !== null ? 'hidden' : 'visible'}}>
-          <p>
-          {formatInfoBarText(selectedDirection, selectedStation, selectedHour, selectedDay, selectedMonths, animation?.field)}  
-          </p>
-        </div>
+        <FloatingInfoBar
+          formatInfoBarText={formatInfoBarText}
+          direction={selectedDirection}
+          stationId={selectedStation}
+          hour={selectedHour}
+          day={selectedDay}
+          selectedMonths={selectedMonths}
+          animation={animation}
+          visible={true}
+        />
       </div>
       {!isStackView && !isMobileSize && (
         <div className="story-progress-container">
@@ -1293,7 +1256,7 @@ const StoryStack = ({ stories, handleStoryClick, currentStoryIndex, isCollapsing
   );
 };
 
-const formatInfoBarText = (direction, stationId, hour, day, selectedMonths, animatingField) => {
+export const formatInfoBarText = ({ direction, stationId, hour, day, selectedMonths, animatingField }) => {
   const stationName = stationIdToStation[stationId]?.display_name.split('(')[0].trim() || 'here';
   const directionText = direction === 'comingFrom' 
     ? 'arriving at'
@@ -1392,21 +1355,5 @@ const StationHighlight = ({ children, stationId, setHoveredStation, containerRef
     </span>
   );
 };
-
-const useTrackMousePositionRef = () => {
-  const mousePosition = useRef({ x: 0, y: 0 });
-  const handleMouseMove = React.useCallback((e) => {
-    mousePosition.current = { x: e.clientX, y: e.clientY };
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-    };
-  }, [handleMouseMove]);
-
-  return mousePosition;
-}
 
 export default StoriesView;

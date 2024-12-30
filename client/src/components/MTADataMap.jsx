@@ -25,6 +25,9 @@ import ColorLegend from './ColorLegend';
 import { splitNameAndLines } from './SubwayLineSymbol.jsx';
 import AboutView from './AboutView.jsx';
 import { trackEvent } from '../lib/analytics.js';
+import GifView from './GifView';
+import { useAnimationManager } from '../hooks/useAnimationManager';
+import { getEnvVar, isDev } from '../lib/env.js';
 
 const NYC_BOUNDS = {
   minLng: -74.2591,  // Southwest longitude
@@ -767,11 +770,47 @@ const MTADataMap = ({ mapboxToken }) => {
     
   }, [setHoverInfo, filteredData, selectedStation, selectedDirection, visibleLines])
 
-  const canScrollZoom = activeView === 'visualization' || altKeyDown
+  const canScrollZoom = activeView !== 'stories' || altKeyDown;
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      // Check for Cmd+G (Mac) or Ctrl+G (Windows)
+      if ((event.metaKey || event.ctrlKey) && event.key === 'g') {
+        event.preventDefault();
+        if (activeView !== 'gif') {
+          trackEvent('gif_mode_entered', { method: 'keyboard_shortcut' });
+          setActiveView('gif');
+        }
+      }
+    };
+
+    // Gif mode is an internal-only feature
+    if (isDev) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [activeView]);
+
+  const { animation, setAnimation } = useAnimationManager({
+    onAnimationTick: React.useCallback(async ({ newDataSettings, mousePosition }) => {
+      await handleDataSettingsChange(newDataSettings);
+      refreshHoverInfo(mousePosition.x, mousePosition.y);
+      // handleDataSettingsChange is a mess so let's not put it into the deps array
+    }, [refreshHoverInfo])
+  });
 
   return (
     <div className="map-container">
-      {!isMobileSize && <ViewTabs activeView={activeView} setActiveView={setActiveView} limitVisibleLines={limitVisibleLines} setSelectedBarScale={handleSetSelectedBarScale} />}
+      {!isMobileSize && activeView !== 'gif' && (
+        <ViewTabs 
+          activeView={activeView} 
+          setActiveView={setActiveView} 
+          limitVisibleLines={limitVisibleLines} 
+          setSelectedBarScale={handleSetSelectedBarScale} 
+        />
+      )}
       <DeckGL
         ref={deckglRef}
         initialViewState={initialViewport}
@@ -809,7 +848,7 @@ const MTADataMap = ({ mapboxToken }) => {
           }}
         />
       </DeckGL>
-      {activeView === 'visualization' && 
+      {activeView === 'visualization' && (
         <DataControls
           selectedHour={selectedHour}
           setSelectedHour={handleSetSelectedHour}
@@ -829,25 +868,29 @@ const MTADataMap = ({ mapboxToken }) => {
           setShowPercentage={handleSetShowPercentage}
           setInfoTooltipInfo={setInfoTooltipInfo}
         />
-      }
-      {activeView === 'stories' && <StoriesView 
-        setViewport={setViewport}
-        handleDataSettingsChange={handleDataSettingsChange}
-        limitVisibleLines={limitVisibleLines}
-        currentStoryIndex={currentStoryIndex}
-        currentPartIndex={currentPartIndex}
-        selectedDirection={selectedDirection}
-        selectedStation={selectedStation}
-        selectedHour={selectedHour}
-        selectedDay={selectedDay}
-        selectedMonths={selectedMonths}
-        showAboutView={showAboutView}
-        setCurrentStoryIndex={setCurrentStoryIndex}
-        setCurrentPartIndex={setCurrentPartIndex}
-        setHoveredStation={setHoveredStation}
-        refreshHoverInfo={refreshHoverInfo}
-        mapRef={mapRef}
-      />}
+      )}
+      {activeView === 'stories' && (
+        <StoriesView 
+          setViewport={setViewport}
+          handleDataSettingsChange={handleDataSettingsChange}
+          limitVisibleLines={limitVisibleLines}
+          currentStoryIndex={currentStoryIndex}
+          currentPartIndex={currentPartIndex}
+          selectedDirection={selectedDirection}
+          selectedStation={selectedStation}
+          selectedHour={selectedHour}
+          selectedDay={selectedDay}
+          selectedMonths={selectedMonths}
+          showAboutView={showAboutView}
+          setCurrentStoryIndex={setCurrentStoryIndex}
+          setCurrentPartIndex={setCurrentPartIndex}
+          setHoveredStation={setHoveredStation}
+          refreshHoverInfo={refreshHoverInfo}
+          mapRef={mapRef}
+          animation={animation}
+          setAnimation={setAnimation}
+        />
+      )}
       {hoverInfo && !isLoading && (
         <RidershipTooltip
           x={hoverInfo.x}
@@ -860,22 +903,47 @@ const MTADataMap = ({ mapboxToken }) => {
           positionedLoosely={hoverInfo.positionedLoosely}
         />
       )}
-      {infoTooltipInfo && <Tooltip x={infoTooltipInfo.x} y={infoTooltipInfo.y} positionedLoosely={true} tooltipHeight={177} beakPosition={'bottom'}>
-        <div className='info-tooltip-content'>
-          <p>Adjust the height of the ridership bars.</p>
-          <p><strong>Auto mode:</strong> Automatically adjust the scale based on today's maximum ridership.</p>
-          <p><strong>Locked mode:</strong> Manually set the scale, keeping it consistent across different views.</p>
+      {infoTooltipInfo && (
+        <Tooltip x={infoTooltipInfo.x} y={infoTooltipInfo.y} positionedLoosely={true} tooltipHeight={177} beakPosition={'bottom'}>
+          <div className='info-tooltip-content'>
+            <p>Adjust the height of the ridership bars.</p>
+            <p><strong>Auto mode:</strong> Automatically adjust the scale based on today's maximum ridership.</p>
+            <p><strong>Locked mode:</strong> Manually set the scale, keeping it consistent across different views.</p>
+          </div>
+        </Tooltip>
+      )}
+      {!isMobileSize && activeView !== 'gif' && (
+        <View3DToggle is3D={viewportIs3d} setViewport={setViewport} />
+      )}
+      <ColorLegend 
+        allStationsView={selectedStation === ALL_STATIONS_ID} 
+        style={{ top: activeView === 'gif' ? 10 : undefined }}
+      />
+      {activeView !== 'gif' && (
+        <div className="info-icon-container">
+          <button className="info-button" onClick={toggleAboutView}>
+            <span className="info-icon map-info-icon" />
+          </button>
         </div>
-      </Tooltip>}
-      {!isMobileSize && <View3DToggle is3D={viewportIs3d} setViewport={setViewport} />}
-      <ColorLegend allStationsView={selectedStation === ALL_STATIONS_ID} />
-      <div className="info-icon-container">
-        <button className="info-button" onClick={toggleAboutView}>
-          <span className="info-icon map-info-icon" />
-        </button>
-      </div>
+      )}
 
       {showAboutView && <AboutView toggleAboutView={toggleAboutView} />}
+
+      {activeView === 'gif' && (
+        <GifView
+          handleDataSettingsChange={handleDataSettingsChange}
+          setViewport={setViewport}
+          limitVisibleLines={limitVisibleLines}
+          selectedDirection={selectedDirection}
+          selectedStation={selectedStation}
+          selectedHour={selectedHour}
+          selectedDay={selectedDay}
+          selectedMonths={selectedMonths}
+          animation={animation}
+          setAnimation={setAnimation}
+          onExit={() => setActiveView('visualization')}
+        />
+      )}
     </div>
   );
 };

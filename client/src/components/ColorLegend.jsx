@@ -17,10 +17,10 @@ export const colorScale = [
 
 export const getColorIntervals = (isAllStationsView) => isAllStationsView ? colorIntervalsForAllStations : colorIntervalsForOriginDestination
 
-const ColorLegend = ({ allStationsView }) => {
+const ColorLegend = ({ allStationsView, style }) => {
   const intervals = getColorIntervals(allStationsView)
   return (
-    <div className="color-legend">
+    <div className="color-legend" style={style}>
       <h3 className="legend-title">Hourly riders</h3>
       {intervals.map((interval, index) => (
         <div key={index} className="legend-item">
