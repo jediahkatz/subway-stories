@@ -17,9 +17,9 @@ primary_region = 'ewr'
   processes = ['app']
 
 [[vm]]
-  memory = '512'
+  memory = '256'
   cpu_kind = 'shared'
-  cpus = 2
+  cpus = 1
 
 [mounts]
   source = "mta_data"
