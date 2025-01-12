@@ -1081,6 +1081,13 @@ const StoriesView = React.memo(({
   };
 
   useEffect(() => {
+    // On exiting stories view, disable any active animations
+    return () => {
+      setAnimation(null)
+    }
+  }, [])
+
+  useEffect(() => {
     // Resume from where we left off
     if (!isStackView) {
       handleJumpToStory(currentStoryIndex, currentPartIndex, false);

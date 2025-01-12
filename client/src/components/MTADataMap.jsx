@@ -179,6 +179,9 @@ const MTADataMap = ({ mapboxToken }) => {
         bearing: prevViewport.bearing,
         pitch: prevViewport.pitch,
       });
+      if (deckglRef.current?.deck.viewState) {
+        deckglRef.current.deck.viewState = newViewport
+      }
       return newViewport;
     });
   }, []);
