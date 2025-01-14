@@ -110,9 +110,8 @@ app.post('/mapbox-load', async (req, res) => {
       const data = await fs.readFile(countFilePath, 'utf8');
       usageCounts = JSON.parse(data);
     } catch (error) {
-      if (error.code !== 'ENOENT') {
-        throw error;
-      }
+      // Log error but continue with blank usageCounts
+      console.error(error);
     }
 
     // Remove entries older than past month
