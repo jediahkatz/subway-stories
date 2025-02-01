@@ -114,7 +114,7 @@ export const BarScaleSlider = ({ barScale, isLocked, setSelectedBarScale, disabl
     return `${position}px`;
   }, [localValue]);
 
-  const handleLockClick = useCallback(() => {
+  const handleAutoClick = useCallback(() => {
     if (isLocked) {
       resetBarScale();
     } else {
@@ -140,8 +140,8 @@ export const BarScaleSlider = ({ barScale, isLocked, setSelectedBarScale, disabl
           <div className="handle-value">{getDisplayValue()}</div>
         </div>
       </div>
-      <button className={`slider-lock-button ${isLocked ? 'locked' : ''}`} onClick={handleLockClick}>
-        {!isLocked && <span className="auto-text">AUTO</span>}
+      <button className={`slider-auto-button ${!isLocked ? 'active' : ''}`} onClick={handleAutoClick}>
+        <span className="auto-text">AUTO</span>
       </button>
     </div>
   );
