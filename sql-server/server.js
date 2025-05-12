@@ -3,8 +3,21 @@ const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
 const fs = require('fs').promises;
 const { Mutex } = require('./lib');
+const timeout = require('connect-timeout');
+const antiAbuse = require('./antiabuse');
 const app = express();
+
+// Trust the intermediate proxy - required when running behind a reverse proxy like Fly.io
+app.set('trust proxy', 1);
+
 const PORT = process.env.PORT || 3000;
+
+// Add timeout middleware - kill requests that take too long
+const TIMEOUT = '30s';
+app.use(timeout(TIMEOUT));
+app.use((req, res, next) => {
+  if (!req.timedout) next();
+});
 
 // Load environment variables
 require('dotenv').config();
@@ -15,6 +28,11 @@ const corsOptions = {
   optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
+
+// Set up anti-abuse system
+const { rateLimiter, antiAbuseMiddleware } = antiAbuse.createMiddleware();
+app.use(antiAbuseMiddleware);
+app.use(rateLimiter);  // Apply rate limiting to all routes
 
 // Connect to SQLite database
 const db = new sqlite3.Database(process.env.DATABASE_PATH, (err) => {
@@ -27,7 +45,8 @@ const db = new sqlite3.Database(process.env.DATABASE_PATH, (err) => {
 
 // Route 1: Ridership by Station
 app.get('/ridership-by-station', (req, res) => {
-  console.log('/ridership-by-station starts at', new Date().toISOString());
+  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  console.log(`/ridership-by-station starts at ${new Date().toISOString()} [ip: ${ip}]`);
   const { selectedDay, selectedStation, selectedDirection, selectedMonths } = req.query;
   const complexId = selectedStation;
   const monthsArray = selectedMonths.split(',');
@@ -59,7 +78,8 @@ app.get('/ridership-by-station', (req, res) => {
 
 // Route 2: Total Ridership
 app.get('/total-ridership', (req, res) => {
-  console.log('/total-ridership starts at', new Date().toISOString());
+  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  console.log(`/total-ridership starts at ${new Date().toISOString()} [ip: ${ip}]`);
 
   const { selectedDay, selectedMonths, selectedDirection } = req.query;
   const monthsArray = selectedMonths.split(',');
@@ -99,6 +119,8 @@ app.get('/total-ridership', (req, res) => {
 const MAX_ALLOWED_LOADS_PER_MONTH = 48_000; // it's really 50k, but let's be conservative
 const usageFileMutex = new Mutex();
 app.post('/mapbox-load', async (req, res) => {
+  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  console.log(`/mapbox-load starts at ${new Date().toISOString()} [ip: ${ip}]`);
   const unlock = await usageFileMutex.lock();
   try {
 
@@ -136,6 +158,7 @@ app.post('/mapbox-load', async (req, res) => {
     // Write updated counts back to file
     await fs.writeFile(countFilePath, JSON.stringify(usageCounts), 'utf8');
 
+    console.log('/mapbox-load done at', new Date().toISOString());
     res.json({ message: 'success', shouldLoad });
   } catch (error) {
     console.error('Error tracking Mapbox load:', error);
@@ -143,6 +166,15 @@ app.post('/mapbox-load', async (req, res) => {
   } finally {
     unlock();
   }
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  if (err.status === 403) {
+    return res.status(403).json({ error: err.message });
+  }
+  console.error('Unhandled error:', err);
+  res.status(500).json({ error: 'Internal server error' });
 });
 
 // Start the server
