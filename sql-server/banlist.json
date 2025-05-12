@@ -1,0 +1,7 @@
+{
+    "banned_ips": [
+        "45.87.212.180"
+    ],
+    "last_updated": "2024-03-21",
+    "description": "List of banned IP addresses for anti-abuse protection"
+} 

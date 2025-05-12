@@ -3,6 +3,7 @@ const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
 const fs = require('fs').promises;
 const { Mutex } = require('./lib');
+const { checkIpBan } = require('./antiabuse');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -15,6 +16,17 @@ const corsOptions = {
   optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
+
+// Add IP ban middleware
+app.use(checkIpBan);
+
+// Add IP logging middleware
+app.use((req, res, next) => {
+  const clientIp = req.ip || req.connection.remoteAddress;
+  const cleanIp = clientIp.replace(/^::ffff:/, ''); // Remove IPv6 prefix if present
+  console.log(`[${new Date().toISOString()}] Request from IP: ${cleanIp}, Path: ${req.path}, Method: ${req.method}, Params: ${JSON.stringify(req.query)}`);
+  next();
+});
 
 // Connect to SQLite database
 const db = new sqlite3.Database(process.env.DATABASE_PATH, (err) => {
