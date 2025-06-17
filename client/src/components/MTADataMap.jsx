@@ -10,6 +10,7 @@ import './MTADataMap.css';
 import { useDotPulseAnimation } from '../hooks/useDotAnimation';
 import subwayRoutes from '../data/nyc-subway-routes.js';
 import subwayLayerStyles from '../data/subway-layer-styles.js';
+import nycBoroughsGeoJSON from '../data/nyc-boroughs.js';
 import MapBarLayer, { BAR_RADIUS, useUpVector } from './MapBarLayer';
 import { saveStateToSessionStorage, loadStateFromSessionStorage } from '../lib/sessionManager.js';
 import ViewTabs from './ViewTabs';
@@ -683,6 +684,53 @@ const MTADataMap = ({ mapboxToken }) => {
     });
   }, []);
 
+  const drawBoroughBoundaries = useCallback((map) => {
+    map.addSource('nyc-borough-boundaries', {
+      type: 'geojson',
+      data: nycBoroughsGeoJSON,
+    });
+
+    // Add a subtle glow effect
+    map.addLayer({
+      id: 'borough-boundaries-glow',
+      type: 'line',
+      source: 'nyc-borough-boundaries',
+      layout: {},
+      paint: {
+        'line-color': '#00BFFF',
+        'line-width': 6,
+        'line-opacity': 0.2,
+        'line-blur': 3
+      }
+    });
+
+    // Add the main boundary line
+    map.addLayer({
+      id: 'borough-boundaries',
+      type: 'line',
+      source: 'nyc-borough-boundaries',
+      layout: {},
+      paint: {
+        'line-color': '#00BFFF',
+        'line-width': 2,
+        'line-opacity': 0.9
+      }
+    });
+
+    // Add a thin white outline for contrast
+    map.addLayer({
+      id: 'borough-boundaries-outline',
+      type: 'line',
+      source: 'nyc-borough-boundaries',
+      layout: {},
+      paint: {
+        'line-color': '#ffffff',
+        'line-width': 1,
+        'line-opacity': 0.6
+      }
+    });
+  }, []);
+
   const setHoveredStation = useCallback((stationId) => {
     if (stationId === null) {
       setHoverInfo(null);
@@ -839,6 +887,7 @@ const MTADataMap = ({ mapboxToken }) => {
             const map = e.target;
             mapRef.current = map;
             drawSubwayLines(map);
+            drawBoroughBoundaries(map);
 
             // Turn off/reduce some distracting labels
             map.setLayoutProperty('road-label-simple', 'visibility', 'none');
