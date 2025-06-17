@@ -542,10 +542,21 @@ body.pointer-cursor {
   background-color: rgba(100, 100, 100, 0.8);
 }
 
+.info-button:hover .map-info-icon {
+  opacity: 1;
+}
+
 .map-info-icon {
   margin-left: 0;
   width: 24px;
   height: 24px;
+  background-image: url('../assets/icon-info.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: inline-block;
+  vertical-align: middle;
+  opacity: 0.7;
 }
 
 .about-view {
