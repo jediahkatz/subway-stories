@@ -42,6 +42,11 @@
   pointer-events: all;
 }
 
+.stories-content.hide-stories {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
 .stories-box {
   position: relative;
   width: 350px;
