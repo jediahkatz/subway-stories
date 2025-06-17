@@ -23,7 +23,6 @@ import { ALL_STATIONS_ID } from '../lib/all-stations';
 import { getColorIntervals, colorScale } from './ColorLegend.jsx';
 import ColorLegend from './ColorLegend';
 import { splitNameAndLines } from './SubwayLineSymbol.jsx';
-import AboutView from './AboutView.jsx';
 import { trackEvent } from '../lib/analytics.js';
 import GifView from './GifView';
 import { useAnimationManager } from '../hooks/useAnimationManager';
@@ -929,8 +928,6 @@ const MTADataMap = ({ mapboxToken }) => {
           </button>
         </div>
       )}
-
-      {showAboutView && <AboutView toggleAboutView={toggleAboutView} />}
 
       {activeView === 'gif' && (
         <GifView
