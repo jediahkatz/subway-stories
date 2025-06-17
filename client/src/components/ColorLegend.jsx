@@ -3,16 +3,15 @@ import React from 'react';
 const colorIntervalsForOriginDestination = [0, 10, 20, 50, 100, 200, 400, 800];
 const colorIntervalsForAllStations = [50, 100, 200, 400, 800, 1600, 3200, 6400];
 export const colorScale = [
-  [250, 250, 240], // Light cream
-  [240, 220, 200], // Very light tan
-  [230, 200, 170], // Light beige
-  [220, 180, 150], // Soft tan
-  [210, 140, 110], // Warm orange-beige
-  [200, 100, 80],  // Muted orange
-  [180, 60, 50],   // Deep orange-red
-  // [140, 40, 30],   // Brick red
-  [170, 20, 20],
-  [220, 10, 10],
+  [250, 250, 240], // Light cream (keeping this as base)
+  [240, 245, 220], // Very light green-cream
+  [220, 235, 190], // Light pale green
+  [200, 225, 160], // Soft light green
+  [170, 210, 130], // Medium light green
+  [140, 190, 100], // Medium green
+  [110, 170, 70],  // Medium-dark green
+  [80, 150, 40],   // Dark green
+  [50, 120, 20],   // Deep green
 ];
 
 export const getColorIntervals = (isAllStationsView) => isAllStationsView ? colorIntervalsForAllStations : colorIntervalsForOriginDestination
