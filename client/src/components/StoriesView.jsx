@@ -273,7 +273,7 @@ const getStories = (StationHighlightComponent) => [
             In her high school years, Anna joined the Saturday shuffle, taking the D train to <StationHighlightComponent stationId="231">Grand St</StationHighlightComponent> to play volleyball in Seward Park. Many of her friends held part-time jobs in the neighborhood. For these high school students without cars, downtown Manhattan served as a central and invigorating meeting point. 
           </p>
           <p>
-            Even the adults, who would normally drive when in Brooklyn, chose to take the subway into Chinatown to attend to business and call on older family members. “The elders who live in Chinatown, we don't make them come to us. We come to them.”
+            Even the adults, who would normally drive when in Brooklyn, chose to take the subway into Chinatown to attend to business and call on older family members. "The elders who live in Chinatown, we don't make them come to us. We come to them.”
           </p>
         </>,
         pointsToInclude: [stationIdToStation['409'], stationIdToStation['58'], stationIdToStation['39']],
@@ -316,7 +316,7 @@ const getStories = (StationHighlightComponent) => [
             attribution="Photo: Wikipedia"
           /> 
           <p>
-            Increasingly prosperous—and also crowded—Flushing is now the fourth largest business district in New York City. During rush hour, a surge of accountants, teachers, nurses, and retail workers pour in.
+            Increasingly prosperous and vibrant, Flushing has grown to become the fourth largest business district in New York City. During rush hour, the neighborhood comes alive as accountants, teachers, nurses, and retail workers make their way to work.
           </p>
           <p>
             Many of them hail from mainland Chinese enclaves in the satellite neighborhoods of <StationHighlightComponent stationId="452">Elmhurst</StationHighlightComponent> and <StationHighlightComponent stationId="450">Corona</StationHighlightComponent>. In Flushing, the chatter one hears is often in Mandarin, unlike the Cantonese more commonly thrown around in Manhattan's Chinatown and Bensonhurst.
@@ -398,7 +398,7 @@ const getStories = (StationHighlightComponent) => [
             Even with this plethora of options, some residents of the East Village prefer to go out in other locales, sometimes even intentionally avoiding their neighborhood. Becca Foley, a young resident, explains:
           </p>
           <p>
-            “I'm 26 and the crowd in the East Village feels a lot younger. A lot of kids are visiting and some are interns, so I think it's more fun to go out with a more local scene in <StationHighlightComponent stationId="120">Williamsburg</StationHighlightComponent> and <StationHighlightComponent stationId="126">Bushwick</StationHighlightComponent>. It's mostly about the age, but I also have better conversations with people [in Bushwick] since they're more mature and there's a lot more diversity in terms of sexuality, gender, and background.”
+            "I'm 26 and the crowd in the East Village feels a lot younger. A lot of kids are visiting and some are interns, so I think it's more fun to go out with a more local scene in <StationHighlightComponent stationId="120">Williamsburg</StationHighlightComponent> and <StationHighlightComponent stationId="126">Bushwick</StationHighlightComponent>. It's mostly about the age, but I also have better conversations with people [in Bushwick] since they're more mature and there's a lot more diversity in terms of sexuality, gender, and background.”
           </p>
         </>,
         // Halsey St (L), 8 Av (L), 59 St-Columbus Circle
@@ -483,7 +483,7 @@ const getStories = (StationHighlightComponent) => [
             attribution="Photo: House of Yes"
           />
           <p>
-            Known for its high concentration of “open until the sun comes up" bars, Bushwick features a crowd eager to stay out later than most. 
+            Known for its high concentration of "open until the sun comes up" bars, Bushwick features a crowd eager to stay out later than most. 
           </p>
           <p>
             Looking at late-night departures from stations along the L, we can see that the party rages later in Bushwick than in its tamer counterpart of Williamsburg. Though more revelers are initially leaving <StationHighlightComponent stationId="120">Bedford Av</StationHighlightComponent> and <StationHighlightComponent stationId="629">Metropolitan Av</StationHighlightComponent> at midnight, by 3 a.m. <StationHighlightComponent stationId="126">Jefferson St</StationHighlightComponent> has overtaken them both. <span className="story-end-marker"/>
@@ -713,7 +713,7 @@ const getStories = (StationHighlightComponent) => [
             In late summer, things get even more packed as the US Open kicks off. Eitan Darwish, a former ball boy, used to take the 7 to the Billie Jean King Tennis Center every morning. 
           </p>
           <p>
-            “The players don't take the train, they get private cars from their hotel,” he notes. “Ball boys can take an hourly shuttle, but I think the subway is faster with the traffic.” 
+            "The players don't take the train, they get private cars from their hotel,” he notes. "Ball boys can take an hourly shuttle, but I think the subway is faster with the traffic.” 
           </p>
           <p>
             The Open has a morning session that starts at 11, and then an evening session at 7. We can see distinct spikes on the map before each session, with many fans again coming from out of town.
@@ -754,7 +754,7 @@ const getStories = (StationHighlightComponent) => [
             The MTA's data is averaged over the course of the month, but major events drive enough traffic that we can pinpoint them anyway.
           </p>
           <p>
-            Eitan cautions, “The Mets play away games half the time, but some nights that overlap [with the US Open] happens. When it happens on a Semifinals night, the traffic is insane.”
+            Eitan cautions, "The Mets play away games half the time, but some nights that overlap [with the US Open] happens. When it happens on a Semifinals night, the traffic is insane.”
           </p>
           <p>
             One such night was Wednesday, August 30, 2023. The Mets eked out a 6-5 victory over the Rangers while Zhang Zhizhen (China) upset Casper Ruud (Norway) in the 2nd round.
