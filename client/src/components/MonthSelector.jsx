@@ -1,52 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import { useDebounce } from '../lib/debounce';
 
-const months = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+const weekdays = [
+  'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'
 ];
 
-const MonthSelector = ({ initialSelectedMonths, onMonthsChange }) => {
-  const [localSelectedMonths, setLocalSelectedMonths] = useState(initialSelectedMonths);
+const WeekdaySelector = ({ initialSelectedWeekdays, onWeekdaysChange }) => {
+  const [localSelectedWeekdays, setLocalSelectedWeekdays] = useState(initialSelectedWeekdays);
   const [isDragging, setIsDragging] = useState(false);
-  const [lastToggledMonth, setLastToggledMonth] = useState(null);
+  const [lastToggledWeekday, setLastToggledWeekday] = useState(null);
 
   useEffect(() => {
-    setLocalSelectedMonths(initialSelectedMonths);
-  }, [initialSelectedMonths]);
+    setLocalSelectedWeekdays(initialSelectedWeekdays);
+  }, [initialSelectedWeekdays]);
 
-  const getNewSelectedMonths = (prevSelected, index) => {
+  const getNewSelectedWeekdays = (prevSelected, index) => {
     return prevSelected.includes(index)
-      ? prevSelected.filter(m => m !== index)
+      ? prevSelected.filter(w => w !== index)
       : [...prevSelected, index].sort((a, b) => a - b);
   };
 
-  const debouncedOnMonthsChange = useDebounce(onMonthsChange, 1000);
+  const debouncedOnWeekdaysChange = useDebounce(onWeekdaysChange, 1000);
 
   const handleMouseDown = (index) => {
     setIsDragging(true);
-    setLastToggledMonth(index);
-    setLocalSelectedMonths(selectedMonths => {
-      const newSelectedMonths = getNewSelectedMonths(selectedMonths, index);
-      debouncedOnMonthsChange(newSelectedMonths);
-      return newSelectedMonths;
+    setLastToggledWeekday(index);
+    setLocalSelectedWeekdays(selectedWeekdays => {
+      const newSelectedWeekdays = getNewSelectedWeekdays(selectedWeekdays, index);
+      debouncedOnWeekdaysChange(newSelectedWeekdays);
+      return newSelectedWeekdays;
     });
   };
 
   const handleMouseEnter = (index) => {
-    if (isDragging && lastToggledMonth !== index) {
-      setLastToggledMonth(index);
-      setLocalSelectedMonths(selectedMonths => {
-        const newSelectedMonths = getNewSelectedMonths(selectedMonths, index);
-        debouncedOnMonthsChange(newSelectedMonths);
-        return newSelectedMonths;
+    if (isDragging && lastToggledWeekday !== index) {
+      setLastToggledWeekday(index);
+      setLocalSelectedWeekdays(selectedWeekdays => {
+        const newSelectedWeekdays = getNewSelectedWeekdays(selectedWeekdays, index);
+        debouncedOnWeekdaysChange(newSelectedWeekdays);
+        return newSelectedWeekdays;
       });
     }
   };
 
   const handleMouseUp = () => {
     setIsDragging(false);
-    setLastToggledMonth(null);
+    setLastToggledWeekday(null);
   };
 
   useEffect(() => {
@@ -54,22 +53,22 @@ const MonthSelector = ({ initialSelectedMonths, onMonthsChange }) => {
     return () => {
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [localSelectedMonths]);
+  }, [localSelectedWeekdays]);
 
   return (
-    <div className="month-selector">
-      {months.map((month, index) => (
+    <div className="weekday-selector">
+      {weekdays.map((weekday, index) => (
         <button
-          key={month}
-          className={`month-button ${localSelectedMonths.includes(index) ? 'selected' : ''}`}
+          key={weekday}
+          className={`weekday-button ${localSelectedWeekdays.includes(index) ? 'selected' : ''}`}
           onMouseDown={() => handleMouseDown(index)}
           onMouseEnter={() => handleMouseEnter(index)}
         >
-          {month}
+          {weekday}
         </button>
       ))}
     </div>
   );
 };
 
-export default MonthSelector;
+export default WeekdaySelector;
