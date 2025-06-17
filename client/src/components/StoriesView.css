@@ -26,6 +26,14 @@
   opacity: 1;
   transition: opacity 0.5s ease;
   pointer-events: none;
+  /* Smooth scrolling improvements */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  will-change: transform;
+  /* GPU acceleration for smoother scrolling */
+  transform: translateZ(0);
+  /* Improve scroll performance */
+  contain: layout style paint;
 }
 
 .stories-view-container.hidden {
@@ -51,6 +59,11 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   margin-bottom: 50vh;
+  /* Scroll performance optimizations */
+  will-change: transform;
+  transform: translateZ(0);
+  contain: layout style paint;
+  backface-visibility: hidden;
   /* scroll-snap-align: center; */
   /* scroll-snap-stop: always; */
 }
@@ -144,8 +157,17 @@
 }
 
 .stories-view-container::-webkit-scrollbar-thumb {
-  background-color: rgb(150, 150, 150);
-  border-radius: 10px;
+  background-color: rgba(150, 150, 150, 0.6);
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.stories-view-container::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(120, 120, 120, 0.8);
+}
+
+.stories-view-container::-webkit-scrollbar-thumb:active {
+  background-color: rgba(100, 100, 100, 0.9);
 }
 
 .story-progress-container {
