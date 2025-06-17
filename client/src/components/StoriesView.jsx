@@ -293,7 +293,7 @@ const getStories = (StationHighlightComponent) => [
             The Brooklyn Chinese aren't the only ones heading into Manhattan's Chinatown on the weekend. A smaller but just as determined handful makes the even longer trek from <StationHighlightComponent stationId="447">Flushing</StationHighlightComponent>, Queens, catching the 7 train into Manhattan and transferring downtown. 
           </p>
           <p>
-            But Flushing, too, draws crowds from near and far. Home to the largest Chinatown outside of Asia, the neighborhood has become a mammoth destination in its own right. 
+            But Flushing, too, draws crowds from near and far. Home to the largest Chinatown outside of Asia, the neighborhood has grown to become the fourth largest business district in New York City. During rush hour, the neighborhood comes alive as accountants, teachers, nurses, and retail workers make their way to work.
           </p>
         </>,
         // Grand St (B D) and Flushing-Main St (7)
