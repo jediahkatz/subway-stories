@@ -72,6 +72,7 @@ app.get('/ridership-by-station', (req, res) => {
 // Route 2: Total Ridership
 app.get('/total-ridership', (req, res) => {
   console.log('/total-ridership starts at', new Date().toISOString());
+  const queryStartTime = Date.now(); // Add timing for performance monitoring
 
   const { selectedDay, selectedMonths, selectedDirection } = req.query;
   const monthsArray = selectedMonths.split(',');
@@ -88,7 +89,9 @@ app.get('/total-ridership', (req, res) => {
   `;
   
   db.all(sqlQuery, [numMonthsToAverageOver, selectedDay, shouldSelectDestinations, ...monthsArray], (err, rows) => {
-    console.log('SQL Query done at', new Date().toISOString());
+    const queryEndTime = Date.now();
+    const executionTime = queryEndTime - queryStartTime;
+    console.log(`SQL Query done at ${new Date().toISOString()} - Execution time: ${executionTime}ms, Rows returned: ${rows ? rows.length : 0}`);
     if (err) {
       res.status(500).json({ error: err.message });
     } else {
