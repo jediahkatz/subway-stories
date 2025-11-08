@@ -1,11 +1,14 @@
 # Use an official Node.js runtime as a parent image
-FROM node:16
+FROM node:20
 
 # Set the working directory in the container
 WORKDIR /app
 
 # Copy package.json and package-lock.json
 COPY package*.json ./
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y sqlite3 && rm -rf /var/lib/apt/lists/*
 
 # Install any needed packages
 RUN npm install --production

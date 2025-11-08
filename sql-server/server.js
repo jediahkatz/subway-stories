@@ -37,12 +37,53 @@ const db = new sqlite3.Database(process.env.DATABASE_PATH, (err) => {
   }
 });
 
+const MAX_MONTHS_ALLOWED = 12;
+
+function parseSelectedMonths(selectedMonths) {
+  if (!selectedMonths || typeof selectedMonths !== 'string') {
+    throw new Error('selectedMonths query parameter is required');
+  }
+
+  const monthsArray = selectedMonths
+    .split(',')
+    .map(month => month.trim())
+    .filter(Boolean);
+
+  if (monthsArray.length === 0) {
+    throw new Error('selectedMonths must include at least one month');
+  }
+
+  if (monthsArray.length > MAX_MONTHS_ALLOWED) {
+    throw new Error(`selectedMonths cannot include more than ${MAX_MONTHS_ALLOWED} entries`);
+  }
+
+  const validatedMonths = monthsArray.map(month => {
+    if (!/^\d{1,2}$/.test(month)) {
+      throw new Error(`Invalid month value: ${month}`);
+    }
+
+    const monthNumber = Number(month);
+    if (monthNumber < 1 || monthNumber > 12) {
+      throw new Error(`Month out of range (1-12): ${month}`);
+    }
+
+    return monthNumber;
+  });
+
+  return validatedMonths;
+}
+
 // Route 1: Ridership by Station
 app.get('/ridership-by-station', (req, res) => {
   console.log('/ridership-by-station starts at', new Date().toISOString());
   const { selectedDay, selectedStation, selectedDirection, selectedMonths } = req.query;
   const complexId = selectedStation;
-  const monthsArray = selectedMonths.split(',');
+  let monthsArray;
+  try {
+    monthsArray = parseSelectedMonths(selectedMonths);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
   const numMonthsToAverageOver = monthsArray.length;
 
   const sqlQuery = `
@@ -57,7 +98,7 @@ app.get('/ridership-by-station', (req, res) => {
   `;
 
   db.all(sqlQuery, [numMonthsToAverageOver, complexId, selectedDay, ...monthsArray], (err, rows) => {
-    console.log('/ridership-by-station query done at', new Date().toISOString());
+    console.log('/ridership-by-station query done at', new Date().toISOString(), `(${rows ? rows.length : 0} rows)`);
     if (err) {
       res.status(500).json({ error: err.message });
     } else {
@@ -65,6 +106,7 @@ app.get('/ridership-by-station', (req, res) => {
         message: 'success',
         data: rows,
       });
+      console.log('/ridership-by-station complete at', new Date().toISOString());
     }
   });
 });
@@ -74,7 +116,12 @@ app.get('/total-ridership', (req, res) => {
   console.log('/total-ridership starts at', new Date().toISOString());
 
   const { selectedDay, selectedMonths, selectedDirection } = req.query;
-  const monthsArray = selectedMonths.split(',');
+  let monthsArray;
+  try {
+    monthsArray = parseSelectedMonths(selectedMonths);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
   const numMonthsToAverageOver = monthsArray.length;
   const shouldSelectDestinations = selectedDirection === 'goingTo';
 
@@ -88,10 +135,11 @@ app.get('/total-ridership', (req, res) => {
   `;
   
   db.all(sqlQuery, [numMonthsToAverageOver, selectedDay, shouldSelectDestinations, ...monthsArray], (err, rows) => {
-    console.log('SQL Query done at', new Date().toISOString());
+    console.log('SQL Query done at', new Date().toISOString(), `(${rows ? rows.length : 0} rows)`);
     if (err) {
       res.status(500).json({ error: err.message });
     } else {
+      const transformStart = Date.now();
       const stationIdToTotalRidershipByHour = {};
       rows.forEach(row => {
         if (!stationIdToTotalRidershipByHour[row.station_id]) {
@@ -99,10 +147,12 @@ app.get('/total-ridership', (req, res) => {
         }
         stationIdToTotalRidershipByHour[row.station_id][row.hour] = row.total_ridership;
       });
+      console.log(`Data transformation took ${Date.now() - transformStart}ms`);
       res.json({
         message: 'success',
         data: stationIdToTotalRidershipByHour
       });
+      console.log('/total-ridership complete at', new Date().toISOString());
     }
   });
 });
