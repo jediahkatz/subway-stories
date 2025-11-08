@@ -29,6 +29,9 @@ app.use((req, res, next) => {
 });
 
 // Connect to SQLite database
+// Cache for the initial page load query (most important!)
+let initialPageLoadCache = null;
+
 const db = new sqlite3.Database(process.env.DATABASE_PATH, (err) => {
   if (err) {
     console.error('Failed to connect to database', err);
@@ -50,10 +53,10 @@ const db = new sqlite3.Database(process.env.DATABASE_PATH, (err) => {
     // mmap_size: use 2x cache for virtual memory mapping (doesn't count against RAM limit)
     db.run(`PRAGMA mmap_size = ${cacheMemoryMB * 2 * 1024 * 1024}`);
     
-    // Warm up the database cache with common queries
-    console.log('Warming up database cache...');
+    // Warm up the database cache AND cache the initial page load query in Node.js memory
+    console.log('Warming up database cache and caching initial page load...');
     
-    // Warmup 1: Total ridership query (page load)
+    // Warmup 1: Total ridership query (page load) - CACHE THIS IN MEMORY
     const warmupQuery1 = `
       SELECT complex_id as station_id, hour_of_day as hour, SUM(total_ridership) / 12 as total_ridership
       FROM precomputed_total_ridership 
@@ -77,8 +80,25 @@ const db = new sqlite3.Database(process.env.DATABASE_PATH, (err) => {
     const totalWarmups = 2;
     
     db.all(warmupQuery1, (err, rows) => {
-      if (err) console.error('Warmup query 1 (total-ridership) failed:', err);
-      else console.log(`Warmup query 1 complete - loaded ${rows ? rows.length : 0} rows`);
+      if (err) {
+        console.error('Warmup query 1 (total-ridership) failed:', err);
+      } else {
+        console.log(`Warmup query 1 complete - loaded ${rows ? rows.length : 0} rows`);
+        
+        // CACHE THE INITIAL PAGE LOAD QUERY IN MEMORY
+        const stationIdToTotalRidershipByHour = {};
+        rows.forEach(row => {
+          if (!stationIdToTotalRidershipByHour[row.station_id]) {
+            stationIdToTotalRidershipByHour[row.station_id] = {};
+          }
+          stationIdToTotalRidershipByHour[row.station_id][row.hour] = row.total_ridership;
+        });
+        initialPageLoadCache = {
+          message: 'success',
+          data: stationIdToTotalRidershipByHour
+        };
+        console.log('✅ Initial page load query cached in memory!');
+      }
       warmupCount++;
       if (warmupCount === totalWarmups) console.log('All database warmups complete!');
     });
@@ -204,6 +224,16 @@ app.get('/total-ridership', (req, res) => {
   }
   const numMonthsToAverageOver = monthsArray.length;
   const shouldSelectDestinations = selectedDirection === 'goingTo';
+
+  // Check if this is the initial page load query (Saturday, goingTo, all 12 months)
+  const isInitialPageLoad = selectedDay === 'Saturday' && 
+                            shouldSelectDestinations && 
+                            monthsArray.length === 12;
+  
+  if (isInitialPageLoad && initialPageLoadCache) {
+    console.log('✨ Serving initial page load from memory cache (instant!)');
+    return res.json(initialPageLoadCache);
+  }
 
   const sqlQuery = `
     SELECT complex_id as station_id, hour_of_day as hour, SUM(total_ridership) / ? as total_ridership
