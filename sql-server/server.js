@@ -49,6 +49,69 @@ const db = new sqlite3.Database(process.env.DATABASE_PATH, (err) => {
     db.run("PRAGMA temp_store = memory");
     // mmap_size: use 2x cache for virtual memory mapping (doesn't count against RAM limit)
     db.run(`PRAGMA mmap_size = ${cacheMemoryMB * 2 * 1024 * 1024}`);
+    
+    // Warm up the database cache with common queries
+    console.log('Warming up database cache...');
+    
+    // Warmup 1: Total ridership query (page load)
+    const warmupQuery1 = `
+      SELECT complex_id as station_id, hour_of_day as hour, SUM(total_ridership) / 12 as total_ridership
+      FROM precomputed_total_ridership 
+      WHERE day_of_week = 'Saturday'
+        AND is_destination = 1
+        AND month IN (1,2,3,4,5,6,7,8,9,10,11,12)
+      GROUP BY station_id, hour
+    `;
+    
+    // Warmup 2: Ridership by station query (common station/day)
+    const warmupQuery2 = `
+      SELECT origin_complex_id AS station_id, hour_of_day AS hour, SUM(estimated_avg_ridership) / 12 AS ridership
+      FROM subway_origin_destination_2023
+      WHERE destination_complex_id = '611'
+        AND day_of_week = 'Wednesday'
+        AND month IN (1,2,3,4,5,6,7,8,9,10,11,12)
+      GROUP BY station_id, hour
+    `;
+    
+    let warmupCount = 0;
+    const totalWarmups = 2;
+    
+    db.all(warmupQuery1, (err, rows) => {
+      if (err) console.error('Warmup query 1 (total-ridership) failed:', err);
+      else console.log(`Warmup query 1 complete - loaded ${rows ? rows.length : 0} rows`);
+      warmupCount++;
+      if (warmupCount === totalWarmups) console.log('All database warmups complete!');
+    });
+    
+    db.all(warmupQuery2, (err, rows) => {
+      if (err) console.error('Warmup query 2 (ridership-by-station) failed:', err);
+      else console.log(`Warmup query 2 complete - loaded ${rows ? rows.length : 0} rows`);
+      warmupCount++;
+      if (warmupCount === totalWarmups) console.log('All database warmups complete!');
+    });
+    
+    console.log('Database warmup initiated (running in background)');
+    
+    // Log cache and memory statistics every 60 seconds
+    setInterval(() => {
+      // Get Node.js memory usage
+      const mem = process.memoryUsage();
+      const heapUsed = (mem.heapUsed / 1024 / 1024).toFixed(0);
+      const heapTotal = (mem.heapTotal / 1024 / 1024).toFixed(0);
+      const rss = (mem.rss / 1024 / 1024).toFixed(0); // Resident Set Size (total memory used by process)
+      const external = (mem.external / 1024 / 1024).toFixed(0); // C++ objects bound to JS (includes SQLite)
+      
+      // Check actual cache_size setting
+      db.get("PRAGMA cache_size", (err, result) => {
+        if (err) return;
+        const cacheSizePages = Math.abs(result ? result.cache_size : 0);
+        const cacheSizeMB = result && result.cache_size < 0 
+          ? (cacheSizePages / 1024).toFixed(0) // Negative = KB
+          : ((cacheSizePages * 4096) / 1024 / 1024).toFixed(0); // Positive = pages
+        
+        console.log(`[Stats] RSS: ${rss}MB (heap: ${heapUsed}/${heapTotal}MB, external: ${external}MB, cache_size: ${cacheSizeMB}MB)`);
+      });
+    }, 60000); // Every 60 seconds
   }
 });
 
@@ -112,8 +175,10 @@ app.get('/ridership-by-station', (req, res) => {
     GROUP BY station_id, hour
   `;
 
+  const queryStartTime = Date.now();
   db.all(sqlQuery, [numMonthsToAverageOver, complexId, selectedDay, ...monthsArray], (err, rows) => {
-    console.log('/ridership-by-station query done at', new Date().toISOString(), `(${rows ? rows.length : 0} rows)`);
+    const queryTime = Date.now() - queryStartTime;
+    console.log('/ridership-by-station query done at', new Date().toISOString(), `(${rows ? rows.length : 0} rows, ${queryTime}ms)`);
     if (err) {
       res.status(500).json({ error: err.message });
     } else {
@@ -149,8 +214,10 @@ app.get('/total-ridership', (req, res) => {
     GROUP BY station_id, hour
   `;
   
+  const queryStartTime = Date.now();
   db.all(sqlQuery, [numMonthsToAverageOver, selectedDay, shouldSelectDestinations, ...monthsArray], (err, rows) => {
-    console.log('SQL Query done at', new Date().toISOString(), `(${rows ? rows.length : 0} rows)`);
+    const queryTime = Date.now() - queryStartTime;
+    console.log('SQL Query done at', new Date().toISOString(), `(${rows ? rows.length : 0} rows, ${queryTime}ms)`);
     if (err) {
       res.status(500).json({ error: err.message });
     } else {
