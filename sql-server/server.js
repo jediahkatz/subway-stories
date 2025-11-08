@@ -34,6 +34,21 @@ const db = new sqlite3.Database(process.env.DATABASE_PATH, (err) => {
     console.error('Failed to connect to database', err);
   } else {
     console.log('Connected to SQLite database');
+    
+    // Calculate SQLite cache size based on available memory
+    // Conservative: use 40% of total RAM for SQLite cache
+    // This leaves 60% for Node.js, query results, temp tables, OS, and safety margin
+    const os = require('os');
+    const totalMemoryMB = os.totalmem() / (1024 * 1024);
+    const cacheMemoryMB = Math.max(64, Math.floor(totalMemoryMB * 0.4));
+    const cacheSizeKB = cacheMemoryMB * 1024;
+    
+    console.log(`Total memory: ${Math.floor(totalMemoryMB)}MB, SQLite cache: ${cacheMemoryMB}MB (40%)`);
+    
+    db.run(`PRAGMA cache_size = -${cacheSizeKB}`); // negative = KB
+    db.run("PRAGMA temp_store = memory");
+    // mmap_size: use 2x cache for virtual memory mapping (doesn't count against RAM limit)
+    db.run(`PRAGMA mmap_size = ${cacheMemoryMB * 2 * 1024 * 1024}`);
   }
 });
 
